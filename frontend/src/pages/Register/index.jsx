@@ -9,9 +9,9 @@ const Register = () => {
     fullName: "",
     username: "",
     email: "",
-    role: "buyer", // Giá trị mặc định
-    password: "",
-    confirmPassword: "",
+    // role: "buyer", // Giá trị mặc định
+    passwordHash: "",
+    // confirmPassword: "",
   });
 
   const handleChange = (e) => {
@@ -21,10 +21,10 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      alert("Mật khẩu xác nhận không khớp!");
-      return;
-    }
+    // if (formData.password !== formData.confirmPassword) {
+    //   alert("Mật khẩu xác nhận không khớp!");
+    //   return;
+    // }
 
     try {
       const response = await registerUser(formData);
@@ -74,7 +74,7 @@ const Register = () => {
             required
           />
         </div>
-        <div className="mb-3">
+        {/* <div className="mb-3">
           <label>Chọn vai trò</label>
           <select
             className="form-select"
@@ -87,19 +87,19 @@ const Register = () => {
             <option value="supplier">Người bán (Supplier)</option>
             <option value="shipper">Người giao hàng (Shipper)</option>
           </select>
-        </div>
+        </div> */}
         <div className="mb-3">
           <label>Mật khẩu</label>
           <input
             type="password"
             className="form-control"
-            name="password"
-            value={formData.password}
+            name="passwordHash"
+            value={formData.passwordHash}
             onChange={handleChange}
             required
           />
         </div>
-        <div className="mb-3">
+        {/* <div className="mb-3">
           <label>Nhập lại mật khẩu</label>
           <input
             type="password"
@@ -109,7 +109,7 @@ const Register = () => {
             onChange={handleChange}
             required
           />
-        </div>
+        </div> */}
         <button type="submit" className="btn btn-success w-100">
           Đăng ký
         </button>

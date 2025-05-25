@@ -23,10 +23,10 @@ const Login = () => {
       alert('Đăng nhập thành công!');
       
       // Lưu token/user info nếu có
-      localStorage.setItem('user', JSON.stringify(user));
+     localStorage.setItem('user', JSON.stringify(user));
 
       // Chuyển sang trang chính hoặc theo role
-      navigate('/');
+      navigate('/profile');
     } catch (error) {
       alert('Đăng nhập thất bại: ' + (error.message || 'Lỗi không xác định'));
     }

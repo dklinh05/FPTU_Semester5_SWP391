@@ -65,6 +65,7 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("User Not Found"));
     }
+
     public User updateUser(String userId, UserUpdateRequest request) {
         User user = getUser(userId);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);

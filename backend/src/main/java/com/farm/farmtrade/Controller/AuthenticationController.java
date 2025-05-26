@@ -1,4 +1,4 @@
-package com.farm.farmtrade.Controller;
+package com.farm.farmtrade.controller;
 
 import com.farm.farmtrade.dto.Request.AuthenticationRequest;
 import com.farm.farmtrade.dto.Response.AuthenticationResponse;
@@ -21,8 +21,8 @@ public class AuthenticationController {
     private final UserService userService;
 
     @PostMapping("/login")
-    Boolean login(@RequestBody AuthenticationRequest request) {
 
+    Integer login(@RequestBody AuthenticationRequest request) {
         return authenticationService.authenticate(request);
     }
 

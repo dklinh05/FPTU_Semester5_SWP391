@@ -16,11 +16,13 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
     UserRepository userRepository;
 
-    public boolean authenticate(AuthenticationRequest request) {
+    public Integer authenticate(AuthenticationRequest request) {
         var user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        return passwordEncoder.matches(request.getPassword(),user.getPasswordHash())&&user.getIsActive();
+
+        return (passwordEncoder.matches(request.getPassword(),user.getPasswordHash())&&user.getIsActive()) ? user.getUserID() : null;
+
     }
 }

@@ -21,6 +21,8 @@ public class AuthenticationService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        return passwordEncoder.matches(request.getPassword(),user.getPasswordHash()) ? user.getUserID() : null;
+
+        return (passwordEncoder.matches(request.getPassword(),user.getPasswordHash())&&user.getIsActive()) ? user.getUserID() : null;
+
     }
 }

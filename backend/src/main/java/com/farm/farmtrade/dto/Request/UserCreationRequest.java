@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,4 +21,22 @@ public class UserCreationRequest {
     private String fullName;
     private String email;
     private String phone;
+    private String role;
+    private String avatar;
+    private LocalDateTime createdAt;
+    private Boolean isActive;
+
+    // Buyer
+    private String address;
+    private Integer rewardPoints;
+    private Long totalSpend;
+
+    // Supplier
+    private String businessName;
+    private String certification;
+    private Long totalRevenue;
+
+    // Shipper
+    private String vehicle;
+    private String licensePlate;
 }

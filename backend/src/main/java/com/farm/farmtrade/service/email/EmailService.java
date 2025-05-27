@@ -1,4 +1,4 @@
-package com.farm.farmtrade.email;
+package com.farm.farmtrade.service.email;
 
 
 import jakarta.mail.MessagingException;

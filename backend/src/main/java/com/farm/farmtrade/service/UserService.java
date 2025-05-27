@@ -2,7 +2,7 @@ package com.farm.farmtrade.service;
 
 import com.farm.farmtrade.dto.Request.UserCreationRequest;
 import com.farm.farmtrade.dto.Request.UserUpdateRequest;
-import com.farm.farmtrade.email.EmailService;
+import com.farm.farmtrade.service.email.EmailService;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.entity.VerificationToken;
 import com.farm.farmtrade.repository.UserRepository;
@@ -99,4 +99,25 @@ public class UserService {
             return true;
         }).orElse(false); // Token không tồn tại
     }
+    
+//    public boolean existsByEmail(String email) {
+//        return userRepository.existsByEmail(email);
+//    }
+//
+//    public void createGoogleUser(String email, String name, String pictureUrl) {
+//        User user = new User();
+//        user.setEmail(email);
+//        user.setFullName(name);
+//        user.setAvatar(pictureUrl);
+//        user.setIsActive(true);
+//        userRepository.save(user);
+//    }
+//
+//    public void updateGoogleUser(String email, String name, String pictureUrl) {
+//        User user = userRepository.findByEmail(email);
+//        user.setFullName(name);
+//        user.setAvatar(pictureUrl);
+//        userRepository.save(user);
+//    }
+
 }

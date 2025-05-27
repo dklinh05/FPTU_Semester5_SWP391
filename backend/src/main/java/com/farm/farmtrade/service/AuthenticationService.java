@@ -41,7 +41,6 @@ public class AuthenticationService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
         return (passwordEncoder.matches(request.getPassword(),user.getPasswordHash())&&user.getIsActive()) ? user.getUserID() : null;
-
     }
 
     public void sendOTP(SendOTPRequest request) throws MessagingException {

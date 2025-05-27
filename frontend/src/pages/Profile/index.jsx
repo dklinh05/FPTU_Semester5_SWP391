@@ -1,11 +1,23 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { getUserById } from "../../services/userService";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
-  const userId = localStorage.getItem("user");
+  const location = useLocation();
 
   useEffect(() => {
+    // Lấy userId từ URL nếu có
+    const params = new URLSearchParams(location.search);
+    const userIdFromUrl = params.get("userId");
+
+    // Nếu có userId từ URL thì lưu vào localStorage
+    if (userIdFromUrl) {
+      localStorage.setItem("user", userIdFromUrl);
+    }
+
+    const userId = localStorage.getItem("user");
+
     const fetchUser = async () => {
       try {
         const data = await getUserById(userId);
@@ -16,7 +28,7 @@ const Profile = () => {
     };
 
     if (userId) fetchUser();
-  }, [userId]);
+  }, [location.search]);
 
   if (!user) {
     return <p>Đang tải thông tin người dùng...</p>;

@@ -1,7 +1,8 @@
 package com.farm.farmtrade.service;
 
-import com.farm.farmtrade.dto.Request.*;
-import com.farm.farmtrade.email.EmailService;
+import com.farm.farmtrade.dto.Request.UserCreationRequest;
+import com.farm.farmtrade.dto.Request.UserUpdateRequest;
+import com.farm.farmtrade.service.email.EmailService;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.entity.VerificationToken;
 import com.farm.farmtrade.repository.UserRepository;
@@ -10,7 +11,6 @@ import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,11 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserService {
@@ -32,7 +30,6 @@ public class UserService {
     private VerificationTokenRepository verificationTokenRepository;
     @Autowired
     private EmailService emailService;
-
     public User createRequest(UserCreationRequest request) throws MessagingException {
         User user = new User();
         user.setIsActive(false);
@@ -65,7 +62,7 @@ public class UserService {
     }
 
     public User getUser(String id) {
-        return userRepository.findById(Integer.valueOf(id))
+        return userRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("User Not Found"));
     }
 
@@ -102,51 +99,25 @@ public class UserService {
             return true;
         }).orElse(false); // Token không tồn tại
     }
-
-    public boolean verifyOTPToken(String token) {
-        return verificationTokenRepository.findByToken(token).map(verificationToken -> {
-            if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-                return false; // Token hết hạn
-            }
-            return true;
-        }).orElse(false); // Token không tồn tại
-    }
-
-    public void changePassword(ChangePasswordRequest request) {
-
-        User user = getUser(request.getUserId());
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-
-        // Verify old password
-        if (!passwordEncoder.matches(request.getOldPassword(), user.getPasswordHash())) {
-            throw new RuntimeException("Invalid old password");
-        }
-
-        // Update password
-        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
-        userRepository.save(user);
-    }
-
-    public void resetPassword(ResetPasswordRequest request) {
-
-        Optional<VerificationToken> tokenOptional = verificationTokenRepository.findByToken(request.getToken());
-
-        if (tokenOptional.isEmpty()) {
-            throw new RuntimeException("Invalid or expired token");
-        }
-
-        VerificationToken verificationToken = tokenOptional.get();
-        if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            verificationTokenRepository.delete(verificationToken);
-            throw new RuntimeException("Token has expired");
-        }
-
-        User user = verificationToken.getUser();
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
-
-        userRepository.save(user);
-        verificationTokenRepository.delete(verificationToken);
-    }
+    
+//    public boolean existsByEmail(String email) {
+//        return userRepository.existsByEmail(email);
+//    }
+//
+//    public void createGoogleUser(String email, String name, String pictureUrl) {
+//        User user = new User();
+//        user.setEmail(email);
+//        user.setFullName(name);
+//        user.setAvatar(pictureUrl);
+//        user.setIsActive(true);
+//        userRepository.save(user);
+//    }
+//
+//    public void updateGoogleUser(String email, String name, String pictureUrl) {
+//        User user = userRepository.findByEmail(email);
+//        user.setFullName(name);
+//        user.setAvatar(pictureUrl);
+//        userRepository.save(user);
+//    }
 
 }

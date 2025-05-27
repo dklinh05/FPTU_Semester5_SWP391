@@ -21,7 +21,10 @@ const Login = () => {
     try {
       const user = await loginUser(formData);
       alert('Đăng nhập thành công!');
-      
+      if(!user){
+         alert('Đăng nhập thất bại: ' + (error.message || 'Lỗi không xác định'));
+         return;
+      }
       // Lưu token/user info nếu có
      localStorage.setItem('user', JSON.stringify(user));
 

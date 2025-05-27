@@ -1,9 +1,11 @@
 package com.farm.farmtrade.controller;
 
-import com.farm.farmtrade.dto.Request.AuthenticationRequest;
+import com.farm.farmtrade.dto.Request.*;
 import com.farm.farmtrade.dto.Response.AuthenticationResponse;
 import com.farm.farmtrade.service.AuthenticationService;
 import com.farm.farmtrade.service.UserService;
+import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,7 +23,6 @@ public class AuthenticationController {
     private final UserService userService;
 
     @PostMapping("/login")
-
     Integer login(@RequestBody AuthenticationRequest request) {
         return authenticationService.authenticate(request);
     }
@@ -33,6 +34,54 @@ public class AuthenticationController {
             return ResponseEntity.ok("Xác minh tài khoản thành công!");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token không hợp lệ hoặc đã hết hạn.");
+        }
+    }
+
+    @PostMapping("/send-otp")
+    public void sendOtp(@RequestBody SendOTPRequest request) throws MessagingException {
+        try {
+            authenticationService.sendOTP(request);
+        }catch (Exception ignored) {
+            ignored.printStackTrace();
+        }
+    }
+
+    @PostMapping("/send-otp-forgot")
+    public void sendOtpForgot(@RequestBody ForgotPasswordRequest request) throws MessagingException {
+        try {
+            authenticationService.sendOTPForget(request);
+        }catch (Exception ignored) {
+            ignored.printStackTrace();
+        }
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<String> verifyOtp(@RequestBody OTPRequest  request) {
+        boolean verified = userService.verifyOTPToken(request.getToken());
+        if (verified) {
+            return ResponseEntity.ok("Xác minh tài khoản thành công!");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token không hợp lệ hoặc đã hết hạn.");
+        }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
+        try {
+            userService.changePassword(request);
+            return ResponseEntity.ok("Thay đổi mật khẩu thành công!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+        try {
+            userService.resetPassword(request);
+            return ResponseEntity.ok("Đặt lại mật khẩu thành công!");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }

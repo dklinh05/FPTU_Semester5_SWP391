@@ -1,5 +1,7 @@
 package com.farm.farmtrade.service;
 
+import com.farm.farmtrade.dto.Request.ChangePasswordRequest;
+import com.farm.farmtrade.dto.Request.ResetPasswordRequest;
 import com.farm.farmtrade.dto.Request.UserCreationRequest;
 import com.farm.farmtrade.dto.Request.UserUpdateRequest;
 import com.farm.farmtrade.service.email.EmailService;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -99,7 +102,53 @@ public class UserService {
             return true;
         }).orElse(false); // Token không tồn tại
     }
-    
+
+    public boolean verifyOTPToken(String token) {
+        return verificationTokenRepository.findByToken(token).map(verificationToken -> {
+            if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+                return false; // Token hết hạn
+            }
+            return true;
+        }).orElse(false); // Token không tồn tại
+    }
+
+    public void changePassword(ChangePasswordRequest request) {
+
+        User user = getUser(request.getUserId());
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+
+        // Verify old password
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPasswordHash())) {
+            throw new RuntimeException("Invalid old password");
+        }
+
+        // Update password
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    public void resetPassword(ResetPasswordRequest request) {
+
+        Optional<VerificationToken> tokenOptional = verificationTokenRepository.findByToken(request.getToken());
+
+        if (tokenOptional.isEmpty()) {
+            throw new RuntimeException("Invalid or expired token");
+        }
+
+        VerificationToken verificationToken = tokenOptional.get();
+        if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            verificationTokenRepository.delete(verificationToken);
+            throw new RuntimeException("Token has expired");
+        }
+
+        User user = verificationToken.getUser();
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+
+        userRepository.save(user);
+        verificationTokenRepository.delete(verificationToken);
+    }
+
 //    public boolean existsByEmail(String email) {
 //        return userRepository.existsByEmail(email);
 //    }

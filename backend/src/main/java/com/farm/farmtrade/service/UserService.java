@@ -62,7 +62,7 @@ public class UserService {
     }
 
     public User getUser(String id) {
-        return userRepository.findById(id)
+        return userRepository.findById(Integer.valueOf(id))
                 .orElseThrow(()-> new RuntimeException("User Not Found"));
     }
 

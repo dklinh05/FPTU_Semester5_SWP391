@@ -4,11 +4,12 @@ package com.farm.farmtrade.service;
 import com.farm.farmtrade.dto.Request.AuthenticationRequest;
 import com.farm.farmtrade.dto.Request.ForgotPasswordRequest;
 import com.farm.farmtrade.dto.Request.SendOTPRequest;
-import com.farm.farmtrade.email.EmailService;
+
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.entity.VerificationToken;
 import com.farm.farmtrade.repository.UserRepository;
 import com.farm.farmtrade.repository.VerificationTokenRepository;
+import com.farm.farmtrade.service.email.EmailService;
 import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

@@ -1,11 +1,17 @@
 .header {
   width: 100%;
-  padding-left: 0;
-  padding-right: 0;
   background-color: #2ecc71;
   color:#02542D;
-  margin-left: 0;
-  margin-right: 0;
+
+}
+body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  margin: 0;
+  padding: 0;
 }
 
 .logo {
@@ -36,4 +42,15 @@
 .cartIcon {
   cursor: pointer;
   margin-bottom: 55px;
+}
+@media (max-width: 768px) {
+  .header {
+    .logo img {
+      width: 80px;
+      height: 80px;
+    }
+    .searchInput{
+
+    }
+  }
 }

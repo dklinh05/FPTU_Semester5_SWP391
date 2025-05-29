@@ -1,0 +1,16 @@
+// src/layouts/ProfileLayout/ProfileLayout.module.scss
+
+.profileLayout {
+  display: flex;
+
+  .sidebar {
+    width: 40%;
+    background-color: #f8f9fa;
+    padding: 20px;
+  }
+
+  .content {
+    width: 60%;
+    padding: 20px;
+  }
+}

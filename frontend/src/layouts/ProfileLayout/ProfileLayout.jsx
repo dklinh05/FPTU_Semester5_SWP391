@@ -3,18 +3,24 @@ import styles from './ProfileLayout.module.scss';
 import Header from '../../components/Header';
 import Sidebar from './Sidebar';
 
-const cx = classNames.bind(styles);
+const ProfileLayout = ({ children }) => {
+  return (
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+      {/* Sidebar - rộng hơn */}
+      <div style={{ width: "280px", flexShrink: 0 }}>
+        <Sidebar />
+      </div>
 
-function ProfileLayout({children}) {
-    return (
-    <div className={cx('wrapper')}>
-        <Header></Header>
-      <div className={cx('container')}>
-        <Sidebar></Sidebar>
-        <div className={cx('content')}>{children}</div>
+      {/* Nội dung chính */}
+      <div style={{ flex: 1, padding: "24px", backgroundColor: "#f5f5f5" }}>
+        <div className="container">
+
+          {/* Nội dung chính */}
+          {children}
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default ProfileLayout;

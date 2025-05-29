@@ -45,7 +45,7 @@ public class AuthenticationService {
     }
 
     public void sendOTP(SendOTPRequest request) throws MessagingException {
-        User user = userRepository.findById(Integer.valueOf(request.getUserId())).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(String.valueOf(Integer.valueOf(request.getUserId()))).orElseThrow(() -> new RuntimeException("User not found"));
 
         String token = String.format("%06d", new Random().nextInt(1000000));
         saveOTPToken(user, token);

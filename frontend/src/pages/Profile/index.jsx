@@ -37,24 +37,24 @@ const Profile = () => {
     fileInputRef.current.click();
   };
 
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file || !user) return;
+const handleFileChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file || !user) return;
 
-    const tempUrl = URL.createObjectURL(file);
-    setUser((prevUser) => ({
-      ...prevUser,
-      avatarPreview: tempUrl,
-    }));
+  const formData = new FormData();
+  formData.append("avatar", file); // tên field phải khớp với backend
 
-    try {
-      const updatedUser = await uploadAvatar(user.id, file);
-      setUser(updatedUser);
-      setAvatarTimestamp(Date.now());
-    } catch (err) {
-      console.error("Lỗi upload avatar:", err);
-    }
-  };
+  try {
+    const updatedUser = await uploadAvatar(user.id, formData);
+    setUser(updatedUser);
+    setAvatarTimestamp(Date.now());
+  } catch (err) {
+    console.error("Lỗi upload avatar:", err);
+    alert("Upload avatar thất bại");
+  }
+};
+
+
 
   const handleEditField = (field, value) => {
     setEditField(field);
@@ -88,9 +88,11 @@ const Profile = () => {
     ? `${user.avatar}?t=${avatarTimestamp}`
     : "/vite.svg";
 
-  return (
-    <div className="d-flex align-items-center justify-content-center min-vh-100">
-<div className="card w-100" style={{ maxWidth: "100%" }}>
+return (
+  <div className="position-relative min-vh-100">
+    {/* Box Profile - Chiếm 60% chiều rộng */}
+    <div className="position-absolute top-0 end-0 p-4 w-60" style={{ zIndex: 10, width: "60vw" }}>
+      <div className="card shadow-sm h-100">
         <div className="card-body p-4">
           <h4 className="mb-3 text-center">My Profile</h4>
           <hr className="mb-4" />
@@ -195,8 +197,8 @@ const Profile = () => {
                 src={avatarUrl}
                 alt="Avatar"
                 className="rounded-circle"
-                width={120}
-                height={120}
+                width={80}
+                height={80}
                 style={{ cursor: "pointer", objectFit: "cover" }}
                 onClick={handleAvatarClick}
               />
@@ -213,7 +215,8 @@ const Profile = () => {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default Profile;

@@ -7,24 +7,14 @@ export const getUserById = async (id) => {
   return res.data;
 };
 
-export async function uploadAvatar(userId, file) {
-  const formData = new FormData();
-  formData.append("file", file); // key "file" phải đúng với tên trong @RequestParam
-
-  const response = await fetch(`${API_BASE}/${userId}/avatar`, {
+export const uploadAvatar = async (userId, formData) => {
+  const res = await fetch(`http://localhost:8080/farmtrade/Users/${userId}/avatar`, {
     method: "POST",
     body: formData,
-    // KHÔNG set headers Content-Type → browser tự set với boundary
   });
 
-  if (!response.ok) {
-    const errMsg = await response.text();
-    throw new Error(`Upload avatar thất bại: ${errMsg}`);
-  }
-
-  const updatedUser = await response.json();
-  return updatedUser;
-}
+  return await res.json();
+};
 
 export const updateUser = async (userId, userData) => {
   const response = await axios.put(`/farmtrade/Users/${userId}`, {
@@ -57,4 +47,3 @@ export const updatePhone = async (userId, phone) => {
   });
   return res.data;
 };
-

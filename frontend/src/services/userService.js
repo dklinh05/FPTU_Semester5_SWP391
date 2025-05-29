@@ -13,8 +13,15 @@ export const uploadAvatar = async (userId, formData) => {
     body: formData,
   });
 
+  if (!res.ok) {
+    const errorText = await res.text(); // <- Đoạn text gây lỗi
+    console.error("Phản hồi lỗi từ backend:", errorText); // <-- In ra lỗi thật sự
+    throw new Error("Upload avatar thất bại");
+  }
+
   return await res.json();
 };
+
 
 export const updateUser = async (userId, userData) => {
   const response = await axios.put(`/farmtrade/Users/${userId}`, {

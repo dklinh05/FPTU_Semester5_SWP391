@@ -85,29 +85,27 @@ public class UserService {
                 .orElseThrow(()-> new RuntimeException("User Not Found"));
     }
     public User uploadAvatar(String id, MultipartFile file) {
-        // Bắt lỗi người dùng không tồn tại
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         try {
-            // Bắt lỗi file rỗng
             if (file.isEmpty()) {
                 throw new RuntimeException("File trống hoặc không hợp lệ");
             }
 
-            // Upload lên Cloudinary
             Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
                     "folder", "avatars",
                     "public_id", "user_" + id
             ));
 
-            String avatarUrl = uploadResult.get("secure_url").toString();
+            String avatarUrl = (String) uploadResult.get("secure_url");
             user.setAvatar(avatarUrl);
-
             return userRepository.save(user);
 
         } catch (IOException e) {
             throw new RuntimeException("Lỗi khi đọc file", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi upload avatar lên Cloudinary", e);
         }
     }
 

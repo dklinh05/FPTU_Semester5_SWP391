@@ -2,6 +2,7 @@ import classNames from 'classnames/bind';
 import styles from './DefaultLayout.module.scss';
 import Header from '../../components/Header';
 import { useEffect, useState } from 'react';
+import { getUserById } from '../../services/userService';
 
 const cx = classNames.bind(styles);
 
@@ -9,18 +10,21 @@ function DefaultLayout({ children }) {
     const [account_name, setAccountName] = useState(null);
 
     useEffect(() => {
-        const userJSON = localStorage.getItem('user');
-        if (userJSON) {
-            try {
-                const user = JSON.parse(userJSON);
-                setAccountName(user.username);
-            } catch {
-                setAccountName(null);
-            }
-        } else {
-            setAccountName(null);
-        }
+        const userId = localStorage.getItem('user');
+        
+         const fetchUser = async () => {
+              try {
+                const data = await getUserById(userId);
+                setAccountName(data.username);
+              } catch (error) {
+                console.error("Lỗi khi lấy thông tin user:", error);
+              }
+            };
+        
+            if (userId) fetchUser();
     }, []);
+
+
 
     return (
         <div className={cx('wrapper')}>

@@ -32,9 +32,12 @@ const Login = () => {
 
       // Chuyển sang trang chính hoặc theo role
       navigate("/profile");
+     
+
     } catch (error) {
       alert("Đăng nhập thất bại: " + (error.message || "Lỗi không xác định"));
     }
+    
   };
 
   return (

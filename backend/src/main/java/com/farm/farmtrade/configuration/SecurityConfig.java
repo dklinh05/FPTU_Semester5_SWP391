@@ -53,7 +53,6 @@ public class SecurityConfig {
                                         .userService(customOAuth2UserService) // ĐÂY LÀ CHỖ GỌI
                                 )
                                 .successHandler(oAuth2SuccessHandler) //   Dùng custom success handler
-//                        .defaultSuccessUrl("http://localhost:5173/profile", true) //   redirect về FE
                 );
 
         return http.build();

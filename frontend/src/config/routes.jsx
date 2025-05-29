@@ -5,7 +5,8 @@ const routes = {
   register: '/register',
   verify: '/verify',
   changePassword: '/change-password',
-  forgotPassword: '/forgot-password'
+  forgotPassword: '/forgot-password',
+  completeGoogleProfile: '/CompleteGoogleProfile'
 };
 
 export default routes;

@@ -1,60 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getUserById } from "../../services/userService";
-import styles from './Profile.module.scss';
-import { Search, ShoppingCart } from "lucide-react";
-
-const Header = ({ username }) => {
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    alert(`Search: ${searchTerm}`);
-  };
-
-  return (
-      <header className={`container-fluid px-0 ${styles.header}`}>
-        <div className="row align-items-center py-3 mx-0">
-          <div className="col-2 d-flex justify-content-start">
-            <div className={styles.logo}>
-              <img src="/public/logo.png" alt="Logo" />
-            </div>
-          </div>
-
-          <div className="col-8 d-flex align-items-center">
-            <form onSubmit={handleSearchSubmit} className="w-100">
-              <div className="input-group">
-          <span className={`input-group-text bg-white text-dark ${styles.inputGroupText}`}>
-            <Search size={20} />
-          </span>
-                <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    className={`form-control ${styles.searchInput}`}
-                    //placeholder="Tìm kiếm..."
-                />
-              </div>
-            </form>
-          </div>
-
-          <div className="col-1 d-flex flex-column align-items-end">
-            <div className={styles.username}>
-              <div>{username || "account_name"}</div>
-            </div>
-            <div className={styles.cartIcon}>
-              <ShoppingCart size={28} />
-            </div>
-          </div>
-        </div>
-      </header>
-  );
-};
-
+import Header from "/src/components/Header";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -96,8 +43,9 @@ const Profile = () => {
   }
 
   return (
+      <>
+
       <div>
-        <Header username={user.username} />
         <div >
           <h2>Hồ sơ cá nhân</h2>
           <div className="card-body" >
@@ -105,7 +53,7 @@ const Profile = () => {
                 src={
                   user.avatar
                       ? `http://localhost:8080/farmtrade/avatars/${user.avatar}`
-                      : "/vite.svg" // ảnh mặc định nằm trong public folder
+                      : "/vite.svg"
                 }
                 alt="Avatar"
                 className="rounded-circle"
@@ -159,6 +107,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
+</>
 
   );
 };

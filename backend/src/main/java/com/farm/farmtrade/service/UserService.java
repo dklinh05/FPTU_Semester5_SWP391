@@ -1,7 +1,6 @@
 package com.farm.farmtrade.service;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.farm.farmtrade.dto.Request.ChangePasswordRequest;
 import com.farm.farmtrade.dto.Request.ResetPasswordRequest;
 import com.farm.farmtrade.dto.Request.UserCreationRequest;
@@ -84,28 +83,35 @@ public class UserService {
         return userRepository.findById(String.valueOf(Integer.valueOf(id)))
                 .orElseThrow(()-> new RuntimeException("User Not Found"));
     }
-    public User uploadAvatar(String id, MultipartFile file) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
+
+    public User updateAvatar(String userId, MultipartFile file) {
         try {
-            if (file.isEmpty()) {
-                throw new RuntimeException("File trống hoặc không hợp lệ");
+            // 1. Tìm user
+            Optional<User> optionalUser = userRepository.findById(userId);
+            if (!optionalUser.isPresent()) {
+                throw new RuntimeException("Không tìm thấy user với ID: " + userId);
             }
 
-            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+            User user = optionalUser.get();
+
+            // 2. Upload file lên Cloudinary
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), Map.of(
                     "folder", "avatars",
-                    "public_id", "user_" + id
+                    "public_id", "user_" + userId,
+                    "overwrite", true
             ));
 
             String avatarUrl = (String) uploadResult.get("secure_url");
+
+            // 3. Cập nhật avatar URL
             user.setAvatar(avatarUrl);
+
+            // 4. Lưu lại user
             return userRepository.save(user);
 
         } catch (IOException e) {
-            throw new RuntimeException("Lỗi khi đọc file", e);
-        } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi upload avatar lên Cloudinary", e);
+            throw new RuntimeException("Lỗi khi upload avatar: " + e.getMessage(), e);
         }
     }
 

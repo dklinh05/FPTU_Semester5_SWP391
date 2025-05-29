@@ -56,24 +56,10 @@ public class UserController {
     }
 
 
-
-
-//    @PostMapping("/{userID}/avatar")
-//    public ResponseEntity<User> uploadAvatar(@PathVariable String userID,   @RequestPart("avatar") MultipartFile file) {
-//        User updatedUser = userService.uploadAvatar(userID, file);
-//        return ResponseEntity.ok(userService.uploadAvatar(userID, file));
-//    }
-
-    @PostMapping("/{userID}/avatar")
-    public ResponseEntity<?> uploadAvatar(
-            @PathVariable("userID") String userID,
-            @RequestParam("avatar") MultipartFile file) {
-        try {
-            User updatedUser = userService.uploadAvatar(userID, file);
-            return ResponseEntity.ok(updatedUser);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Collections.singletonMap("error", e.getMessage()));
-        }
+    @PostMapping("/users/{id}/avatar")
+    public ResponseEntity<User> uploadAvatar(@PathVariable String id, @RequestParam("avatar") MultipartFile file) {
+        User updatedUser = userService.updateAvatar(id, file);
+        return ResponseEntity.ok(updatedUser);
     }
 
     public User updateAvatar(String userId, MultipartFile file) {

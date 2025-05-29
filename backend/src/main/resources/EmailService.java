@@ -119,4 +119,6 @@ public class EmailService {
         """;
         return String.format(template, userName, otp);
     }
+
+
 }

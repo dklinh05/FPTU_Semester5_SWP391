@@ -14,6 +14,10 @@ const Register = () => {
   const roles = ["Supplier", "Customer", "Shipper"];
 
   const handleRoleSelect = (role) => {
+    setFormData((prev) => ({
+      ...prev,
+      role: role,
+    }));
     setRole(role);
     setStep(2);
   };
@@ -23,9 +27,12 @@ const Register = () => {
     username: "",
     email: "",
     phone: "",
-    role: {role},
+    role: role,
     passwordHash: "",
     // confirmPassword: "",
+    businessName: "",
+    certification: "",
+    address: "",
   });
 
   const handleChange = (e) => {
@@ -39,7 +46,7 @@ const Register = () => {
     //   alert("Mật khẩu xác nhận không khớp!");
     //   return;
     // }
-
+    console.log(formData);
     try {
       const response = await registerUser(formData);
       alert("Đăng ký thành công!");
@@ -53,7 +60,9 @@ const Register = () => {
 
   return (
     <div className="container mt-3" style={{ maxWidth: "500px" }}>
-      {step === 1 && <h3 className={cx(styles.title, "text-center")}>Choose role</h3>}
+      {step === 1 && (
+        <h3 className={cx(styles.title, "text-center")}>Choose role</h3>
+      )}
 
       {step === 1 && (
         <div className={cx(styles["form-role"])}>
@@ -73,7 +82,9 @@ const Register = () => {
           ))}
         </div>
       )}
-      {step === 2 && <h3 className={cx(styles.title, "text-center")}>Register for {role}</h3>}
+      {step === 2 && (
+        <h3 className={cx(styles.title, "text-center")}>Register for {role}</h3>
+      )}
       {step === 2 && (
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -150,45 +161,45 @@ const Register = () => {
           </div>
           {role === "Supplier" && (
             <div className="mb-3">
-            <label>Business Name</label>
-            <input
-              type="text"
-              className="form-control"
-              name="businessName"
-              value={formData.businessName}
-              onChange={handleChange}
-              placeholder="Your Business Name"
-              required
-            />
-          </div>
+              <label>Business Name</label>
+              <input
+                type="text"
+                className="form-control"
+                name="businessName"
+                value={formData.businessName}
+                onChange={handleChange}
+                placeholder="Your Business Name"
+                required
+              />
+            </div>
           )}
           {role === "Supplier" && (
             <div className="mb-3">
-            <label>Certification</label>
-            <input
-              type="text"
-              className="form-control"
-              name="certification"
-              value={formData.certification}
-              onChange={handleChange}
-              placeholder="Your Certification"
-              required
-            />
-          </div>
+              <label>Certification</label>
+              <input
+                type="text"
+                className="form-control"
+                name="certification"
+                value={formData.certification}
+                onChange={handleChange}
+                placeholder="Your Certification"
+                required
+              />
+            </div>
           )}
           {role === "Customer" && (
             <div className="mb-3">
-            <label>Address</label>
-            <input
-              type="text"
-              className="form-control"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="Your Address"
-              required
-            />
-          </div>
+              <label>Address</label>
+              <input
+                type="text"
+                className="form-control"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Your Address"
+                required
+              />
+            </div>
           )}
           <button type="submit" className="btn btn-success w-100">
             Đăng ký

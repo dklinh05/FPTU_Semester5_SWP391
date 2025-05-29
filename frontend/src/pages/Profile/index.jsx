@@ -1,6 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { getUserById, updateUser, uploadAvatar } from "../../services/userService";
+import {
+  getUserById,
+  updateUser,
+  uploadAvatar,
+} from "../../services/userService";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -90,7 +94,7 @@ const Profile = () => {
 
   return (
     <div className="d-flex align-items-center justify-content-center min-vh-100">
-<div className="card w-100" style={{ maxWidth: "100%" }}>
+      <div className="card w-100" style={{ maxWidth: "100%" }}>
         <div className="card-body p-4">
           <h4 className="mb-3 text-center">My Profile</h4>
           <hr className="mb-4" />
@@ -128,9 +132,7 @@ const Profile = () => {
                     {user.username}{" "}
                     <button
                       className="btn btn-outline-primary btn-sm ms-2"
-                      onClick={() =>
-                        handleEditField("username", user.username)
-                      }
+                      onClick={() => handleEditField("username", user.username)}
                     >
                       Change
                     </button>

@@ -1,5 +1,6 @@
 package com.farm.farmtrade.service;
 
+import com.cloudinary.Cloudinary;
 import com.farm.farmtrade.dto.Request.ChangePasswordRequest;
 import com.farm.farmtrade.dto.Request.ResetPasswordRequest;
 import com.farm.farmtrade.dto.Request.UserCreationRequest;
@@ -17,9 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,6 +34,8 @@ import java.util.UUID;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private Cloudinary cloudinary;
     @Autowired
     private VerificationTokenRepository verificationTokenRepository;
     @Autowired
@@ -73,28 +80,61 @@ public class UserService {
     }
 
     public User getUser(String id) {
-        return userRepository.findById(Integer.valueOf(id))
+        return userRepository.findById(String.valueOf(Integer.valueOf(id)))
                 .orElseThrow(()-> new RuntimeException("User Not Found"));
+    }
+
+
+    public User updateAvatar(String userId, MultipartFile file) {
+        try {
+            // 1. Tìm user
+            Optional<User> optionalUser = userRepository.findById(userId);
+            if (!optionalUser.isPresent()) {
+                throw new RuntimeException("Không tìm thấy user với ID: " + userId);
+            }
+
+            User user = optionalUser.get();
+
+            // 2. Upload file lên Cloudinary
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), Map.of(
+                    "folder", "avatars",
+                    "public_id", "user_" + userId,
+                    "overwrite", true
+            ));
+
+            String avatarUrl = (String) uploadResult.get("secure_url");
+
+            // 3. Cập nhật avatar URL
+            user.setAvatar(avatarUrl);
+
+            // 4. Lưu lại user
+            return userRepository.save(user);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Lỗi khi upload avatar: " + e.getMessage(), e);
+        }
     }
 
     public User updateUser(String userId, UserUpdateRequest request) {
         User user = getUser(userId);
-        user.setFullName(request.getFullName());
-        user.setEmail(request.getEmail());
-        user.setPhone(request.getPhone());
-        user.setRole(request.getRole());
-        user.setCreatedAt(LocalDateTime.now());
-        user.setAddress(request.getAddress());
-        user.setRewardPoints(0);
-        user.setTotalSpend(0L);
-        user.setBusinessName(request.getBusinessName());
-        user.setCertification(request.getCertification());
-        user.setTotalRevenue(0L);
-        user.setVehicle(request.getVehicle());
-        user.setLicensePlate(request.getLicensePlate());
+
+        if (request.getUsername() != null && !request.getUsername().isEmpty()) {
+            if (userRepository.existsByUsername(request.getUsername())) {
+                throw new RuntimeException("Username already taken");
+            }
+            user.setUsername(request.getUsername());
+        }
+
+        if (request.getEmail() != null && !request.getEmail().isEmpty()) {
+            if (userRepository.existsByEmail(request.getEmail())) {
+                throw new RuntimeException("Email already taken");
+            }
+            user.setEmail(request.getEmail());
+        }
 
         return userRepository.save(user);
     }
+
 
     public void saveVerificationToken(User user, String token) {
         VerificationToken verificationToken = new VerificationToken(
@@ -163,6 +203,18 @@ public class UserService {
         userRepository.save(user);
         verificationTokenRepository.delete(verificationToken);
     }
+    @PutMapping("/{userId}/username")
+    public User updateUsername(String userId, String username) {
+        User user = getUser(userId);
+        user.setUsername(username);
+        return userRepository.save(user);
+    }
+
+    public User getUserById(String userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
 
 //    public boolean existsByEmail(String email) {
 //        return userRepository.existsByEmail(email);

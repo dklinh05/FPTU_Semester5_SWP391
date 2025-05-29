@@ -55,14 +55,20 @@ public class UserController {
         return userService.getUser(userID);
     }
 
+    @PutMapping("/{userID}")
+    public ResponseEntity<User> updateUser(
+            @PathVariable("userID") String userID,
+            @RequestBody Map<String, String> payload) {
 
+        String newEmail = payload.get("email");
 
+        if (newEmail == null || newEmail.isEmpty()) {
+            throw new RuntimeException("Trường email không hợp lệ");
+        }
 
-//    @PostMapping("/{userID}/avatar")
-//    public ResponseEntity<User> uploadAvatar(@PathVariable String userID,   @RequestPart("avatar") MultipartFile file) {
-//        User updatedUser = userService.uploadAvatar(userID, file);
-//        return ResponseEntity.ok(userService.uploadAvatar(userID, file));
-//    }
+        User updatedUser = userService.updateEmail(userID, newEmail);
+        return ResponseEntity.ok(updatedUser);
+    }
 
     @PostMapping("/{userID}/avatar")
     public ResponseEntity<?> uploadAvatar(
@@ -105,21 +111,4 @@ public class UserController {
             throw new RuntimeException("Lỗi khi upload avatar: " + e.getMessage(), e);
         }
     }
-
-
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") String id) {
-        return ResponseEntity.ok(userService.getUserById(id));
-    }
-
-    @PutMapping("/{userId}/username")
-    public ResponseEntity<User> updateUsername(
-            @PathVariable String userId,
-            @RequestBody Map<String, String> payload) {
-        String newUsername = payload.get("username");
-        User updatedUser = userService.updateUsername(userId, newUsername);
-        return ResponseEntity.ok(updatedUser);
-    }
-
-
 }

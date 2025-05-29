@@ -109,8 +109,8 @@ public class UserService {
         }
     }
 
-    public User updateUser(String userId, UserUpdateRequest request) {
-        User user = getUser(userId);
+    public User updateUser(String userID, UserUpdateRequest request) {
+        User user = getUser(userID);
 
         if (request.getUsername() != null && !request.getUsername().isEmpty()) {
             if (userRepository.existsByUsername(request.getUsername())) {
@@ -197,19 +197,24 @@ public class UserService {
         userRepository.save(user);
         verificationTokenRepository.delete(verificationToken);
     }
-    @PutMapping("/{userId}/username")
-    public User updateUsername(String userId, String username) {
-        User user = getUser(userId);
+    @PutMapping("/{userID}/username")
+    public User updateUsername(String userID, String username) {
+        User user = getUser(userID);
         user.setUsername(username);
         return userRepository.save(user);
     }
 
-    public User getUserById(String userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public User updateEmail(String userID, String newEmail) {
+        User user = userRepository.findById(userID)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
+        if (userRepository.existsByEmail(newEmail)) {
+            throw new RuntimeException("Email này đã tồn tại");
+        }
+
+        user.setEmail(newEmail);
+        return userRepository.save(user);
     }
-
-
 //    public boolean existsByEmail(String email) {
 //        return userRepository.existsByEmail(email);
 //    }

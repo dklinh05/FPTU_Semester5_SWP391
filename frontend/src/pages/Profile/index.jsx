@@ -63,20 +63,23 @@ const Profile = () => {
     setFieldValue(value);
   };
 
-  const handleSaveField = async () => {
-    if (!user || !editField) return;
+const handleSaveField = async () => {
+  if (!user || !editField) return;
 
-    const payload = {};
-    payload[editField] = fieldValue;
-
-    try {
-      const updatedUser = await updateUser(user.userID, payload);
-      setUser(updatedUser);
-      setEditField(null);
-    } catch (err) {
-      console.error("Lỗi cập nhật thông tin:", err);
-    }
+  const payload = {
+    username: editField === "username" ? fieldValue : null,
+    email: editField === "email" ? fieldValue : null
   };
+
+  try {
+    const updatedUser = await updateUser(user.userID, payload);
+    setUser(updatedUser);
+    setEditField(null);
+  } catch (err) {
+    console.error("Lỗi cập nhật thông tin:", err);
+    alert("Cập nhật thất bại");
+  }
+};
 
   if (!user) {
     return (

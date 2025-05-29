@@ -23,6 +23,15 @@ export const uploadAvatar = async (userId, formData) => {
 };
 
 
+export const updateUser = async (userID, userData) => {
+  const response = await fetch(`${API_BASE}/${userID}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(userData)
+
+
 //
 export const updateUserExtra = async (userId, extraData) => {
   try {
@@ -35,17 +44,15 @@ export const updateUserExtra = async (userId, extraData) => {
 
 
 
-export const updateUser = async (userId, userData) => {
-  const response = await axios.put(`/farmtrade/Users/${userId}`, {
-    fullName: userData.fullName,
-    phone: userData.phone,
-    username: userData.username,
-    email: userData.email,
-    passwordHash: userData.passwordHash || "placeholder123", // bắt buộc field
-  });
-  return response.data;
-};
 
+  });
+
+  if (!response.ok) {
+    throw new Error("Cập nhật thất bại");
+  }
+
+  return await response.json();
+};
 export const updateUsername = async (userId, username) => {
   const res = await axios.patch(`/Users/${userId}/username`, null, {
     params: { username },

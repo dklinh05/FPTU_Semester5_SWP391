@@ -108,6 +108,7 @@ public class UserService {
             throw new RuntimeException("Lỗi khi upload avatar lên Cloudinary", e);
         }
     }
+
     public User updateUserr(String userId, UserUpdateRequest request) {
         User user = getUser(userId);
         user.setPhone(request.getPhone());
@@ -121,7 +122,6 @@ public class UserService {
     }
     public User updateUser(String userId, UserUpdateRequest request) {
         User user = getUser(userId);
-
         if (request.getUsername() != null && !request.getUsername().isEmpty()) {
             if (userRepository.existsByUsername(request.getUsername())) {
                 throw new RuntimeException("Username already taken");
@@ -207,18 +207,25 @@ public class UserService {
         userRepository.save(user);
         verificationTokenRepository.delete(verificationToken);
     }
-    @PutMapping("/{userId}/username")
-    public User updateUsername(String userId, String username) {
-        User user = getUser(userId);
+    @PutMapping("/{userID}/username")
+    public User updateUsername(String userID, String username) {
+        User user = getUser(userID);
         user.setUsername(username);
         return userRepository.save(user);
     }
 
-    public User getUserById(String userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
+    public User updateEmail(String userID, String newEmail) {
+        User user = userRepository.findById(userID)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
+        if (userRepository.existsByEmail(newEmail)) {
+            throw new RuntimeException("Email này đã tồn tại");
+        }
+
+
+        user.setEmail(newEmail);
+        return userRepository.save(user);
+    }
 
 
 //    public boolean existsByEmail(String email) {

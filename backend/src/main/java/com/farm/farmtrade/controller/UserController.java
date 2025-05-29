@@ -45,6 +45,10 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @PutMapping("/google/{userID}")
+    User upDateUserr(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
+        return userService.updateUserr(userID,request);
+    }
     @PutMapping("/{userID}")
     User upDateUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
         return userService.updateUser(userID,request);

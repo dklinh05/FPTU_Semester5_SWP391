@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import request from '../utils/httpRequest';
 const API_BASE = "http://localhost:8080/farmtrade/Users";
 
 export const getUserById = async (id) => {
@@ -25,6 +25,18 @@ export async function uploadAvatar(userId, file) {
   const updatedUser = await response.json();
   return updatedUser;
 }
+
+//
+export const updateUserExtra = async (userId, extraData) => {
+  try {
+    const response = await request.put(`Users/google/${userId}`,extraData)
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+
 
 export const updateUser = async (userId, userData) => {
   const response = await axios.put(`/farmtrade/Users/${userId}`, {

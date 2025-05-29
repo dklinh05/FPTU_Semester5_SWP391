@@ -114,7 +114,17 @@ public class UserService {
             throw new RuntimeException("Lỗi khi upload avatar: " + e.getMessage(), e);
         }
     }
-
+    public User updateUserr(String userId, UserUpdateRequest request) {
+        User user = getUser(userId);
+        user.setPhone(request.getPhone());
+        user.setRole(request.getRole());
+        user.setAddress(request.getAddress());
+        user.setBusinessName(request.getBusinessName());
+        user.setCertification(request.getCertification());
+        user.setVehicle(request.getVehicle());
+        user.setLicensePlate(request.getLicensePlate());
+        return userRepository.save(user);
+    }
     public User updateUser(String userId, UserUpdateRequest request) {
         User user = getUser(userId);
 
@@ -214,26 +224,5 @@ public class UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
-
-
-//    public boolean existsByEmail(String email) {
-//        return userRepository.existsByEmail(email);
-//    }
-//
-//    public void createGoogleUser(String email, String name, String pictureUrl) {
-//        User user = new User();
-//        user.setEmail(email);
-//        user.setFullName(name);
-//        user.setAvatar(pictureUrl);
-//        user.setIsActive(true);
-//        userRepository.save(user);
-//    }
-//
-//    public void updateGoogleUser(String email, String name, String pictureUrl) {
-//        User user = userRepository.findByEmail(email);
-//        user.setFullName(name);
-//        user.setAvatar(pictureUrl);
-//        userRepository.save(user);
-//    }
 
 }

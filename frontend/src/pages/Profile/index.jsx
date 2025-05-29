@@ -102,13 +102,19 @@ const Profile = () => {
           <h2>Hồ sơ cá nhân</h2>
           <div className="card-body" >
             <img
-                src={
-                  user.avatar
-                      ? `http://localhost:8080/farmtrade/avatars/${user.avatar}`
-                      : "/vite.svg" // ảnh mặc định nằm trong public folder
-                }
-                alt="Avatar"
-                className="rounded-circle"
+
+              src={
+                user.avatar
+                  ?user.avatar.startsWith("/")
+                    ? user.avatar
+                    : `http://localhost:8080/farmtrade/avatars/${user.avatar}`
+                  : "/vite.svg"
+              }
+
+              alt="Avatar"
+              className="rounded-circle"
+              width={120}
+              height={120}
 
             />
 

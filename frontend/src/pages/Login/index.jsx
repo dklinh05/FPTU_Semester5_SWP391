@@ -63,6 +63,7 @@ const Login = () => {
             required
           />
         </div>
+
         <div className="text-center mt-3">
           <a href="http://localhost:8080/farmtrade/oauth2/authorization/google">
             <button

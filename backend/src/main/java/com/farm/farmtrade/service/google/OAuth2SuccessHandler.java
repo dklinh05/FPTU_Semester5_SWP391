@@ -34,16 +34,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
 
-//            // Trả JSON về frontend
-//            response.setContentType("application/json");
-//            response.setCharacterEncoding("UTF-8");
-//            response.getWriter().write("""
-//                {
-//                    "userId": %d,
-//                    "email": "%s",
-//                    "fullName": "%s"
-//                }
-//                """.formatted(user.getUserID(), user.getEmail(), user.getFullName()));
             response.sendRedirect("http://localhost:5173/profile?userId=" + user.getUserID());
         } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found in DB");

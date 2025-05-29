@@ -16,14 +16,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        System.out.println("✅ [CustomOAuth2UserService] loadUser() called");
-
         OAuth2User user = super.loadUser(userRequest);
-        System.out.println("✅ OAuth2User: " + user.getAttributes());
-
         String email = user.getAttribute("email");
         String name = user.getAttribute("name");
-
         if (userRepository.findByEmail(email).isEmpty()) {
             User newUser = new User();
             newUser.setEmail(email);

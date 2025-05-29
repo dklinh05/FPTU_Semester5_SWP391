@@ -1,8 +1,10 @@
-
 import React, { useState } from "react";
-import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../../services/authService';
+import classNames from "classnames";
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "../../services/authService";
+import styles from "./Login.module.scss";
 
+const cx = classNames.bind(styles);
 const Login = () => {
   const navigate = useNavigate();
 
@@ -20,49 +22,60 @@ const Login = () => {
 
     try {
       const user = await loginUser(formData);
-      alert('Đăng nhập thành công!');
-      if(!user){
-         alert('Đăng nhập thất bại: ' + (error.message || 'Lỗi không xác định'));
-         return;
+      alert("Đăng nhập thành công!");
+      if (!user) {
+        alert("Đăng nhập thất bại: " + (error.message || "Lỗi không xác định"));
+        return;
       }
       // Lưu token/user info nếu có
-     localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(user));
 
       // Chuyển sang trang chính hoặc theo role
-      navigate('/profile');
+      navigate("/profile");
     } catch (error) {
-      alert('Đăng nhập thất bại: ' + (error.message || 'Lỗi không xác định'));
+      alert("Đăng nhập thất bại: " + (error.message || "Lỗi không xác định"));
     }
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "400px" }}>
-      <h3 className="text-center">Đăng nhập</h3>
+    <div className={cx(styles.login, "container", "mt-5")} style={{ maxWidth: "400px" }}>
+      <h3 className={cx(styles.title, "text-center")}>Login</h3>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label>Tên đăng nhập</label>
           <input
             type="text"
             className="form-control"
             name="username"
             value={formData.username}
             onChange={handleChange}
+            placeholder="Email"
             required
           />
         </div>
         <div className="mb-3">
-          <label>Mật khẩu</label>
           <input
             type="password"
             className="form-control"
             name="password"
             value={formData.password}
             onChange={handleChange}
+            placeholder="Password"
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary w-100">
-          Đăng nhập
+
+        <div className="text-center mt-3">
+          <a href="http://localhost:8080/farmtrade/oauth2/authorization/google">
+            <button
+              type="button"
+              className={cx("btn", styles["btn-submit"], "w-100")}
+            >
+              <img src="/googlelogo.png" alt="" /> Continue with Google
+            </button>
+          </a>
+        </div>
+        <button type="submit" className={cx("btn", styles["btn-login"], "w-100")}>
+          Login
         </button>
       </form>
     </div>

@@ -37,16 +37,24 @@ public class UserService {
         User user = new User();
         user.setIsActive(false);
 
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("User already exists");
+        if (userRepository.existsByUsername(request.getUsername())|| userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("User already  or email is already in use. Please try again!");
         }
 
         user.setUsername(request.getUsername());
-        user.setPasswordHash(request.getPasswordHash());
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
-        user.setEmail(request.getEmail());
+        user.setRole(request.getRole());
+        user.setCreatedAt(LocalDateTime.now());
+        user.setAddress(request.getAddress());
+        user.setRewardPoints(0);
+        user.setTotalSpend(0L);
+        user.setBusinessName(request.getBusinessName());
+        user.setCertification(request.getCertification());
+        user.setTotalRevenue(0L);
+        user.setVehicle(request.getVehicle());
+        user.setLicensePlate(request.getLicensePlate());
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPasswordHash(passwordEncoder.encode(request.getPasswordHash()));
@@ -71,12 +79,19 @@ public class UserService {
 
     public User updateUser(String userId, UserUpdateRequest request) {
         User user = getUser(userId);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-        user.setPasswordHash(passwordEncoder.encode(request.getPasswordHash()));
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
-        user.setEmail(request.getEmail());
+        user.setRole(request.getRole());
+        user.setCreatedAt(LocalDateTime.now());
+        user.setAddress(request.getAddress());
+        user.setRewardPoints(0);
+        user.setTotalSpend(0L);
+        user.setBusinessName(request.getBusinessName());
+        user.setCertification(request.getCertification());
+        user.setTotalRevenue(0L);
+        user.setVehicle(request.getVehicle());
+        user.setLicensePlate(request.getLicensePlate());
 
         return userRepository.save(user);
     }

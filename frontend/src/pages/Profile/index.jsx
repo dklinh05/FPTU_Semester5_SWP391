@@ -43,9 +43,12 @@ const Profile = () => {
             <img
               src={
                 user.avatar
-                  ? `http://localhost:8080/farmtrade/avatars/${user.avatar}`
-                  : "/vite.svg" // ảnh mặc định nằm trong public folder
+                  ?user.avatar.startsWith("/")
+                    ? user.avatar
+                    : `http://localhost:8080/farmtrade/avatars/${user.avatar}`
+                  : "/vite.svg"
               }
+
               alt="Avatar"
               className="rounded-circle"
               width={120}

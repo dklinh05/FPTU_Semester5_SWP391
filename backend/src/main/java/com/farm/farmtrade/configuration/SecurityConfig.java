@@ -34,26 +34,17 @@ public class SecurityConfig {
                     corsConfig.setAllowCredentials(true);
                     return corsConfig;
                 }))
-//                .cors(cors -> cors.configurationSource(request -> {
-//                    var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-//                    corsConfig.setAllowedOrigins(List.of("http://localhost:8080"));
-//                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//                    corsConfig.setAllowedHeaders(List.of("*"));
-//                    corsConfig.setAllowCredentials(true);
-//                    return corsConfig;
-//                }))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/oauth2/**", "/register", "/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(Customizer.withDefaults())
+//                .formLogin(Customizer.withDefaults())
                 .oauth2Login(oauth2 -> oauth2
                                 .userInfoEndpoint(user -> user
                                         .userService(customOAuth2UserService) // ĐÂY LÀ CHỖ GỌI
                                 )
                                 .successHandler(oAuth2SuccessHandler) //   Dùng custom success handler
-//                        .defaultSuccessUrl("http://localhost:5173/profile", true) //   redirect về FE
                 );
 
         return http.build();

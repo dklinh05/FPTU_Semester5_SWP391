@@ -61,6 +61,16 @@ const Login = () => {
             required
           />
         </div>
+        {/* đăng nhập bằng gg */}
+        <div className="text-center mt-3">
+          <p>Hoặc đăng nhập bằng</p>
+          <a href="http://localhost:8080/farmtrade/oauth2/authorization/google">
+            <button type="button" className="btn btn-danger w-100">
+              <i className="bi bi-google"></i> Đăng nhập với Google
+            </button>
+          </a>
+        </div>
+
         <button type="submit" className="btn btn-primary w-100">
           Đăng nhập
         </button>

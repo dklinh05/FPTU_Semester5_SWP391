@@ -15,7 +15,7 @@ function DefaultLayout({ children }) {
          const fetchUser = async () => {
               try {
                 const data = await getUserById(userId);
-                setAccountName(data.fullName);
+                setAccountName(data.username);
               } catch (error) {
                 console.error("Lỗi khi lấy thông tin user:", error);
               }

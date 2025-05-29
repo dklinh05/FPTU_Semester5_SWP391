@@ -1,15 +1,29 @@
 import React, { useState } from "react";
+import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/authService";
+import styles from "./Register.module.scss";
+
+const cx = classNames.bind(styles);
 
 const Register = () => {
+  const [step, setStep] = useState(1);
+  const [role, setRole] = useState("");
   const navigate = useNavigate();
+
+  const roles = ["Supplier", "Customer", "Shipper"];
+
+  const handleRoleSelect = (role) => {
+    setRole(role);
+    setStep(2);
+  };
 
   const [formData, setFormData] = useState({
     fullName: "",
     username: "",
     email: "",
-    // role: "buyer", // Giá trị mặc định
+    phone: "",
+    role: {role},
     passwordHash: "",
     // confirmPassword: "",
   });
@@ -38,82 +52,149 @@ const Register = () => {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "500px" }}>
-      <h3 className="text-center">Đăng ký tài khoản</h3>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-          <label>Họ và tên</label>
-          <input
-            type="text"
-            className="form-control"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleChange}
-            required
-          />
+    <div className="container mt-3" style={{ maxWidth: "500px" }}>
+      {step === 1 && <h3 className={cx(styles.title, "text-center")}>Choose role</h3>}
+
+      {step === 1 && (
+        <div className={cx(styles["form-role"])}>
+          {roles.map((role) => (
+            <div
+              key={role}
+              onClick={() => handleRoleSelect(role)}
+              className={styles["role-item"]}
+            >
+              <img
+                src="/role.png" // đổi thành ảnh phù hợp
+                alt={role}
+                width="100"
+              />
+              <p>{role}</p>
+            </div>
+          ))}
         </div>
-        <div className="mb-3">
-          <label>Tên đăng nhập</label>
-          <input
-            type="text"
-            className="form-control"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label>Email</label>
-          <input
-            type="email"
-            className="form-control"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        {/* <div className="mb-3">
-          <label>Chọn vai trò</label>
-          <select
-            className="form-select"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            required
-          >
-            <option value="buyer">Người mua (Buyer)</option>
-            <option value="supplier">Người bán (Supplier)</option>
-            <option value="shipper">Người giao hàng (Shipper)</option>
-          </select>
-        </div> */}
-        <div className="mb-3">
-          <label>Mật khẩu</label>
-          <input
-            type="password"
-            className="form-control"
-            name="passwordHash"
-            value={formData.passwordHash}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        {/* <div className="mb-3">
-          <label>Nhập lại mật khẩu</label>
-          <input
-            type="password"
-            className="form-control"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
-        </div> */}
-        <button type="submit" className="btn btn-success w-100">
-          Đăng ký
-        </button>
-      </form>
+      )}
+      {step === 2 && <h3 className={cx(styles.title, "text-center")}>Register for {role}</h3>}
+      {step === 2 && (
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label>Full Name</label>
+            <input
+              type="text"
+              className="form-control"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              placeholder="Your Full Name"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label>Username</label>
+            <input
+              type="text"
+              className="form-control"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder="Your Username"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label>Email</label>
+            <input
+              type="email"
+              className="form-control"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Your Email"
+              required
+            />
+          </div>
+          <div className="mb-3">
+            <label>Mật khẩu</label>
+            <input
+              type="password"
+              className="form-control"
+              name="passwordHash"
+              value={formData.passwordHash}
+              onChange={handleChange}
+              placeholder="Your Password"
+              required
+            />
+          </div>
+          {/* <div className="mb-3">
+            <label>Nhập lại mật khẩu</label>
+            <input
+              type="password"
+              className="form-control"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Your Password"
+              required
+            />
+          </div> */}
+          <div className="mb-3">
+            <label>Phone</label>
+            <input
+              type="tel"
+              className="form-control"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="Your phone"
+              required
+            />
+          </div>
+          {role === "Supplier" && (
+            <div className="mb-3">
+            <label>Business Name</label>
+            <input
+              type="text"
+              className="form-control"
+              name="businessName"
+              value={formData.businessName}
+              onChange={handleChange}
+              placeholder="Your Business Name"
+              required
+            />
+          </div>
+          )}
+          {role === "Supplier" && (
+            <div className="mb-3">
+            <label>Certification</label>
+            <input
+              type="text"
+              className="form-control"
+              name="certification"
+              value={formData.certification}
+              onChange={handleChange}
+              placeholder="Your Certification"
+              required
+            />
+          </div>
+          )}
+          {role === "Customer" && (
+            <div className="mb-3">
+            <label>Address</label>
+            <input
+              type="text"
+              className="form-control"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Your Address"
+              required
+            />
+          </div>
+          )}
+          <button type="submit" className="btn btn-success w-100">
+            Đăng ký
+          </button>
+        </form>
+      )}
     </div>
   );
 };

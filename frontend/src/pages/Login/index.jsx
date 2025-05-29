@@ -24,7 +24,7 @@ const Login = () => {
       const user = await loginUser(formData);
       alert("Đăng nhập thành công!");
       if (!user) {
-        alert("Đăng nhập thất bại: " + (error.message || "Lỗi không xác định"));
+        alert("Đăng nhập thất bại: ");
         return;
       }
       // Lưu token/user info nếu có
@@ -35,7 +35,7 @@ const Login = () => {
      
 
     } catch (error) {
-      alert("Đăng nhập thất bại: " + (error.message || "Lỗi không xác định"));
+      alert("Đăng nhập thất bại: ");
     }
     
   };

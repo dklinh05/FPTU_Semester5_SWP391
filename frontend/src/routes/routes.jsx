@@ -7,6 +7,7 @@ import Register from '../pages/Register';
 import ChangePassword from '../pages/ChangePassword';
 import ForgotPassword from '../pages/ForgotPassword';
 import ProfileLayout from '../layouts/ProfileLayout';
+import CompleteGoogleProfile from '../pages/UpdateLoginGG';
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
@@ -15,6 +16,7 @@ const publicRoutes = [
   { path: config.routes.register, component: Register },
   { path: config.routes.changePassword, component: ChangePassword , layout: ProfileLayout},
   { path: config.routes.forgotPassword, component: ForgotPassword },
+  { path: config.routes.completeGoogleProfile, component: CompleteGoogleProfile },
 ];
 
 const privateRoutes = [];

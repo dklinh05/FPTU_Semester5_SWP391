@@ -1,6 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { getUserById, updateUser, uploadAvatar } from "../../services/userService";
+import {
+  getUserById,
+  updateUser,
+  uploadAvatar,
+} from "../../services/userService";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -90,6 +94,7 @@ const handleSaveField = async () => {
     : "/vite.svg";
 
   return (
+
     <div className="d-flex align-items-center justify-content-center min-vh-100 py-4">
       <div className="container">
         <div className="row justify-content-center">
@@ -98,7 +103,6 @@ const handleSaveField = async () => {
               <div className="card-body p-4">
                 <h4 className="mb-3 text-center">My Profile</h4>
                 <hr className="mb-4" />
-
                 <div className="d-flex align-items-center justify-content-between mb-4">
                   {/* Thông tin người dùng */}
                   <div className="flex-grow-1">

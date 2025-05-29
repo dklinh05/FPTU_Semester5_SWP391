@@ -33,8 +33,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
+            if (user.getRole()!=null){
+                response.sendRedirect("http://localhost:5173/profile?userId=" + user.getUserID());
 
-            response.sendRedirect("http://localhost:5173/profile?userId=" + user.getUserID());
+            }else {
+                response.sendRedirect("http://localhost:5173/CompleteGoogleProfile?userId=" + user.getUserID());
+            }
         } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found in DB");
         }

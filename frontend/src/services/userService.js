@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import request from '../utils/httpRequest';
 const API_BASE = "http://localhost:8080/farmtrade/Users";
 
 export const getUserById = async (id) => {
@@ -7,24 +7,33 @@ export const getUserById = async (id) => {
   return res.data;
 };
 
-export async function uploadAvatar(userId, file) {
-  const formData = new FormData();
-  formData.append("file", file); // key "file" phải đúng với tên trong @RequestParam
-
-  const response = await fetch(`${API_BASE}/${userId}/avatar`, {
+export const uploadAvatar = async (userId, formData) => {
+  const res = await fetch(`http://localhost:8080/farmtrade/Users/${userId}/avatar`, {
     method: "POST",
     body: formData,
-    // KHÔNG set headers Content-Type → browser tự set với boundary
   });
 
-  if (!response.ok) {
-    const errMsg = await response.text();
-    throw new Error(`Upload avatar thất bại: ${errMsg}`);
+  if (!res.ok) {
+    const errorText = await res.text(); // <- Đoạn text gây lỗi
+    console.error("Phản hồi lỗi từ backend:", errorText); // <-- In ra lỗi thật sự
+    throw new Error("Upload avatar thất bại");
   }
 
-  const updatedUser = await response.json();
-  return updatedUser;
-}
+  return await res.json();
+};
+
+
+//
+export const updateUserExtra = async (userId, extraData) => {
+  try {
+    const response = await request.put(`Users/google/${userId}`,extraData)
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+
 
 export const updateUser = async (userId, userData) => {
   const response = await axios.put(`/farmtrade/Users/${userId}`, {
@@ -57,4 +66,3 @@ export const updatePhone = async (userId, phone) => {
   });
   return res.data;
 };
-

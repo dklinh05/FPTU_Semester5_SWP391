@@ -14,10 +14,12 @@ const Register = () => {
   const roles = ["Supplier", "Customer", "Shipper"];
 
   const handleRoleSelect = (role) => {
+
     setFormData((prev) => ({
       ...prev,
       role: role,
     }));
+
     setRole(role);
     setStep(2);
   };
@@ -30,13 +32,13 @@ const Register = () => {
     role: "",
     passwordHash: "",
     // confirmPassword: "",
-
     vehicle: "",
     businessName: "",
     certification: "",
     address: "",
     licensePlate: "",
     vehicle: "",
+
   });
 
   const handleChange = (e) => {
@@ -46,10 +48,10 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // if (formData.password !== formData.confirmPassword) {
-    //   alert("Mật khẩu xác nhận không khớp!");
-    //   return;
-    // }
+    if (formData.passwordHash !== formData.confirmPassword) {
+      alert("Mật khẩu xác nhận không khớp!");
+      return;
+    }
 
     try {
       const response = await registerUser(formData);
@@ -139,7 +141,7 @@ const Register = () => {
               required
             />
           </div>
-          {/* <div className="mb-3">
+          <div className="mb-3">
             <label>Nhập lại mật khẩu</label>
             <input
               type="password"
@@ -150,7 +152,7 @@ const Register = () => {
               placeholder="Your Password"
               required
             />
-          </div> */}
+          </div>
           <div className="mb-3">
             <label>Phone</label>
             <input

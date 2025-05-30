@@ -3,6 +3,7 @@ import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
 import { Search, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { getUserById } from "../../services/userService";
 
 const cx = classNames.bind(styles);
 
@@ -10,6 +11,22 @@ function Header({ account_name }) {
   const [username, setUsername] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+const [accountName, setAccountName] = useState(null);
+const userId = localStorage.getItem('user');
+    useEffect(() => {
+        
+        
+         const fetchUser = async () => {
+              try {
+                const data = await getUserById(userId);
+                setAccountName(data.fullName);
+              } catch (error) {
+                console.error("Lỗi khi lấy thông tin user:", error);
+              }
+            };
+        
+            if (userId) fetchUser();
+    }, [userId]);
 
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
 
@@ -22,19 +39,6 @@ function Header({ account_name }) {
     navigate("/");
   };
 
-//   useEffect(() => {
-//     const userJSON = localStorage.getItem("user");
-//     if (userJSON) {
-//       try {
-//         const user = JSON.parse(userJSON);
-//         setUsername(user.username);
-//       } catch {
-//         setUsername(null);
-//       }
-//     } else {
-//       setUsername(null);
-//     }
-//   }, []);
 
   const handleLogout = () => {
     alert("Đăng xuất thành công!");
@@ -82,14 +86,14 @@ function Header({ account_name }) {
             </div>
 
             <div className="col-2 d-flex justify-content-end pe-4">
-              {account_name ? (
+              {accountName ? (
                 <div className={cx("user")}>
                   <div
                     className={cx("username")}
                     onClick={() => navigate("/profile")}
                     style={{ cursor: "pointer" }}
                   >
-                    {account_name}
+                    {accountName}
                   </div>
                   <button
                     className={cx("logoutBtn")}

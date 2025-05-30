@@ -53,7 +53,7 @@ function ChangePassword() {
 
   return (
     <div className="container mt-5" style={{ maxWidth: "500px" }}>
-      <h2>Đổi mật khẩu</h2>
+      <h2 className="text-center">Đổi mật khẩu</h2>
 
       {step === 1 && (
         <form onSubmit={handleSendOtp}>

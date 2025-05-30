@@ -32,7 +32,6 @@ const Register = () => {
     role: "",
     passwordHash: "",
     // confirmPassword: "",
-    vehicle: "",
     businessName: "",
     certification: "",
     address: "",

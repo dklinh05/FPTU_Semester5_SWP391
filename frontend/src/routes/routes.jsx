@@ -14,7 +14,7 @@ const publicRoutes = [
   { path: config.routes.profile, component: Profile },
   { path: config.routes.login, component: Login },
   { path: config.routes.register, component: Register },
-  { path: config.routes.changePassword, component: ChangePassword , layout: ProfileLayout},
+  { path: config.routes.changePassword, component: ChangePassword },
   { path: config.routes.forgotPassword, component: ForgotPassword },
   { path: config.routes.completeGoogleProfile, component: CompleteGoogleProfile },
 ];

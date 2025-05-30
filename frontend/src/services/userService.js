@@ -30,21 +30,6 @@ export const updateUser = async (userID, userData) => {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(userData)
-
-
-//
-export const updateUserExtra = async (userId, extraData) => {
-  try {
-    const response = await request.put(`Users/google/${userId}`,extraData)
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
-};
-
-
-
-
   });
 
   if (!response.ok) {
@@ -52,6 +37,14 @@ export const updateUserExtra = async (userId, extraData) => {
   }
 
   return await response.json();
+};
+export const updateUserExtra = async (userId, extraData) => {
+  try {
+    const response = await request.put(`Users/google/${userId}`,extraData)
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
 };
 export const updateUsername = async (userId, username) => {
   const res = await axios.patch(`/Users/${userId}/username`, null, {

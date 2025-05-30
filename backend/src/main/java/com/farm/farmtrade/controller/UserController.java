@@ -47,14 +47,10 @@ public class UserController {
 
     @PutMapping("/google/{userID}")
     User upDateUserr(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
-        return userService.updateUserr(userID,request);
+        return userService.updateUser(userID,request);
     }
-//    @PutMapping("/{userID}")
-//    User upDateUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
-//        return userService.updateUser(userID,request);
-//    }
 
-     @GetMapping("/{userID}")
+    @GetMapping("/{userID}")
     User getUser(@PathVariable String userID) {
         return userService.getUser(userID);
     }
@@ -62,18 +58,9 @@ public class UserController {
     @PutMapping("/{userID}")
     public ResponseEntity<User> updateUser(
             @PathVariable("userID") String userID,
-            @RequestBody Map<String, String> payload) {
-
-        String newEmail = payload.get("email");
-
-        if (newEmail == null || newEmail.isEmpty()) {
-            throw new RuntimeException("Trường email không hợp lệ");
-        }
-
-        User updatedUser = userService.updateEmail(userID, newEmail);
-        return ResponseEntity.ok(updatedUser);
+            @RequestBody UserUpdateRequest request) {
+        return ResponseEntity.ok(userService.updateUser(userID, request));
     }
-
     @PostMapping("/{userID}/avatar")
     public ResponseEntity<?> uploadAvatar(
             @PathVariable("userID") String userID,

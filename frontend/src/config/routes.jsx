@@ -6,7 +6,9 @@ const routes = {
   verify: '/verify',
   changePassword: '/change-password',
   forgotPassword: '/forgot-password',
-  completeGoogleProfile: '/CompleteGoogleProfile'
+  completeGoogleProfile: '/CompleteGoogleProfile',
+  shop: '/shop/',
+  product: '/product',
 };
 
 export default routes;

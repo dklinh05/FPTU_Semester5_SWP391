@@ -99,7 +99,7 @@ function Header({ account_name }) {
               <a href="index.html" className="nav-item nav-link active">
                 Home
               </a>
-              <a href="shop.html" className="nav-item nav-link">
+              <a href="/shop" className="nav-item nav-link">
                 Shop
               </a>
               <a href="shop-detail.html" className="nav-item nav-link">

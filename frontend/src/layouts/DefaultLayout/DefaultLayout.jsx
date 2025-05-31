@@ -1,6 +1,7 @@
 import classNames from 'classnames/bind';
 import styles from './DefaultLayout.module.scss';
 import Header from '../../components/Header';
+import Spinner from '../../components/Spinner';
 import { useEffect, useState } from 'react';
 import { getUserById } from '../../services/userService';
 
@@ -26,6 +27,7 @@ function DefaultLayout({ children }) {
 
     return (
         <div className={cx('wrapper')}>
+            {/* <Spinner/> */}
             <Header account_name={account_name || undefined} />
             <div className={cx('container')}>
                 <div className={cx('content')}>

@@ -1,6 +1,5 @@
 function CardItem({category, title, description, price}) {
   return (
-  
   <div className="rounded position-relative fruite-item">
     <div className="fruite-img">
       <img

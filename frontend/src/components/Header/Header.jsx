@@ -114,13 +114,13 @@ function Header({ account_name }) {
                   Pages
                 </a>
                 <div className="dropdown-menu m-0 bg-secondary rounded-0">
-                  <a href="cart.html" className="dropdown-item">
+                  <a href="/cart" className="dropdown-item">
                     Cart
                   </a>
                   <a href="chackout.html" className="dropdown-item">
                     Chackout
                   </a>
-                  <a href="testimonial.html" className="dropdown-item">
+                  <a href="/testimonial" className="dropdown-item">
                     Testimonial
                   </a>
                   <a href="404.html" className="dropdown-item">
@@ -128,7 +128,7 @@ function Header({ account_name }) {
                   </a>
                 </div>
               </div>
-              <a href="contact.html" className="nav-item nav-link">
+              <a href="/contact" className="nav-item nav-link">
                 Contact
               </a>
             </div>

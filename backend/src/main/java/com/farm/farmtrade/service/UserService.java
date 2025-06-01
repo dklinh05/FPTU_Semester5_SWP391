@@ -109,9 +109,20 @@ public class UserService {
         }
     }
 
-    public User updateUser(String userID, UserUpdateRequest request) {
-        User user = userRepository.findById(userID)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+    public User updateGoogleUser(String userId, UserUpdateRequest request) {
+        User user = getUser(userId);
+        user.setPhone(request.getPhone());
+        user.setRole(request.getRole());
+        user.setAddress(request.getAddress());
+        user.setBusinessName(request.getBusinessName());
+        user.setCertification(request.getCertification());
+        user.setVehicle(request.getVehicle());
+        user.setLicensePlate(request.getLicensePlate());
+        return userRepository.save(user);
+    }
+  
+    public User updateUser(String userId, UserUpdateRequest request) {
+        User user = getUser(userId);
 
         // Chỉ xử lý username nếu có giá trị
         if (request.getUsername() != null && !request.getUsername().isBlank()) {

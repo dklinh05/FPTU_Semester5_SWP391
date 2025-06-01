@@ -47,6 +47,10 @@ public class UserController {
 
     @PutMapping("/google/{userID}")
     User upDateUserr(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
+        return userService.updateGoogleUser(userID,request);
+    }
+    @PutMapping("/{userID}")
+    User upDateUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
         return userService.updateUser(userID,request);
     }
 
@@ -55,12 +59,12 @@ public class UserController {
         return userService.getUser(userID);
     }
 
-    @PutMapping("/{userID}")
-    public ResponseEntity<User> updateUser(
-            @PathVariable("userID") String userID,
-            @RequestBody UserUpdateRequest request) {
-        return ResponseEntity.ok(userService.updateUser(userID, request));
-    }
+//     @PutMapping("/{userID}")
+//     public ResponseEntity<User> updateUser(
+//             @PathVariable("userID") String userID,
+//             @RequestBody UserUpdateRequest request) {
+//         return ResponseEntity.ok(userService.updateUser(userID, request));
+//     }
     @PostMapping("/{userID}/avatar")
     public ResponseEntity<?> uploadAvatar(
             @PathVariable("userID") String userID,

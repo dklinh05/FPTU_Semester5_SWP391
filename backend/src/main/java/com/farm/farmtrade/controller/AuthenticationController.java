@@ -22,7 +22,6 @@ public class AuthenticationController {
     private final UserService userService;
 
     @PostMapping("/login")
-
     Integer login(@RequestBody AuthenticationRequest request) {
         return authenticationService.authenticate(request);
     }
@@ -31,17 +30,20 @@ public class AuthenticationController {
     public ResponseEntity<String> verifyEmail(@RequestParam("token") String token) {
         boolean verified = userService.verifyToken(token);
         if (verified) {
-            return ResponseEntity.ok("Xác minh tài khoản thành công!");
+            return ResponseEntity.ok().header("Content-Type", "text/html").body(htmlResponse);
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token không hợp lệ hoặc đã hết hạn.");
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Token không hợp lệ hoặc đã hết hạn.");
         }
     }
+
 
     @PostMapping("/send-otp")
     public void sendOtp(@RequestBody SendOTPRequest request) throws MessagingException {
         try {
             authenticationService.sendOTP(request);
-        }catch (Exception ignored) {
+        } catch (Exception ignored) {
             ignored.printStackTrace();
         }
     }
@@ -50,7 +52,7 @@ public class AuthenticationController {
     public void sendOtpForgot(@RequestBody ForgotPasswordRequest request) throws MessagingException {
         try {
             authenticationService.sendOTPForget(request);
-        }catch (Exception ignored) {
+        } catch (Exception ignored) {
             ignored.printStackTrace();
         }
     }
@@ -84,4 +86,16 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    String htmlResponse = """
+                        <html>
+                        <head>
+                            <script type="text/javascript">
+                                alert('Your account has been successfully verified!');
+                                window.location.href = 'http://localhost:5173/login';
+                            </script>
+                        </head>
+                        <body></body>
+                        </html>
+                    """;
 }

@@ -54,16 +54,27 @@ public class UserController {
         return userService.updateUser(userID,request);
     }
 
-    // @GetMapping("/{userID}")
+    @GetMapping("/{userID}")
     User getUser(@PathVariable String userID) {
         return userService.getUser(userID);
     }
 
-
-    @PostMapping("/users/{id}/avatar")
-    public ResponseEntity<User> uploadAvatar(@PathVariable String id, @RequestParam("avatar") MultipartFile file) {
-        User updatedUser = userService.updateAvatar(id, file);
-        return ResponseEntity.ok(updatedUser);
+//     @PutMapping("/{userID}")
+//     public ResponseEntity<User> updateUser(
+//             @PathVariable("userID") String userID,
+//             @RequestBody UserUpdateRequest request) {
+//         return ResponseEntity.ok(userService.updateUser(userID, request));
+//     }
+    @PostMapping("/{userID}/avatar")
+    public ResponseEntity<?> uploadAvatar(
+            @PathVariable("userID") String userID,
+            @RequestParam("avatar") MultipartFile file) {
+        try {
+            User updatedUser = userService.uploadAvatar(userID, file);
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Collections.singletonMap("error", e.getMessage()));
+        }
     }
 
     public User updateAvatar(String userId, MultipartFile file) {
@@ -95,21 +106,4 @@ public class UserController {
             throw new RuntimeException("Lỗi khi upload avatar: " + e.getMessage(), e);
         }
     }
-
-
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") String id) {
-        return ResponseEntity.ok(userService.getUserById(id));
-    }
-
-    @PutMapping("/{userId}/username")
-    public ResponseEntity<User> updateUsername(
-            @PathVariable String userId,
-            @RequestBody Map<String, String> payload) {
-        String newUsername = payload.get("username");
-        User updatedUser = userService.updateUsername(userId, newUsername);
-        return ResponseEntity.ok(updatedUser);
-    }
-
-
 }

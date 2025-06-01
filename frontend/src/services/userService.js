@@ -7,66 +7,45 @@ export const getUserById = async (id) => {
   return res.data;
 };
 
-export async function uploadAvatar(userId, file) {
-  const formData = new FormData();
-  formData.append("file", file); // key "file" phải đúng với tên trong @RequestParam
-
-  const response = await fetch(`${API_BASE}/${userId}/avatar`, {
+export const uploadAvatar = async (userId, formData) => {
+  const res = await fetch(`http://localhost:8080/farmtrade/Users/${userId}/avatar`, {
     method: "POST",
     body: formData,
-    // KHÔNG set headers Content-Type → browser tự set với boundary
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text(); // <- Đoạn text gây lỗi
+    console.error("Phản hồi lỗi từ backend:", errorText); // <-- In ra lỗi thật sự
+    throw new Error("Upload avatar thất bại");
+  }
+
+  return await res.json();
+};
+
+export const updateUser = async (userID, userData) => {
+  const response = await fetch(`http://localhost:8080/farmtrade/Users/${userID}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(userData),
   });
 
   if (!response.ok) {
-    const errMsg = await response.text();
-    throw new Error(`Upload avatar thất bại: ${errMsg}`);
+    const errorText = await response.text();
+    console.error("Phản hồi lỗi từ server:", errorText);
+    throw new Error(errorText || "Cập nhật thất bại");
   }
 
-  const updatedUser = await response.json();
-  return updatedUser;
-}
+  return await response.json();
+};
 
-//
+
 export const updateUserExtra = async (userId, extraData) => {
   try {
-    const response = await request.put(`Users/google/${userId}`,extraData)
+    const response = await request.put(`Users/google/${userId}`, extraData)
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
-
-
-
-export const updateUser = async (userId, userData) => {
-  const response = await axios.put(`/farmtrade/Users/${userId}`, {
-    fullName: userData.fullName,
-    phone: userData.phone,
-    username: userData.username,
-    email: userData.email,
-    passwordHash: userData.passwordHash || "placeholder123", // bắt buộc field
-  });
-  return response.data;
-};
-
-export const updateUsername = async (userId, username) => {
-  const res = await axios.patch(`/Users/${userId}/username`, null, {
-    params: { username },
-  });
-  return res.data;
-};
-
-export const updateFullName = async (userId, fullName) => {
-  const res = await axios.patch(`/Users/${userId}/fullname`, null, {
-    params: { fullName },
-  });
-  return res.data;
-};
-
-export const updatePhone = async (userId, phone) => {
-  const res = await axios.patch(`/Users/${userId}/phone`, null, {
-    params: { phone },
-  });
-  return res.data;
-};
-

@@ -114,7 +114,7 @@ public class UserService {
             throw new RuntimeException("Lỗi khi upload avatar: " + e.getMessage(), e);
         }
     }
-    public User updateUserr(String userId, UserUpdateRequest request) {
+    public User updateGoogleUser(String userId, UserUpdateRequest request) {
         User user = getUser(userId);
         user.setPhone(request.getPhone());
         user.setRole(request.getRole());

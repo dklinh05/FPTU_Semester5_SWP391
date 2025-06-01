@@ -31,7 +31,7 @@ public class EmailService {
 
         helper.setTo(toEmail);
         helper.setSubject("Please verify your account!");
-        helper.setFrom("nguyendinhphantrung@gmail.com");
+        helper.setFrom("farmtrade43@gmail.com");
         helper.setText(htmlContent, true);
 
         mailSender.send(mimeMessage);
@@ -46,7 +46,7 @@ public class EmailService {
 
         helper.setTo(toEmail);
         helper.setSubject("Reset your password");
-        helper.setFrom("nguyendinhphantrung@gmail.com");
+        helper.setFrom("farmtrade43@gmail.com");
         helper.setText(htmlContent, true);
 
         mailSender.send(mimeMessage);
@@ -61,7 +61,7 @@ public class EmailService {
 
         helper.setTo(toEmail);
         helper.setSubject("Reset your password");
-        helper.setFrom("nguyendinhphantrung@gmail.com");
+        helper.setFrom("farmtrade43@gmail.com");
         helper.setText(htmlContent, true);
 
         mailSender.send(mimeMessage);

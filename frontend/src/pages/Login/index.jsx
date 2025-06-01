@@ -51,7 +51,7 @@ const Login = () => {
             name="username"
             value={formData.username}
             onChange={handleChange}
-            placeholder="Email"
+            placeholder="Username"
             required
           />
         </div>
@@ -113,13 +113,13 @@ const Login = () => {
       </div>
       <p class="mt-4 text-center">
         Don't have an account yet?
-        <a class="text-primary" href="signup.html">
+        <a class="text-primary" href="/register">
           Sign Up
         </a>
       </p>
       <p class="mt-4 text-center">
         Did you forget your password?
-        <a class="text-primary" href="forgot-password.html">
+        <a class="text-primary" href="/forgot-password">
           Recover Password
         </a>
       </p>

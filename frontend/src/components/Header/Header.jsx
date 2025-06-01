@@ -96,13 +96,13 @@ function Header({ account_name }) {
             id="navbarCollapse"
           >
             <div className="navbar-nav mx-auto">
-              <a href="index.html" className="nav-item nav-link active">
+              <a href="/" className="nav-item nav-link active">
                 Home
               </a>
               <a href="/shop" className="nav-item nav-link">
                 Shop
               </a>
-              <a href="shop-detail.html" className="nav-item nav-link">
+              <a href="/product" className="nav-item nav-link">
                 Shop Detail
               </a>
               <div className="nav-item dropdown">
@@ -132,7 +132,7 @@ function Header({ account_name }) {
                 Contact
               </a>
             </div>
-            <div className="d-flex m-3 me-0">
+            <div className="d-flex align-items-center m-3 me-0">
               <button
                 className="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4"
                 data-bs-toggle="modal"
@@ -140,7 +140,8 @@ function Header({ account_name }) {
               >
                 <i className="fas fa-search text-primary"></i>
               </button>
-              <a href="#" className="position-relative me-4 my-auto">
+
+              <a href="/cart" className="position-relative me-4">
                 <i className="fa fa-shopping-bag fa-2x"></i>
                 <span
                   className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
@@ -154,9 +155,42 @@ function Header({ account_name }) {
                   3
                 </span>
               </a>
-              <a href="#" className="my-auto">
-                <i className="fas fa-user fa-2x"></i>
-              </a>
+
+              <li className="dropdown list-unstyled m-0 p-0">
+                <a
+                  className="nav-link"
+                  href="#"
+                  id="navbarDropdownMenuLink"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <i className="fas fa-user fa-2x"></i>
+                </a>
+                <ul
+                  className="dropdown-menu"
+                  aria-labelledby="navbarDropdownMenuLink"
+                >
+                  <li>
+                    <a className="dropdown-item py-2" href="/profile">
+                      <i className="fa-solid fa-user me-2 text-success"></i>
+                      Profile
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item py-2" href="/">
+                      <i className="fa-solid fa-gear me-2 text-info"></i>
+                      Setting
+                    </a>
+                  </li>
+                  <li>
+                    <a className="dropdown-item py-2" href="#">
+                      <i className="fa-solid fa-right-from-bracket me-2 text-danger"></i>
+                      Logout
+                    </a>
+                  </li>
+                </ul>
+              </li>
             </div>
           </div>
         </nav>

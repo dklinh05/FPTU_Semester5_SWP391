@@ -1,8 +1,15 @@
- import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { getUserById, updateUser, uploadAvatar } from "../../services/userService";
+import { useUser } from "../../context/UserContext";
+import {
+  getUserById,
+  updateUser,
+  uploadAvatar,
+} from "../../services/userService";
 
 const Profile = () => {
+
+  //  const { user } = useUser();
   const [user, setUser] = useState(null);
   const [editField, setEditField] = useState(null); // "username", "email"
   const [fieldValue, setFieldValue] = useState("");
@@ -59,25 +66,25 @@ const Profile = () => {
     setFieldValue(value);
   };
 
-const handleSaveField = async () => {
-  if (!user || !editField) return;
+  const handleSaveField = async () => {
+    if (!user || !editField) return;
 
-  const payload = {};
-  if (editField === "username") {
-    payload.username = fieldValue;
-  } else if (editField === "email") {
-    payload.email = fieldValue;
-  }
+    const payload = {};
+    if (editField === "username") {
+      payload.username = fieldValue;
+    } else if (editField === "email") {
+      payload.email = fieldValue;
+    }
 
-  try {
-    const updatedUser = await updateUser(user.userID, payload);
-    setUser(updatedUser);
-    setEditField(null);
-  } catch (err) {
-    console.error("Lỗi cập nhật thông tin:", err.message);
-    alert(err.message);
-  }
-};
+    try {
+      const updatedUser = await updateUser(user.userID, payload);
+      setUser(updatedUser);
+      setEditField(null);
+    } catch (err) {
+      console.error("Lỗi cập nhật thông tin:", err.message);
+      alert(err.message);
+    }
+  };
 
   if (!user) {
     return (
@@ -199,7 +206,9 @@ const handleSaveField = async () => {
                       style={{ display: "none" }}
                       onChange={handleFileChange}
                     />
-                    <p className="text-muted mt-2">Nhấn vào ảnh để thay đổi avatar</p>
+                    <p className="text-muted mt-2">
+                      Nhấn vào ảnh để thay đổi avatar
+                    </p>
                   </div>
                 </div>
               </div>
@@ -212,7 +221,3 @@ const handleSaveField = async () => {
 };
 
 export default Profile;
-
-
-
-

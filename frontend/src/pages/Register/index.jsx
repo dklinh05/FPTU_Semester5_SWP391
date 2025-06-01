@@ -15,26 +15,36 @@ const Register = () => {
     username: "",
     email: "",
     phone: "",
-    role: "",
+    role: role,
     passwordHash: "",
-    // confirmPassword: "",
     businessName: "",
     certification: "",
     address: "",
   });
+
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleRoleSelect = (role) => {
     setRole(role.target.value);
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "confirmPassword") {
+      setConfirmPassword(value);
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.passwordHash !== formData.confirmPassword) {
+    if (formData.passwordHash !== confirmPassword) {
       alert("Mật khẩu xác nhận không khớp!");
       return;
     }
@@ -225,7 +235,7 @@ const Register = () => {
       </div>
       <p class="mt-4 text-center">
         You have an account?
-        <a class="text-primary" href="login.html">
+        <a class="text-primary" href="/login">
           Login
         </a>
       </p>

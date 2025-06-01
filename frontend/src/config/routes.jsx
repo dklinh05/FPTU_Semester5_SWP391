@@ -8,6 +8,9 @@ const routes = {
   forgotPassword: '/forgot-password',
   completeGoogleProfile: '/CompleteGoogleProfile',
   shop: '/shop/',
+  contact: '/contact/',
+  cart: '/cart/',
+  testimonial: '/testimonial',
   product: '/product',
 };
 

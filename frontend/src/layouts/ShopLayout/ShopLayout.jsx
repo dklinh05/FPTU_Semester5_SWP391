@@ -7,7 +7,6 @@ import Footer from "../../components/Footer";
 function ShopLayout({ children }) {
   return (
     <div>
-      {/* <Spinner/> */}
       <Header />
       <ShopBanner />
       <div className="container-fluid fruite py-5">

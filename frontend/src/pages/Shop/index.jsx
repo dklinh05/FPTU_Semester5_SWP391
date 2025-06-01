@@ -4,6 +4,7 @@ function Shop() {
   return (
     <div className="col-lg-9">
       <div className="row g-4 justify-content-center">
+
         <div className="col-md-6 col-lg-4 col-xl-4">
           <CardItem
             category="Fruits"
@@ -120,3 +121,10 @@ function Shop() {
 }
 
 export default Shop;
+
+
+
+
+
+
+

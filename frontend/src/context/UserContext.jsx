@@ -15,7 +15,7 @@ export const UserProvider = ({ children }) => {
         .then(data => setUser(data))
         .catch(err => console.error('Lỗi lấy user:', err));
     }
-  }, [[location.search]]);
+  }, []);
 
   return (
     <UserContext.Provider value={{ user, setUser }}>

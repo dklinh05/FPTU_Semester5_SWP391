@@ -1,8 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { getUserById, updateUser, uploadAvatar } from "../../services/userService";
+import { useUser } from "../../context/UserContext";
+import {
+  getUserById,
+  updateUser,
+  uploadAvatar,
+} from "../../services/userService";
 
 const Profile = () => {
+
+  //  const { user } = useUser();
   const [user, setUser] = useState(null);
   const [editField, setEditField] = useState(null); // "username", "email"
   const [fieldValue, setFieldValue] = useState("");
@@ -93,6 +100,7 @@ const Profile = () => {
     } else if (editField === "address") {
       payload.address = fieldValue;
     }
+
 
     try {
       const updatedUser = await updateUser(user.userID, payload);
@@ -356,7 +364,3 @@ const handleSave = async (e) => {
 };
 
 export default Profile;
-
-
-
-

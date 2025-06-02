@@ -23,9 +23,9 @@ import CartLayout from '../layouts/CartLayout';
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
-  { path: config.routes.profile, component: Profile, layout: ProfileLayout},
-  { path: config.routes.login, component: Login },
-  { path: config.routes.register, component: Register },
+  { path: config.routes.profile, component: Profile , layout: ProfileLayout},
+  { path: config.routes.login, component: Login,  layout: null },
+  { path: config.routes.register, component: Register, layout: null },
   { path: config.routes.changePassword, component: ChangePassword },
   { path: config.routes.forgotPassword, component: ForgotPassword },
   { path: config.routes.completeGoogleProfile, component: CompleteGoogleProfile },

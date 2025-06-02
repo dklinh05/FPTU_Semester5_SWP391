@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -45,15 +45,21 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-//    @PutMapping("/google/{userID}")
-//    User upDateUserr(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
-//        return userService.updateUser(Integer.valueOf(userID),request);
-//    }
+
+    @PutMapping("/google/{userID}")
+    User upDateGoogleUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
+        return userService.updateGoogleUser(userID,request);
+    }
+//     @PutMapping("/{userID}")
+//     User upDateUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
+//         return userService.updateUser(userID,request);
+//     }
 
     @GetMapping("/{userID}")
     User getUser(@PathVariable String userID) {
         return userService.getUser(userID);
     }
+
 
     @PutMapping("/{userID}")
     public ResponseEntity<?> updateUser(
@@ -67,6 +73,27 @@ public class UserController {
             return ResponseEntity.ok().build(); // Thành công
         } else {
             return ResponseEntity.notFound().build(); // Không tìm thấy người dùng
+        }
+    }
+
+
+    @GetMapping("/suppliers")
+    List<User> getAllSuppliers() {
+        return userService.getAllSuppliers();
+    }
+    @GetMapping("/customers")
+    List<User> getAllCustomers() {
+        return userService.getAllCustomers();
+    }
+    @Transactional
+    @DeleteMapping("/{userID}")
+    public ResponseEntity<User> deleteUser(@PathVariable Integer userID) {
+        Optional<User> user = userRepository.findById(String.valueOf(userID));
+        if (user.isPresent()) {
+            userRepository.delete(user.get());
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -111,4 +138,5 @@ public class UserController {
             throw new RuntimeException("Lỗi khi upload avatar: " + e.getMessage(), e);
         }
     }
+
 }

@@ -79,6 +79,13 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+    public List<User> getAllSuppliers() {
+        return userRepository.findByRole("Supplier");
+    }
+    public List<User> getAllCustomers() {
+        return userRepository.findByRole("Customer");
+    }
+
 
     public User getUser(String id) {
         return userRepository.findById(String.valueOf(Integer.valueOf(id)))
@@ -109,7 +116,18 @@ public class UserService {
         }
     }
 
-
+    public User updateGoogleUser(String userId, UserUpdateRequest request) {
+        User user = getUser(userId);
+        user.setPhone(request.getPhone());
+        user.setRole(request.getRole());
+        user.setAddress(request.getAddress());
+        user.setBusinessName(request.getBusinessName());
+        user.setCertification(request.getCertification());
+        user.setVehicle(request.getVehicle());
+        user.setLicensePlate(request.getLicensePlate());
+        return userRepository.save(user);
+    }
+  
     public boolean updateUser(Integer userID, UserUpdateRequest request) {
         Optional<User> userOpt = userRepository.findById(String.valueOf(userID));
 
@@ -215,24 +233,6 @@ public class UserService {
         user.setEmail(newEmail);
         return userRepository.save(user);
     }
-//    public boolean existsByEmail(String email) {
-//        return userRepository.existsByEmail(email);
-//    }
-//
-//    public void createGoogleUser(String email, String name, String pictureUrl) {
-//        User user = new User();
-//        user.setEmail(email);
-//        user.setFullName(name);
-//        user.setAvatar(pictureUrl);
-//        user.setIsActive(true);
-//        userRepository.save(user);
-//    }
-//
-//    public void updateGoogleUser(String email, String name, String pictureUrl) {
-//        User user = userRepository.findByEmail(email);
-//        user.setFullName(name);
-//        user.setAvatar(pictureUrl);
-//        userRepository.save(user);
-//    }
+
 
 }

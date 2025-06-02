@@ -22,24 +22,35 @@ export const uploadAvatar = async (userId, formData) => {
   return await res.json();
 };
 
-export const updateUser = async (userID, userData) => {
-  const response = await fetch(`http://localhost:8080/farmtrade/Users/${userID}`, {
-    method: "PUT",
+// export const updateUser = async (userID, userData) => {
+//   const response = await fetch(`http://localhost:8080/farmtrade/Users/${userID}`, {
+//     method: "PUT",
+//     headers: {
+//       "Content-Type": "application/json"
+//     },
+//     body: JSON.stringify(userData),
+//   });
+
+//   if (!response.ok) {
+//     const errorText = await response.text();
+//     console.error("Phản hồi lỗi từ server:", errorText);
+//     throw new Error(errorText || "Cập nhật thất bại");
+//   }
+
+//   return await response.json();
+// };
+
+export const updateUser = async (userId, data) => {
+  const response = await fetch(`${API_BASE}/${userId}`, {
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json"
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(userData),
+    body: JSON.stringify(data)
   });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("Phản hồi lỗi từ server:", errorText);
-    throw new Error(errorText || "Cập nhật thất bại");
-  }
-
+  if (!response.ok) throw new Error('Failed to update user');
   return await response.json();
 };
-
 
 export const updateUserExtra = async (userId, extraData) => {
   try {

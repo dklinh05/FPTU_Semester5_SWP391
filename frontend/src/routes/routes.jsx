@@ -23,7 +23,7 @@ import CartLayout from '../layouts/CartLayout';
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
-  { path: config.routes.profile, component: Profile },
+  { path: config.routes.profile, component: Profile, layout: ProfileLayout},
   { path: config.routes.login, component: Login },
   { path: config.routes.register, component: Register },
   { path: config.routes.changePassword, component: ChangePassword },

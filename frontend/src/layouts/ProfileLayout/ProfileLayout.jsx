@@ -1,24 +1,26 @@
-import classNames from 'classnames/bind';
-import styles from './ProfileLayout.module.scss';
-import Header from '../../components/Header';
-import Sidebar from './Sidebar';
-
-const ProfileLayout = ({ children }) => {
+import React from 'react';
+import Sidebar from './Sidebar'; // Đảm bảo đúng đường dẫn đến Sidebar của bạn
+import Profile from '../../pages/Profile';
+import Spinner from '../../components/Spinner';
+import Footer from "../../components/Footer";
+const ProfileLayout = () => {
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
-      {/* Sidebar - rộng hơn */}
-      <div style={{ width: "280px", flexShrink: 0 }}>
-        <Sidebar />
-      </div>
+    <div className="container-fluid py-5 mt-5">
 
-      {/* Nội dung chính */}
-      <div style={{ flex: 1, padding: "24px", backgroundColor: "#f5f5f5" }}>
-        <div className="container">
+      <div className="container py-5">
+        <div className="row g-4">
+          {/* Sidebar - Bên trái */}
+          <div className="col-md-3">
+            <Sidebar />
+          </div>
 
-          {/* Nội dung chính */}
-          {children}
+          {/* Nội dung chính - Bên phải */}
+          <div className="col-md-9">
+            <Profile />
+          </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 };

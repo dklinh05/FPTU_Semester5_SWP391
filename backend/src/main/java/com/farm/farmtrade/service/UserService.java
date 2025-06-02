@@ -109,38 +109,33 @@ public class UserService {
         }
     }
 
-    public User updateUser(String userID, UserUpdateRequest request) {
-        User user = userRepository.findById(userID)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
-        // Chỉ xử lý username nếu có giá trị
-        if (request.getUsername() != null && !request.getUsername().isBlank()) {
-            if (userRepository.existsByUsername(request.getUsername())) {
-                throw new RuntimeException("Tên người dùng đã tồn tại");
-            }
-            user.setUsername(request.getUsername());
+    public boolean updateUser(Integer userID, UserUpdateRequest request) {
+        Optional<User> userOpt = userRepository.findById(String.valueOf(userID));
+
+        if (userOpt.isEmpty()) {
+            return false; // Người dùng không tồn tại
         }
 
-        // ✅ CHỈ xử lý email nếu có giá trị
-        if (request.getEmail() != null && !request.getEmail().isBlank()) {
-            if (userRepository.existsByEmail(request.getEmail())) {
-                throw new RuntimeException("Email này đã được sử dụng");
-            }
+        User user = userOpt.get();
 
-            if (!isValidEmail(request.getEmail())) {
-                throw new RuntimeException("Trường email không hợp lệ");
-            }
-
-            user.setEmail(request.getEmail());
+        // Chỉ cập nhật các field có giá trị khác null hoặc không trống
+        if (request.getFullName() != null && !request.getFullName().trim().isEmpty()) {
+            user.setFullName(request.getFullName());
         }
 
-        return userRepository.save(user);
+        if (request.getPhone() != null && !request.getPhone().trim().isEmpty()) {
+            user.setPhone(request.getPhone());
+        }
+
+        if (request.getAddress() != null && !request.getAddress().trim().isEmpty()) {
+            user.setAddress(request.getAddress());
+        }
+
+        userRepository.save(user); // Lưu lại người dùng sau khi cập nhật
+        return true;
     }
 
-    private boolean isValidEmail(String email) {
-        String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-        return email != null && email.matches(regex);
-    }
     public void saveVerificationToken(User user, String token) {
         VerificationToken verificationToken = new VerificationToken(
                 token,

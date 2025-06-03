@@ -6,6 +6,9 @@ import com.farm.farmtrade.dto.Request.ChangePasswordRequest;
 import com.farm.farmtrade.dto.Request.ResetPasswordRequest;
 import com.farm.farmtrade.dto.Request.UserCreationRequest;
 import com.farm.farmtrade.dto.Request.UserUpdateRequest;
+import com.farm.farmtrade.enums.Role;
+import com.farm.farmtrade.exception.AppException;
+import com.farm.farmtrade.exception.ErrorCode;
 import com.farm.farmtrade.service.email.EmailService;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.entity.VerificationToken;
@@ -19,15 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -46,24 +45,18 @@ public class UserService {
         user.setIsActive(false);
 
         if (userRepository.existsByUsername(request.getUsername())|| userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("User already  or email is already in use. Please try again!");
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
 
         user.setUsername(request.getUsername());
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
-        user.setRole(request.getRole());
         user.setCreatedAt(LocalDateTime.now());
         user.setAddress(request.getAddress());
         user.setRewardPoints(0);
         user.setTotalSpend(0L);
-        user.setBusinessName(request.getBusinessName());
-        user.setCertification(request.getCertification());
-        user.setTotalRevenue(0L);
-        user.setVehicle(request.getVehicle());
-        user.setLicensePlate(request.getLicensePlate());
-
+        user.setRole(Role.CUSTOMER.name());
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPasswordHash(passwordEncoder.encode(request.getPasswordHash()));
 
@@ -79,13 +72,6 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-    public List<User> getAllSuppliers() {
-        return userRepository.findByRole("Supplier");
-    }
-    public List<User> getAllCustomers() {
-        return userRepository.findByRole("Customer");
-    }
-
 
     public User getUser(String id) {
         return userRepository.findById(String.valueOf(Integer.valueOf(id)))
@@ -119,7 +105,8 @@ public class UserService {
     public User updateGoogleUser(String userId, UserUpdateRequest request) {
         User user = getUser(userId);
         user.setPhone(request.getPhone());
-        user.setRole(request.getRole());
+        user.setRole(Role.CUSTOMER.name());
+
         user.setAddress(request.getAddress());
         user.setBusinessName(request.getBusinessName());
         user.setCertification(request.getCertification());

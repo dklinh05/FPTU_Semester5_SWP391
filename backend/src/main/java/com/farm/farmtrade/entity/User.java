@@ -1,8 +1,8 @@
 package com.farm.farmtrade.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
@@ -10,35 +10,38 @@ import java.time.LocalDateTime;
 @Table(name = "Users")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer userID;
+    Integer userID;
 
     @Column(unique = true, nullable = false)
-    private String username;
-    private String passwordHash;
-    private String fullName;
-    private String email;
-    private String phone;
-    private String role;
-    private String avatar;
-    private LocalDateTime createdAt;
-    private Boolean isActive;
+    String username;
+    String passwordHash;
+    String fullName;
+    String email;
+    String phone;
+    String role;
+    String avatar;
+    LocalDateTime createdAt;
+    Boolean isActive;
 
     // Buyer
-    private String address;
-    private Integer rewardPoints;
-    private Long totalSpend;
+    String address;
+    Integer rewardPoints;
+    Long totalSpend;
 
     // Supplier
-    private String businessName;
-    private String certification;
-    private Long totalRevenue;
+    String businessName;
+    String certification;
+    Long totalRevenue;
 
     // Shipper
-    private String vehicle;
-    private String licensePlate;
+    String vehicle;
+    String licensePlate;
 
-    // Getters and setters...
 }

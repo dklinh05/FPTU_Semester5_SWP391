@@ -1,8 +1,12 @@
 package com.farm.farmtrade.controller;
 
 import com.farm.farmtrade.dto.Request.*;
+import com.farm.farmtrade.dto.Response.ApiResponse;
+import com.farm.farmtrade.dto.Response.AuthenticationResponse;
+import com.farm.farmtrade.dto.Response.IntrospectResponse;
 import com.farm.farmtrade.service.AuthenticationService;
 import com.farm.farmtrade.service.UserService;
+import com.nimbusds.jose.JOSEException;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -11,6 +15,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
 
 @RestController
 @RequestMapping("/auth")
@@ -25,6 +31,25 @@ public class AuthenticationController {
     Integer login(@RequestBody AuthenticationRequest request) {
         return authenticationService.authenticate(request);
     }
+
+    @PostMapping("/token")
+    ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
+        var result = authenticationService.authenticateNEW(request);
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/introspect")
+    ApiResponse<IntrospectResponse> authenticate(@RequestBody IntrospectRequest request)
+            throws ParseException, JOSEException {
+        var result = authenticationService.introspect(request);
+        return ApiResponse.<IntrospectResponse>builder()
+                .result(result)
+                .build();
+    }
+
+
 
     @GetMapping("/verify")
     public ResponseEntity<String> verifyEmail(@RequestParam("token") String token) {

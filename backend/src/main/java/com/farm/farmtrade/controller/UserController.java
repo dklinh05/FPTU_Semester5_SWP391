@@ -4,6 +4,7 @@ package com.farm.farmtrade.controller;
 import com.cloudinary.Cloudinary;
 import com.farm.farmtrade.dto.Request.UserCreationRequest;
 import com.farm.farmtrade.dto.Request.UserUpdateRequest;
+import com.farm.farmtrade.dto.Response.ApiResponse;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.repository.UserRepository;
 import com.farm.farmtrade.service.UserService;
@@ -13,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,13 +37,25 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping
+    @PostMapping("/register")
     User createUser(@RequestBody @Valid UserCreationRequest request) throws MessagingException {
         return userService.createRequest(request);
     }
 
+//    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) throws MessagingException {
+//        ApiResponse<User> apiResponse = new ApiResponse<>();
+//
+//        apiResponse.setResult(userService.createRequest(request));
+//
+//        return apiResponse;
+//    }
+
+
     @GetMapping
     List<User> getAllUsers() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("Username: "+ authentication.getName());
+        authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
         return userService.getAllUsers();
     }
 
@@ -77,14 +91,6 @@ public class UserController {
     }
 
 
-    @GetMapping("/suppliers")
-    List<User> getAllSuppliers() {
-        return userService.getAllSuppliers();
-    }
-    @GetMapping("/customers")
-    List<User> getAllCustomers() {
-        return userService.getAllCustomers();
-    }
     @Transactional
     @DeleteMapping("/{userID}")
     public ResponseEntity<User> deleteUser(@PathVariable Integer userID) {

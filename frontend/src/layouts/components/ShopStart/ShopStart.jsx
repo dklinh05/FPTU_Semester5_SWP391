@@ -151,10 +151,10 @@ function ShopStart() {
                 </div>
               </div>
             </div>
-            <div id="tab-2" class="tab-pane fade show p-0"></div>
-            <div id="tab-3" class="tab-pane fade show p-0"></div>
-            <div id="tab-4" class="tab-pane fade show p-0"></div>
-            <div id="tab-5" class="tab-pane fade show p-0"></div>
+            <div id="tab-2" className="tab-pane fade show p-0"></div>
+            <div id="tab-3" className="tab-pane fade show p-0"></div>
+            <div id="tab-4" className="tab-pane fade show p-0"></div>
+            <div id="tab-5" className="tab-pane fade show p-0"></div>
 
             {/* Các tab khác (tab-2, tab-3...) có thể thêm tương tự ở đây */}
           </div>

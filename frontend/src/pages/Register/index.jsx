@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/authService";
@@ -15,7 +15,7 @@ const Register = () => {
     username: "",
     email: "",
     phone: "",
-    role: role,
+    role: "",
     passwordHash: "",
     businessName: "",
     certification: "",
@@ -23,6 +23,13 @@ const Register = () => {
   });
 
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      role: role,
+    }));
+  }, [role]);
 
   const handleRoleSelect = (role) => {
     setRole(role.target.value);

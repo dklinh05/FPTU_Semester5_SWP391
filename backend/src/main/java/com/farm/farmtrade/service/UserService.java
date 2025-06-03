@@ -77,6 +77,7 @@ public class UserService {
         return userRepository.findById(String.valueOf(Integer.valueOf(id)))
                 .orElseThrow(()-> new RuntimeException("User Not Found"));
     }
+
     public User uploadAvatar(String id, MultipartFile file) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));

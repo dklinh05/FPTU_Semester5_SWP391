@@ -59,19 +59,37 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+
     @PutMapping("/google/{userID}")
     User upDateGoogleUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
         return userService.updateGoogleUser(userID,request);
     }
-    @PutMapping("/{userID}")
-    User upDateUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
-        return userService.updateUser(userID,request);
-    }
+//     @PutMapping("/{userID}")
+//     User upDateUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
+//         return userService.updateUser(userID,request);
+//     }
 
     @GetMapping("/{userID}")
     User getUser(@PathVariable String userID) {
         return userService.getUser(userID);
     }
+
+
+    @PutMapping("/{userID}")
+    public ResponseEntity<?> updateUser(
+            @PathVariable Integer userID,
+            @RequestBody UserUpdateRequest request) {
+
+        // Gọi service để cập nhật người dùng
+        boolean isUpdated = userService.updateUser(userID, request);
+
+        if (isUpdated) {
+            return ResponseEntity.ok().build(); // Thành công
+        } else {
+            return ResponseEntity.notFound().build(); // Không tìm thấy người dùng
+        }
+    }
+
 
     @Transactional
     @DeleteMapping("/{userID}")
@@ -85,12 +103,6 @@ public class UserController {
         }
     }
 
-//     @PutMapping("/{userID}")
-//     public ResponseEntity<User> updateUser(
-//             @PathVariable("userID") String userID,
-//             @RequestBody UserUpdateRequest request) {
-//         return ResponseEntity.ok(userService.updateUser(userID, request));
-//     }
     @PostMapping("/{userID}/avatar")
     public ResponseEntity<?> uploadAvatar(
             @PathVariable("userID") String userID,

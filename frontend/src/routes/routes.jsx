@@ -12,12 +12,15 @@ import Shop from '../pages/Shop';
 import Contact from '../pages/Contact';
 import Cart from '../pages/Cart';
 import Testimonial from '../pages/Testimonial';
+import CustomerManagement from '../pages/CustomerManagement';
+import Dashboard from '../pages/Dashboard';
 import TestimonialLayout from '../layouts/TestimonialLayout';
 import ProfileLayout from '../layouts/ProfileLayout';
 import ShopLayout from '../layouts/ShopLayout';
 import ContactLayout from '../layouts/ContactLayout';
 import ProductLayout from '../layouts/ProductLayout';
 import CartLayout from '../layouts/CartLayout';
+import AdminLayout from '../layouts/AdminLayout';
 
 
 
@@ -34,6 +37,8 @@ const publicRoutes = [
   { path: config.routes.testimonial, component: Testimonial, layout: TestimonialLayout},
   { path: config.routes.contact, component: Contact, layout: ContactLayout},
   { path: config.routes.product, component: Product, layout: ProductLayout },
+   { path: config.routes.customerManagement, component: CustomerManagement, layout: AdminLayout },
+   { path: config.routes.dashboard, component: Dashboard, layout: AdminLayout },
 ];
 
 const privateRoutes = [];

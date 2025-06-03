@@ -165,7 +165,7 @@ function Header() {
                 >
                   {/* User ava */}
                   {user?.avatar ? (
-                    <img src={user.avatar} alt="avatar" />
+                    <img className={cx(styles.avatar)} src={user.avatar} alt="avatar" />
                   ) : (
                     <i className="fas fa-user fa-2x"></i>
                   )}

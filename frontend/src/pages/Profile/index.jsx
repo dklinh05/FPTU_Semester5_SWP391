@@ -92,7 +92,7 @@ const Profile = () => {
 
     const payload = {};
     if (editField === "fullName") {
-      payload.fullNamefullName = fieldValue;
+      payload.fullName = fieldValue;
     } else if (editField === "email") {
       payload.email = fieldValue;
     } else if (editField === "phone") {

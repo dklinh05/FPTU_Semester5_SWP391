@@ -16,6 +16,7 @@ const routes = {
   product: '/product',
   customerManagement: '/customer',
   dashboard: '/dashboard',
+  addProduct: '/addProduct',
 };
 
 export default routes;

@@ -2,10 +2,23 @@ import axios from "axios";
 import request from '../utils/httpRequest';
 const API_BASE = "http://localhost:8080/farmtrade/Users";
 
+// export const getUserById = async (id) => {
+//   const res = await axios.get(`${API_BASE}/${id}`);
+//   return res.data;
+// };
 export const getUserById = async (id) => {
-  const res = await axios.get(`${API_BASE}/${id}`);
+  const token = localStorage.getItem("token"); // Lấy token đã lưu sau khi đăng nhập
+
+  const res = await axios.get(`${API_BASE}/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`, // Gửi token như Postman
+    },
+    withCredentials: true, // nếu bạn vẫn muốn gửi cookie kèm theo
+  });
+
   return res.data;
 };
+
 
 export const uploadAvatar = async (userId, formData) => {
   const res = await fetch(`http://localhost:8080/farmtrade/Users/${userId}/avatar`, {

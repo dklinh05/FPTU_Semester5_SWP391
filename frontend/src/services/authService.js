@@ -1,8 +1,18 @@
 import request from '../utils/httpRequest';
 
+export const getTokenFromCookie = () => {
+  const cookies = document.cookie.split(';').map(cookie => cookie.trim());
+  for (const cookie of cookies) {
+    if (cookie.startsWith('accessToken=')) {
+      return cookie.split('=')[1];
+    }
+  }
+  return null;
+};
+
 export const registerUser = async (data) => {
   try {
-    const response = await request.post('/Users', data);
+    const response = await request.post('/users', data);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -11,8 +21,10 @@ export const registerUser = async (data) => {
 
 export const loginUser = async (data) => {
   try {
-    const response = await request.post('/auth/login', data);
-    return response.data;
+    const response = await request.post('/auth/login', data, {
+      withCredentials: true
+    });
+    return response.data.result;
   } catch (error) {
     throw error.response?.data || error.message;
   }

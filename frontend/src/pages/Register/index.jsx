@@ -15,7 +15,6 @@ const Register = () => {
     username: "",
     email: "",
     phone: "",
-    role: "",
     passwordHash: "",
     businessName: "",
     certification: "",

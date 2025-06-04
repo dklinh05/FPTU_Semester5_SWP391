@@ -8,15 +8,19 @@ import com.farm.farmtrade.service.AuthenticationService;
 import com.farm.farmtrade.service.UserService;
 import com.nimbusds.jose.JOSEException;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
+import java.time.Duration;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,14 +31,27 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
     private final UserService userService;
 
-    @PostMapping("/login")
-    Integer login(@RequestBody AuthenticationRequest request) {
-        return authenticationService.authenticate(request);
-    }
+//    @PostMapping("/login")
+//    Integer login(@RequestBody AuthenticationRequest request) {
+//        return authenticationService.authenticate(request);
+//    }
 
-    @PostMapping("/token")
-    ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
+    @PostMapping("/login")
+    ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request, HttpServletResponse response) {
+        // Gọi service để lấy token
         var result = authenticationService.authenticateNEW(request);
+
+        // Tạo cookie chứa token
+        ResponseCookie cookie = ResponseCookie.from("accessToken", result.getToken())
+                .httpOnly(false)
+                .secure(false)
+                .path("/")
+                .maxAge(Duration.ofDays(7))
+                .sameSite("Lax")
+                .build();
+        // Gửi cookie về client
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
                 .build();
@@ -48,7 +65,6 @@ public class AuthenticationController {
                 .result(result)
                 .build();
     }
-
 
 
     @GetMapping("/verify")
@@ -113,14 +129,14 @@ public class AuthenticationController {
     }
 
     String htmlResponse = """
-                        <html>
-                        <head>
-                            <script type="text/javascript">
-                                alert('Your account has been successfully verified!');
-                                window.location.href = 'http://localhost:5173/login';
-                            </script>
-                        </head>
-                        <body></body>
-                        </html>
-                    """;
+                <html>
+                <head>
+                    <script type="text/javascript">
+                        alert('Your account has been successfully verified!');
+                        window.location.href = 'http://localhost:5173/login';
+                    </script>
+                </head>
+                <body></body>
+                </html>
+            """;
 }

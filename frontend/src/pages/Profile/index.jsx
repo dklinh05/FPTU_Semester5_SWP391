@@ -20,11 +20,6 @@ const Profile = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const userIdFromUrl = params.get("userId");
-
-    if (userIdFromUrl) {
-      localStorage.setItem("user", userIdFromUrl);
-    }
 
     const userId = localStorage.getItem("user");
 

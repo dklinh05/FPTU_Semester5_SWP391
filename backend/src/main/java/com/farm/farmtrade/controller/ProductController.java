@@ -32,15 +32,20 @@ public class ProductController {
     }
 
     // Delete product
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer productId) {
+        try {
+            productService.deleteProductById(productId);
+            return ResponseEntity.ok().body("Product deleted successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
     }
 
-    // Optional: get products by supplier
-//    @GetMapping("/supplier/{supplierId}")
-//    public ResponseEntity<List<Product>> getProductsBySupplier(@PathVariable Integer supplierId) {
-//        return ResponseEntity.ok(productService.getProductsBySupplier(supplierId));
-//    }
+    @GetMapping("/supplier/{supplierId}")
+    public List<Product> getProductsBySupplier(@PathVariable Integer supplierId) {
+        return productService.getProductsBySupplierId(supplierId);
+    }
+
+
 }

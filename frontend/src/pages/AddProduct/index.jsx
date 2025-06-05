@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { addProduct } from "../../services/productService";
 
 function AddProduct() {
   const [formData, setFormData] = useState({
@@ -28,23 +28,17 @@ function AddProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-console.log(formData)
+    console.log(formData);
+    const productData = new FormData();
+    productData.append("name", formData.name);
+    productData.append("description", formData.description);
+    productData.append("price", formData.price);
+    productData.append("stockQuantity", formData.quantity);
+    if (formData.image) {
+      productData.append("image", formData.image);
+    }
     try {
-      const productData = new FormData();
-      productData.append("name", formData.name);
-      productData.append("description", formData.description);
-      productData.append("price", formData.price);
-      productData.append("stockQuantity", formData.quantity);
-      if (formData.image) {
-        productData.append("image", formData.image);
-      }
-
-      const response = await axios.post("http://localhost:8080/farmtrade/products", productData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        // withCredentials: true, // gửi cookie nếu có xác thực
-      });
+      const response = await addProduct(productData);
 
       alert("Thêm sản phẩm thành công!");
       console.log(response.data);

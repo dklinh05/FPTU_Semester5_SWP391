@@ -16,7 +16,10 @@ const routes = {
   product: '/product',
   customerManagement: '/customer',
   dashboard: '/dashboard',
-  addProduct: '/addProduct',
+  addProduct: '/addproduct',
+  listProduct: '/listproduct',
+  orderList: '/orderlist',
+  userList: '/userlist',
 };
 
 export default routes;

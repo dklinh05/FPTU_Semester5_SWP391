@@ -10,7 +10,7 @@ function AdminLayout({ children }) {
       <div id="main-wrapper" className="d-flex">
         <SidebarAdmin />
         <div className="content-wrapper">
-        <HeaderAdmin/>
+        {/* <HeaderAdmin/> */}
           {children}
           </div>
       </div>

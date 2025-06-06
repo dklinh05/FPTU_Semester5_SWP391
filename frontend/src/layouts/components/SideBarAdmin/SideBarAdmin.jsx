@@ -1,7 +1,17 @@
-function SidebarAdmin() {
+import React, { useState } from "react";
+import "./SidebarAdmin.scss"; // Tạo file CSS riêng
+
+const SidebarAdmin = () => {
+  const [activeSubmenu, setActiveSubmenu] = useState(null);
+  const [collapsed, setCollapsed] = useState(false);
+
+  const toggleSubmenu = (index) => {
+    setActiveSubmenu(activeSubmenu === index ? null : index);
+  };
+
   return (
-    <div className="sidebar">
-      <div className="collapse-sidebar d-none d-lg-block">
+    <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+      <div className="collapse-sidebar d-none d-lg-block" onClick={() => setCollapsed(!collapsed)}>
         <span>
           <i className="fa-solid fa-chevron-left"></i>
         </span>
@@ -23,99 +33,91 @@ function SidebarAdmin() {
       <div className="sidebar-body custom-scrollbar">
         <ul className="sidebar-menu">
           <li className="sidebar-label">Menu</li>
-
           <li>
-            <a href="/dashboard" className="text-black sidebar-link active">
+            <a href="index.html" className="text-black sidebar-link">
               <i className="fa-solid fa-house"></i>
               <p>Dashboard</p>
             </a>
           </li>
 
+          {/* Products */}
           <li>
-            <a href="#" className="text-black sidebar-link submenu-parent">
-              <i className="fa-solid fa-list"></i>
-              <p>
-                Category <i className="fa-solid fa-angle-down right-icon"></i>
-              </p>
-            </a>
-            <ul className="sidebar-submenu">
-              <li>
-                <a href="category-add.html" className="submenu-link">
-                  Add
-                </a>
-              </li>
-              <li>
-                <a href="category-list.html" className="submenu-link">
-                  List
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          <li>
-            <a href="#" className="text-black sidebar-link submenu-parent">
+            <a
+              href="#"
+              className="text-black sidebar-link submenu-parent"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleSubmenu(2);
+              }}
+            >
               <i className="fa-brands fa-microsoft"></i>
               <p>
                 Products <i className="fa-solid fa-angle-down right-icon"></i>
               </p>
             </a>
-            <ul className="sidebar-submenu">
+            <ul className={`sidebar-submenu ${activeSubmenu === 2 ? "open" : ""}`}>
               <li>
-                <a href="product-add.html" className="submenu-link">
+                <a href="/addproduct" className="submenu-link">
                   Add
                 </a>
               </li>
               <li>
-                <a href="product-list.html" className="submenu-link">
+                <a href="/listproduct" className="submenu-link">
                   List
                 </a>
               </li>
             </ul>
           </li>
 
+          {/* Order */}
           <li>
-            <a href="#" className="text-black sidebar-link submenu-parent">
+            <a
+              href="#"
+              className="text-black sidebar-link submenu-parent"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleSubmenu(3);
+              }}
+            >
               <i className="fa-solid fa-bucket"></i>
               <p>
                 Order <i className="fa-solid fa-angle-down right-icon"></i>
               </p>
             </a>
-            <ul className="sidebar-submenu">
+            <ul className={`sidebar-submenu ${activeSubmenu === 3 ? "open" : ""}`}>
               <li>
-                <a href="order-list.html" className="submenu-link">
+                <a href="/orderlist" className="submenu-link">
                   List
-                </a>
-              </li>
-              <li>
-                <a href="order-details.html" className="submenu-link">
-                  Details
-                </a>
-              </li>
-              <li>
-                <a href="invoice.html" className="submenu-link">
-                  Invoice
                 </a>
               </li>
             </ul>
           </li>
 
           <li>
-            <a href="/customer" className="text-black sidebar-link">
+            <a href="/userlist" className="text-black sidebar-link">
               <i className="fa-regular fa-user"></i>
               <p>Customers</p>
             </a>
           </li>
 
+          {/* Page */}
           <li>
-            <a href="#" className="text-black sidebar-link submenu-parent">
+            <a
+              href="#"
+              className="text-black sidebar-link submenu-parent"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleSubmenu(4);
+              }}
+            >
               <i className="fa-solid fa-pager"></i>
               <p>
                 Page <i className="fa-solid fa-angle-down right-icon"></i>
               </p>
             </a>
-            <ul className="sidebar-submenu">
+            <ul className={`sidebar-submenu ${activeSubmenu === 4 ? "open" : ""}`}>
               <li>
-                <a href="login.html" className="submenu-link">
+                <a href="/login" className="submenu-link">
                   Login
                 </a>
               </li>
@@ -135,33 +137,11 @@ function SidebarAdmin() {
           <li className="sidebar-label">Other</li>
 
           <li>
-            <a href="#" className="text-black sidebar-link submenu-parent">
-              <i className="fa-solid fa-web-awesome"></i>
-              <p>
-                Components <i className="fa-solid fa-angle-down right-icon"></i>
-              </p>
-            </a>
-            <ul className="sidebar-submenu">
-              <li>
-                <a href="basic-table.html" className="submenu-link">
-                  Basic table
-                </a>
-              </li>
-              <li>
-                <a href="data-table.html" className="submenu-link">
-                  Datatable
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          <li>
             <a href="#" className="text-black sidebar-link">
               <i className="fa-regular fa-message"></i>
               <p>Message</p>
             </a>
           </li>
-
           <li>
             <a href="#" className="text-black sidebar-link">
               <i className="fa-solid fa-phone"></i>
@@ -172,6 +152,6 @@ function SidebarAdmin() {
       </div>
     </div>
   );
-}
+};
 
 export default SidebarAdmin;

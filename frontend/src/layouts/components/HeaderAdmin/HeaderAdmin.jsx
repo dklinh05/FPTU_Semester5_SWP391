@@ -7,7 +7,7 @@ function HeaderAdmin() {
             <button className="menu-toggle btn btn-lg text-white d-block d-lg-none">
               <i className="fa-solid fa-bars"></i>
             </button>
-            <h1 className="header-title d-none d-lg-block">Order</h1>
+            <h1 className="header-title d-none d-lg-block">Dashboard</h1>
           </div>
           <div className="col-6 col-lg-6 d-flex justify-content-end">
             <div>

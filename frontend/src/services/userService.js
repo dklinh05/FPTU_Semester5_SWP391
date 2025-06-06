@@ -1,15 +1,19 @@
 import axios from "axios";
-import request from '../utils/httpRequest';
-const API_BASE = "http://localhost:8080/farmtrade/Users";
+import { request, formRequest } from "../utils/httpRequest";
+const API_BASE = "http://localhost:8080/farmtrade/users";
 
+// export const getUserById = async (id) => {
+//   const res = await axios.get(`${API_BASE}/${id}`);
+//   return res.data;
+// };
 export const getUserById = async (id) => {
-  const res = await axios.get(`${API_BASE}/${id}`);
+  const res = await request.get(`users/${id}`);
+
   return res.data;
 };
 
 export const uploadAvatar = async (userId, formData) => {
-  const res = await fetch(`http://localhost:8080/farmtrade/Users/${userId}/avatar`, {
-    method: "POST",
+  const res = await formRequest.put(`users/${userId}/avatar`, {
     body: formData,
   });
 
@@ -41,20 +45,16 @@ export const uploadAvatar = async (userId, formData) => {
 // };
 
 export const updateUser = async (userId, data) => {
-  const response = await fetch(`${API_BASE}/${userId}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
+  const response = await request.put(`${userId}`, {
+    body: data,
   });
-  if (!response.ok) throw new Error('Failed to update user');
+  if (!response.ok) throw new Error("Failed to update user");
   return await response.json();
 };
 
 export const updateUserExtra = async (userId, extraData) => {
   try {
-    const response = await request.put(`Users/google/${userId}`, extraData)
+    const response = await request.put(`Users/google/${userId}`, extraData);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

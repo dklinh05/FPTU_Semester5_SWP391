@@ -6,6 +6,9 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,14 +17,17 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductCreateRequest {
     @NotBlank
     String name;
-
-    @NotNull
-    Double price;
-
+    String category;
     String description;
 
     @NotNull
-    Integer stockQuantity;
+    BigDecimal price;
+    String unit;
+    String origin;
+    LocalDateTime createdAt;
 
+    @NotNull
+    Integer stockQuantity;
+    Integer sales;
     MultipartFile image;
 }

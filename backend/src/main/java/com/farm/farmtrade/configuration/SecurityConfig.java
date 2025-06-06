@@ -28,7 +28,7 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENDPOINTS = {"/api/auth/**", "/oauth2/**", "/Users/register", "/auth/**",};
+    private final String[] PUBLIC_ENDPOINTS = {"/api/auth/**", "/oauth2/**", "/users/register", "/auth/**",};
 
 
     @Autowired
@@ -49,6 +49,7 @@ public class SecurityConfig {
                     corsConfig.setAllowedOrigins(List.of("http://localhost:5173"));
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setExposedHeaders(List.of("Set-Cookie"));
                     corsConfig.setAllowCredentials(true);
                     return corsConfig;
                 }))
@@ -56,7 +57,8 @@ public class SecurityConfig {
                 //phân quyền cho các role tại đây
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll() // cho phép truy cập public chỉ với HttpMethod POST
-                        .requestMatchers(HttpMethod.GET,"/Users").hasAuthority("ROLE_ADMIN") // chỉ admin mới truy cập được endpoint này
+                        .requestMatchers(HttpMethod.GET,"/users").hasAuthority("ROLE_ADMIN") // chỉ admin mới truy cập được endpoint này(mặc định là ADMIN truy cập được full đường truyền được config cho SUPPLIER và CUSTOMER, tương tự SUPPLIER cũng được truy cập endpoint của CUSTOMER), nhưng phải cung cấp token)
+                        .requestMatchers(HttpMethod.GET,"/users/**").hasAuthority("ROLE_CUSTOMER") // customer chỉ truy cập được endpoint này
                         .anyRequest().authenticated()
                 )
                 // Google OAuth2 login
@@ -74,33 +76,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .cors(cors -> cors.configurationSource(request -> {
-//                    var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-//                    corsConfig.setAllowedOrigins(List.of("http://localhost:5173"));
-//                    corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//                    corsConfig.setAllowedHeaders(List.of("*"));
-//                    corsConfig.setAllowCredentials(true);
-//                    return corsConfig;
-//                }))
-//                .csrf(csrf -> csrf.disable())
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-//                        .anyRequest().authenticated()
-//                )
-//                .formLogin(Customizer.withDefaults())
-//                .oauth2Login(oauth2 -> oauth2
-//                                .userInfoEndpoint(user -> user
-//                                        .userService(customOAuth2UserService) // ĐÂY LÀ CHỖ GỌI
-//                                )
-//                                .successHandler(oAuth2SuccessHandler) //   Dùng custom success handler
-//                );
-//
-//        return http.build();
-//    }
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();

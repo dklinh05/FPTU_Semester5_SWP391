@@ -6,6 +6,7 @@ import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.repository.ProductRepository;
 import com.farm.farmtrade.repository.UserRepository;
 import com.farm.farmtrade.service.fileStorage.FileStorageService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class ProductService {
 
         product.setName(request.getName());
         product.setDescription(request.getDescription());
-        product.setPrice(BigDecimal.valueOf(request.getPrice()));
+        product.setPrice(request.getPrice());
 
         product.setSupplier(user);
 
@@ -66,7 +67,16 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-//    public List<Product> getProductsBySupplier(Integer supplierId) {
-//        return productRepository.findBySupplier_Id(supplierId);
-//    }
+    public List<Product> getProductsBySupplierId(Integer supplierId) {
+        return productRepository.findBySupplierUserID(supplierId);
+    }
+
+    @Transactional
+    public void deleteProductById(Integer productId) {
+        if (!productRepository.existsById(productId)) {
+            throw new RuntimeException("Product not found with ID: " + productId);
+        }
+
+        productRepository.deleteById(productId);
+    }
 }

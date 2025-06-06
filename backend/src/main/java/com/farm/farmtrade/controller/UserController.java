@@ -26,7 +26,7 @@ import java.util.Optional;
 
 @RestController
 @Slf4j
-@RequestMapping("/Users")
+@RequestMapping("/users")
 public class UserController {
     @Autowired
     private UserService userService;

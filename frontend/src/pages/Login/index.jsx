@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../../services/authService";
+import { loginUser,getTokenFromCookie } from "../../services/authService";
 import styles from "./Login.module.scss";
-
+import { jwtDecode } from "jwt-decode";
 const cx = classNames.bind(styles);
 const Login = () => {
   const navigate = useNavigate();
@@ -22,13 +22,16 @@ const Login = () => {
 
     try {
       const user = await loginUser(formData);
-      alert("Đăng nhập thành công!");
+      // alert("Đăng nhập thành công!");
       if (!user) {
         alert("Đăng nhập thất bại: ");
         return;
       }
-      // Lưu token/user info nếu có
-      localStorage.setItem("user", JSON.stringify(user));
+      const token = getTokenFromCookie();
+      localStorage.setItem("token", user.token);
+      // const token = localStorage.getItem("token");
+      const decoded = jwtDecode(token);      
+      localStorage.setItem("user", decoded.userId);
 
       // Chuyển sang trang chính hoặc theo role
       navigate("/profile");

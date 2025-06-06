@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios"; // Nếu bạn dùng axios để gửi request
+import { addProduct } from "../../services/productService";
+
 
 function AddProduct() {
   const [formData, setFormData] = useState({
@@ -29,26 +30,18 @@ function AddProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const productData = new FormData();
     productData.append("name", formData.name);
     productData.append("description", formData.description);
     productData.append("price", formData.price);
-    productData.append("quantity", formData.quantity);
     productData.append("origin", formData.origin);
     productData.append("category", formData.category);
+    productData.append("stockQuantity", formData.quantity);
     if (formData.image) {
       productData.append("image", formData.image);
     }
-
     try {
-      // Thay URL này bằng endpoint thực tế của bạn
-      const response = await axios.post("http://localhost:8080/api/products", productData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
+      const response = await addProduct(productData);
       alert("Thêm sản phẩm thành công!");
       console.log("Response:", response.data);
     } catch (error) {

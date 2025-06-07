@@ -21,7 +21,7 @@ public class CartItemController {
     // Thêm sản phẩm vào giỏ hàng
     @PostMapping("/add")
     public ResponseEntity<String> addToCart(@RequestBody CartAddRequest request) {
-        cartItemService.addToCart(request.getBuyerId(), request.getProductId(), request.getQuantity());
+        cartItemService.addToCart(request.getBuyerId(), request.getProductId());
         return ResponseEntity.ok("Thêm vào giỏ hàng thành công");
     }
 

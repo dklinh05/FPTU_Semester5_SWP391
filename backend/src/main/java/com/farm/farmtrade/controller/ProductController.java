@@ -4,6 +4,7 @@ import com.farm.farmtrade.dto.Request.ProductRequest.ProductCreateRequest;
 import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,23 @@ import java.util.List;
 public class ProductController {
     @Autowired
     private ProductService productService;
+
+    // Lấy danh sách sản phẩm không phân trang
+    @GetMapping
+    public ResponseEntity<List<Product>> listProductsForHome() {
+        List<Product> products = productService.getAllActiveProducts();
+        return ResponseEntity.ok(products);
+    }
+
+    // (Tùy chọn) Lấy danh sách có phân trang
+//    @GetMapping("/home/paged")
+//    public ResponseEntity<Page<Product>> listProductsPaged(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size
+//    ) {
+//        Page<Product> paged = productService.getAllActiveProductsPaged(page, size);
+//        return ResponseEntity.ok(paged);
+//    }
 
     // Add product
     @PostMapping
@@ -41,6 +59,8 @@ public class ProductController {
             return ResponseEntity.status(404).body(e.getMessage());
         }
     }
+
+
 
     @GetMapping("/supplier/{supplierId}")
     public List<Product> getProductsBySupplier(@PathVariable Integer supplierId) {

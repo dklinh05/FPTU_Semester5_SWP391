@@ -1,7 +1,25 @@
-import React from 'react';
-import CartItem from '../../layouts/components/CartItem';
+import { useEffect, useState } from "react";
+import CartItem from "../../layouts/components/CartItem";
+import { renderCart } from "../../services/cartItemService";
 
 function Cart() {
+  const userId = localStorage.getItem("user");
+
+  const [carts, setCarts] = useState([]);
+
+  useEffect(() => {
+    const getCarts = async () => {
+      try {
+        const response = await renderCart(userId);
+        setCarts(response);
+        console.log("Response:", response);
+      } catch (error) {
+        console.error("Lỗi khi lấy sản phẩm:", error);
+      }
+    };
+    getCarts();
+  }, []);
+
   return (
     <div className="container-fluid py-5">
       <div className="container py-5">
@@ -20,9 +38,14 @@ function Cart() {
             </thead>
             <tbody>
               {/* Product 1 */}
-              <CartItem name='Big Banana' price='2.99'/>
-              <CartItem name='Big Banana' price='2.99'/>
-              <CartItem name='Big Banana' price='2.99'/>
+              {carts.map((cart, index) => (
+                <CartItem
+                  key={index}
+                  img={cart.product.imageURL}
+                  name={cart.product.name}
+                  price={cart.product.price}
+                />
+              ))}
             </tbody>
           </table>
         </div>

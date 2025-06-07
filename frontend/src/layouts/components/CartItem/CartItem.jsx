@@ -1,10 +1,12 @@
-function CartItem({name, price}) {
+
+
+function CartItem({img, name, price}) {
   return (
     <tr>
       <th scope="row">
         <div className="d-flex align-items-center">
           <img
-            src="img/vegetable-item-3.png"
+            src={img ? img : "img/vegetable-item-3.png" }
             className="img-fluid me-5 rounded-circle"
             style={{ width: "80px", height: "80px" }}
             alt="Big Banana"

@@ -1,17 +1,17 @@
 import {request, formRequest} from '../utils/httpRequest';
 
-export const addProduct = async (data) =>{
+export const addProductToCart = async (data) =>{
   try {
-    const response = await formRequest.post('/products', data);
+    const response = await request.post('/cart/add', data);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 }
 
-export const renderProduct = async (data) =>{
+export const renderCart = async (id) =>{
   try {
-    const response = await request.get('/products');
+    const response = await request.get(`/cart/${id}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

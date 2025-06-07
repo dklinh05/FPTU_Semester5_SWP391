@@ -12,7 +12,7 @@ export const getTokenFromCookie = () => {
 
 export const registerUser = async (data) => {
   try {
-    const response = await request.post("/users", data);
+    const response = await request.post("/users/register", data);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

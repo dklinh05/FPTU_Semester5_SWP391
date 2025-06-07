@@ -16,23 +16,10 @@ const Register = () => {
     email: "",
     phone: "",
     passwordHash: "",
-    businessName: "",
-    certification: "",
     address: "",
   });
 
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      role: role,
-    }));
-  }, [role]);
-
-  const handleRoleSelect = (role) => {
-    setRole(role.target.value);
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -143,61 +130,20 @@ const Register = () => {
             required
           />
         </div>
+
         <div className="mb-3">
-          <label className="form-label">Chọn vai trò</label>
-          <select
-            className="form-select"
-            value={role}
-            onChange={handleRoleSelect}
+          <label>Address</label>
+          <input
+            type="text"
+            className="form-control"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            placeholder="Your Address"
             required
-          >
-            <option value="">-- Select Role --</option>
-            <option value="Customer">Customer</option>
-            <option value="Supplier">Supplier</option>
-          </select>
+          />
         </div>
-        {role === "Supplier" && (
-          <>
-            <div className="mb-3">
-              <label>Business Name</label>
-              <input
-                type="text"
-                className="form-control"
-                name="businessName"
-                value={formData.businessName}
-                onChange={handleChange}
-                placeholder="Your Business Name"
-                required
-              />
-            </div>
-            <div className="mb-3">
-              <label>Certification</label>
-              <input
-                type="text"
-                className="form-control"
-                name="certification"
-                value={formData.certification}
-                onChange={handleChange}
-                placeholder="Your Certification"
-                required
-              />
-            </div>
-          </>
-        )}
-        {role === "Customer" && (
-          <div className="mb-3">
-            <label>Address</label>
-            <input
-              type="text"
-              className="form-control"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="Your Address"
-              required
-            />
-          </div>
-        )}
+
         <button type="submit" className="btn btn-success w-100">
           Đăng ký
         </button>

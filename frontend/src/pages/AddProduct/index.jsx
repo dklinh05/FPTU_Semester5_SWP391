@@ -3,6 +3,7 @@ import { addProduct } from "../../services/productService";
 
 
 function AddProduct() {
+  const userId = localStorage.getItem("user");
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -31,6 +32,8 @@ function AddProduct() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const productData = new FormData();
+    
+    productData.append("userId", userId);
     productData.append("name", formData.name);
     productData.append("description", formData.description);
     productData.append("price", formData.price);

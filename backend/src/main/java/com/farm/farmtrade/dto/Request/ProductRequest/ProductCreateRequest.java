@@ -21,6 +21,9 @@ public class ProductCreateRequest {
     String description;
 
     @NotNull
+    String userId;
+
+    @NotNull
     BigDecimal price;
     String unit;
     String origin;
@@ -28,6 +31,5 @@ public class ProductCreateRequest {
 
     @NotNull
     Integer stockQuantity;
-    Integer sales;
     MultipartFile image;
 }

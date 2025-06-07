@@ -79,7 +79,6 @@ public class AuthenticationController {
         }
     }
 
-
     @PostMapping("/send-otp")
     public void sendOtp(@RequestBody SendOTPRequest request) throws MessagingException {
         try {

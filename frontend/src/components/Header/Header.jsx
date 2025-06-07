@@ -34,6 +34,7 @@ function Header() {
 
   const handleLogout = () => {
     alert("Đăng xuất thành công!");
+    localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/");
     window.location.reload();

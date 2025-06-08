@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
-import { loginUser,getTokenFromCookie } from "../../services/authService";
+import { loginUser, getTokenFromCookie } from "../../services/authService";
 import styles from "./Login.module.scss";
 import { jwtDecode } from "jwt-decode";
+import { useUser } from "../../context/UserContext";
+
 const cx = classNames.bind(styles);
+
 const Login = () => {
+  const { setToken } = useUser();
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -27,14 +32,12 @@ const Login = () => {
         alert("Đăng nhập thất bại: ");
         return;
       }
-      const token = getTokenFromCookie();
+
       localStorage.setItem("token", user.token);
-      // const token = localStorage.getItem("token");
-      const decoded = jwtDecode(token);      
-      localStorage.setItem("user", decoded.userId);
+      setToken(user.token);
 
       // Chuyển sang trang chính hoặc theo role
-      navigate("/profile");
+      navigate("/");
     } catch (error) {
       alert("Đăng nhập thất bại: ");
     }

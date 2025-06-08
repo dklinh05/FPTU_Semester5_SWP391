@@ -26,8 +26,6 @@ import AdminLayout from '../layouts/AdminLayout';
 import OrderList from "../pages/OrderList";
 import UserList from "../pages/UserList";
 
-
-
 const publicRoutes = [
   { path: config.routes.home, component: Home },
   { path: config.routes.profile, component: Profile, layout: ProfileLayout },

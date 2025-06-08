@@ -29,7 +29,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final String[] PUBLIC_POST_ENDPOINTS = {"/api/auth/**", "/oauth2/**", "/users/register", "/auth/**",};
-    private final String[] PUBLIC_GET_ENDPOINTS = { "/auth/**", "/products"};
+    private final String[] PUBLIC_GET_ENDPOINTS = { "/auth/**", "/products/**"};
 
     @Autowired
     private OAuth2SuccessHandler oAuth2SuccessHandler;

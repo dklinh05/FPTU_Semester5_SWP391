@@ -3,7 +3,7 @@ import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
 import { useNavigate } from "react-router-dom";
 import { getUserById } from "../../services/userService";
-import { useUser } from "../../context/UserContext";
+import { useUser} from "../../context/UserContext";
 
 const cx = classNames.bind(styles);
 

@@ -49,11 +49,23 @@ public class CartItemService {
 
         return cartItemRepository.save(newItem);
     }
+    public void updateQuantity(Integer cartItemId, Integer quantity) {
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        if (quantity <= 0) {
+            cartItemRepository.delete(cartItem);
+        } else {
+            cartItem.setQuantity(quantity);
+            cartItemRepository.save(cartItem);
+        }
+    }
+
 
     // Xóa sản phẩm khỏi giỏ hàng
     @Transactional
-    public void removeFromCart(Integer buyerId, Integer productId) {
-        cartItemRepository.deleteByBuyerUserIDAndProductProductID(buyerId, productId);
+    public void removeFromCart(Integer cartItemId) {
+        cartItemRepository.deleteById(cartItemId);
     }
 
     // Lấy danh sách giỏ hàng của người dùng

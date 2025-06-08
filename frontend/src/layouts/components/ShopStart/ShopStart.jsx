@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import CardItem from "../../../components/CardItem/CardItem";
 import { renderProduct } from "../../../services/productService";
 
 function ShopStart() {
-  const [products, setProducts]  = useState([]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const getProducts = async () => {
@@ -93,7 +94,10 @@ function ShopStart() {
                 <div className="col-lg-12">
                   <div className="row g-4">
                     {products?.map((product, index) => (
-                      <div className="col-md-6 col-lg-4 col-xl-3">
+                      <Link
+                        to={`/product/${product.productID}`}
+                        className="col-md-6 col-lg-4 col-xl-3"
+                      >
                         <CardItem
                           key={index}
                           id={product.productID}
@@ -103,7 +107,7 @@ function ShopStart() {
                           description={product.description}
                           price={product.price}
                         />
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 </div>

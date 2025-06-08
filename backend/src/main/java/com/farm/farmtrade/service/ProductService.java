@@ -94,4 +94,10 @@ public class ProductService {
 
         productRepository.deleteById(productId);
     }
+
+    public Product getProductById(Integer id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với id: " + id));
+    }
+
 }

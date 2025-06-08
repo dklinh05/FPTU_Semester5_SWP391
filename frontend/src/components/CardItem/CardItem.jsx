@@ -1,8 +1,12 @@
+import { useUser } from "../../context/UserContext";
 import { addProductToCart } from "../../services/cartItemService";
 
 function CardItem({ id, category, title, description, price, img }) {
-  const userId = localStorage.getItem("user");
-  const addToCart = async () => {
+  const { userId } = useUser();
+
+  const addToCart = async (e) => {
+    e.preventDefault(); // Ngăn chuyển trang nếu nút nằm trong <Link>
+    e.stopPropagation();
     const productData = new FormData();
 
     productData.append("buyerId", userId);
@@ -15,6 +19,8 @@ function CardItem({ id, category, title, description, price, img }) {
       console.error("Lỗi khi lấy sản phẩm:", error);
     }
   };
+
+  
 
   return (
     <div className="rounded position-relative fruite-item">
@@ -37,7 +43,6 @@ function CardItem({ id, category, title, description, price, img }) {
         <div className="d-flex justify-content-between flex-lg-wrap">
           <p className="text-dark fs-5 fw-bold mb-0">${price} / kg</p>
           <div
-            
             className="btn border border-secondary rounded-pill px-3 text-primary"
             onClick={addToCart}
           >

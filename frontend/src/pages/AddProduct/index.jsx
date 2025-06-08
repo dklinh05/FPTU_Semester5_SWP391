@@ -1,9 +1,10 @@
 import React, { useState } from "react";
+import { useUser } from "../../context/UserContext";
 import { addProduct } from "../../services/productService";
 
 
 function AddProduct() {
-  const userId = localStorage.getItem("user");
+  const { userId } = useUser();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -32,7 +33,7 @@ function AddProduct() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const productData = new FormData();
-    
+    console.log(userId)
     productData.append("userId", userId);
     productData.append("name", formData.name);
     productData.append("description", formData.description);
@@ -43,6 +44,7 @@ function AddProduct() {
     if (formData.image) {
       productData.append("image", formData.image);
     }
+    console.log(userId)
     try {
       const response = await addProduct(productData);
       alert("Thêm sản phẩm thành công!");

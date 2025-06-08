@@ -43,6 +43,13 @@ public class ProductController {
         return ResponseEntity.ok(productService.addProduct(product));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProductById(@PathVariable Integer id) {
+        Product product = productService.getProductById(id);
+        return ResponseEntity.ok(product);
+    }
+
+
     // Update product
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Integer id, @RequestBody Product product) {
@@ -59,8 +66,6 @@ public class ProductController {
             return ResponseEntity.status(404).body(e.getMessage());
         }
     }
-
-
 
     @GetMapping("/supplier/{supplierId}")
     public List<Product> getProductsBySupplier(@PathVariable Integer supplierId) {

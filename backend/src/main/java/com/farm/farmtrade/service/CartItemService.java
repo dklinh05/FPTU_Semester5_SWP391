@@ -35,7 +35,7 @@ public class CartItemService {
         }
 
         // Nếu chưa tồn tại thì tạo mới
-        User buyer = userRepository.findById(String.valueOf(buyerId))
+        User buyer = userRepository.findById(buyerId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người mua"));
 
         Product product = productRepository.findById(productId)

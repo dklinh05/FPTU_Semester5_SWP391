@@ -32,7 +32,7 @@ const publicRoutes = [
   { path: config.routes.login, component: Login, layout: null },
   { path: config.routes.register, component: Register, layout: null },
   { path: config.routes.changePassword, component: ChangePassword },
-  { path: config.routes.forgotPassword, component: ForgotPassword },
+  { path: config.routes.forgotPassword, component: ForgotPassword, layout: null },
   { path: config.routes.completeGoogleProfile, component: CompleteGoogleProfile },
   { path: config.routes.shop, component: Shop, layout: ShopLayout },
   { path: config.routes.cart, component: Cart, layout: CartLayout },

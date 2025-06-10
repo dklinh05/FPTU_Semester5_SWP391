@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import classNames from "classnames/bind";
 import styles from "./Header.module.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // Thêm useLocation
 import { getUserById } from "../../services/userService";
-import { useUser} from "../../context/UserContext";
+import { useUser } from "../../context/UserContext";
 
 const cx = classNames.bind(styles);
 
 function Header() {
   const { user } = useUser();
-
+  const location = useLocation(); // Lấy thông tin đường dẫn hiện tại
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
@@ -34,11 +34,13 @@ function Header() {
 
   const handleLogout = () => {
     alert("Đăng xuất thành công!");
-    localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/");
     window.location.reload();
   };
+
+  // Kiểm tra nếu là trang profile thì không hiển thị login/register
+  const isProfilePage = location.pathname.startsWith("/profile");
 
   return (
     <div className="container-fluid fixed-top">
@@ -49,13 +51,13 @@ function Header() {
             <small className="me-3">
               <i className="fas fa-map-marker-alt me-2 text-secondary"></i>
               <a href="#" className="text-white">
-                123 Street, New York
+                Da Nang City, Viet Nam
               </a>
             </small>
             <small className="me-3">
               <i className="fas fa-envelope me-2 text-secondary"></i>
               <a href="#" className="text-white">
-                Email@Example.com
+                farmtrade43@gmail.com
               </a>
             </small>
           </div>
@@ -76,8 +78,8 @@ function Header() {
       {/* Navbar */}
       <div className="container px-0">
         <nav className="navbar navbar-light bg-white navbar-expand-xl">
-          <a href="index.html" className="navbar-brand">
-            <h1 className="text-primary display-6">Fruitables</h1>
+          <a href="/" className="navbar-brand" onClick={handleLogoClick}>
+            <h1 className="text-primary display-6">Farm Trade</h1>
           </a>
           <button
             className="navbar-toggler py-2 px-3"
@@ -113,20 +115,26 @@ function Header() {
                   <a href="/cart" className="dropdown-item">
                     Cart
                   </a>
-                  <a href="chackout.html" className="dropdown-item">
-                    Chackout
-                  </a>
                   <a href="/testimonial" className="dropdown-item">
                     Testimonial
-                  </a>
-                  <a href="404.html" className="dropdown-item">
-                    404 Page
                   </a>
                 </div>
               </div>
               <a href="/contact" className="nav-item nav-link">
                 Contact
               </a>
+
+              {/* Chỉ hiển thị Login/Register nếu không phải trang profile */}
+              {!isProfilePage && (
+                <>
+                  <a href="/login" className="nav-item nav-link">
+                    Login
+                  </a>
+                  <a href="/register" className="nav-item nav-link">
+                    Register
+                  </a>
+                </>
+              )}
             </div>
             <div className="d-flex align-items-center m-3 me-0">
               <button
@@ -183,7 +191,7 @@ function Header() {
                       </a>
                     </li>
                     <li>
-                      <a className="dropdown-item py-2" href="/">
+                      <a className="dropdown-item py-2" href="/settings">
                         <i className="fa-solid fa-gear me-2 text-info"></i>
                         Setting
                       </a>

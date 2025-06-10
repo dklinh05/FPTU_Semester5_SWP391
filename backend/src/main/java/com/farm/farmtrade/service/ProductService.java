@@ -1,6 +1,6 @@
 package com.farm.farmtrade.service;
 
-import com.farm.farmtrade.dto.Request.ProductRequest.ProductCreateRequest;
+import com.farm.farmtrade.dto.request.productRequest.ProductCreateRequest;
 import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.repository.ProductRepository;
@@ -9,11 +9,8 @@ import com.farm.farmtrade.service.fileStorage.FileStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.function.Supplier;
 
 @Service
 @Slf4j
@@ -33,7 +30,7 @@ public class ProductService {
 
 
         // Tìm supplier
-        User user = userRepository.findById("23").orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(23).orElseThrow(() -> new RuntimeException("User not found"));
 
         // Tạo sản phẩm
 

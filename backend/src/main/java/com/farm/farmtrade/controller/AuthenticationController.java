@@ -1,9 +1,10 @@
 package com.farm.farmtrade.controller;
 
-import com.farm.farmtrade.dto.Request.*;
-import com.farm.farmtrade.dto.Response.ApiResponse;
-import com.farm.farmtrade.dto.Response.AuthenticationResponse;
-import com.farm.farmtrade.dto.Response.IntrospectResponse;
+import com.farm.farmtrade.dto.request.authenticationRequest.*;
+import com.farm.farmtrade.dto.response.ApiResponse;
+import com.farm.farmtrade.dto.response.AuthenticationResponse;
+import com.farm.farmtrade.dto.response.IntrospectResponse;
+import com.farm.farmtrade.repository.UserRepository;
 import com.farm.farmtrade.service.AuthenticationService;
 import com.farm.farmtrade.service.UserService;
 import com.nimbusds.jose.JOSEException;
@@ -30,7 +31,7 @@ public class AuthenticationController {
 
     AuthenticationService authenticationService;
     private final UserService userService;
-
+    UserRepository userRepository;
 //    @PostMapping("/login")
 //    Integer login(@RequestBody AuthenticationRequest request) {
 //        return authenticationService.authenticate(request);

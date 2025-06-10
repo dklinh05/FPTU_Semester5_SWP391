@@ -29,7 +29,7 @@ public class User {
     String avatar;
     LocalDateTime createdAt;
     Boolean isActive;
-
+    Boolean isLocked;
     // Buyer
     String address;
     Integer rewardPoints;

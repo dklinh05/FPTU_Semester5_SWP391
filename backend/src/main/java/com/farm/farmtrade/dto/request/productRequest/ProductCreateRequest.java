@@ -1,4 +1,4 @@
-package com.farm.farmtrade.dto.Request.ProductRequest;
+package com.farm.farmtrade.dto.request.productRequest;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

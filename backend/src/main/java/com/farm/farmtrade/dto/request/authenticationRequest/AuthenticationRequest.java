@@ -1,4 +1,5 @@
-package com.farm.farmtrade.dto.Request;
+package com.farm.farmtrade.dto.request.authenticationRequest;
+
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,8 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VerifyOTPRequest {
-    String email;
-    String otp;
-    String newPassword;
+public class AuthenticationRequest {
+    String username;
+    String password;
 }

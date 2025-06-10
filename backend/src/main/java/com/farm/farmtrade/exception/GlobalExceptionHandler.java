@@ -1,8 +1,7 @@
 package com.farm.farmtrade.exception;
 
 
-import com.farm.farmtrade.dto.Response.ApiResponse;
-import org.springframework.http.HttpStatus;
+import com.farm.farmtrade.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;

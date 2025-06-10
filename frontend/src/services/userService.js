@@ -13,7 +13,7 @@ export const getUserById = async (id) => {
 };
 
 export const uploadAvatar = async (userId, formData) => {
-  const res = await formRequest.put(`users/${userId}/avatar`, {
+  const res = await formRequest.post(`users/${userId}/avatar`, {
     body: formData,
   });
 
@@ -42,10 +42,10 @@ export const uploadAvatar = async (userId, formData) => {
 //   }
 
 //   return await response.json();
-// };
+// }; 
 
 export const updateUser = async (userId, data) => {
-  const response = await request.put(`${userId}`, {
+  const response = await formRequest.put(`users/${userId}`, {
     body: data,
   });
   if (!response.ok) throw new Error("Failed to update user");

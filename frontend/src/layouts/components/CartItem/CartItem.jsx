@@ -1,11 +1,20 @@
-import { useEffect,useCallback, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import debounce from "lodash/debounce";
 import {
   deleteCartItem,
   updateQuantityCart,
 } from "../../../services/cartItemService";
 
-function CartItem({ quantity, img, name, price, id, onDeleted }) {
+function CartItem({
+  quantity,
+  img,
+  name,
+  price,
+  id,
+  onDeleted,
+  checked,
+  onCheck,
+}) {
   const [localQuantity, setLocalQuantity] = useState(quantity);
 
   const handleDeleteCartItem = async () => {
@@ -70,6 +79,15 @@ function CartItem({ quantity, img, name, price, id, onDeleted }) {
 
   return (
     <tr>
+      <td className="text-center align-middle">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => onCheck(e.target.checked)}
+            style={{ transform: "scale(1.3)" }}
+        />
+      </td>
+
       <th scope="row">
         <div className="d-flex align-items-center">
           <img

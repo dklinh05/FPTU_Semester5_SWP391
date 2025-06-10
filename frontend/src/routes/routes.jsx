@@ -25,6 +25,7 @@ import CartLayout from '../layouts/CartLayout';
 import AdminLayout from '../layouts/AdminLayout';
 import OrderList from "../pages/OrderList";
 import UserList from "../pages/UserList";
+import Checkout from '../pages/Checkout';
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
@@ -44,7 +45,8 @@ const publicRoutes = [
   { path: config.routes.addProduct, component: AddProduct, layout: AdminLayout },
   { path: config.routes.listProduct, component: ListProduct, layout: AdminLayout},
   { path: config.routes.orderList, component: OrderList, layout: AdminLayout },
-  { path: config.routes.userList, component: UserList, layout: AdminLayout }
+  { path: config.routes.userList, component: UserList, layout: AdminLayout },
+  { path: config.routes.checkout, component: Checkout, layout: null }
 ];
 
 const privateRoutes = [];

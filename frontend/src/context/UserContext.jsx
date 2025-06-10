@@ -1,10 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import { getTokenFromCookie } from "../services/authService";
 import { getUserById } from "../services/userService";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+  
   const storedToken = localStorage.getItem("token");
 
   const [token, setToken] = useState(storedToken || null);
@@ -26,6 +28,9 @@ export const UserProvider = ({ children }) => {
         setUserId(null);
         setUser(null);
       }
+    } else {
+       const token = getTokenFromCookie();
+       localStorage.setItem("token", token)
     }
   }, [storedToken]);
 

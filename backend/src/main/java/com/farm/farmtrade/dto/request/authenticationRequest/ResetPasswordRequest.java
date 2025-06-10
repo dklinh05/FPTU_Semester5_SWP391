@@ -1,4 +1,4 @@
-package com.farm.farmtrade.dto.Request;
+package com.farm.farmtrade.dto.request.authenticationRequest;
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

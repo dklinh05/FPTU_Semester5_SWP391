@@ -8,7 +8,7 @@ import {
 } from "../../services/userService";
 
 const Profile = () => {
-  const { user, setUser } = useUser();
+  const { user,userId, setUser } = useUser();
   const [editField, setEditField] = useState(null); // "username", "email"
   const [fieldValue, setFieldValue] = useState("");
   const location = useLocation();
@@ -28,8 +28,8 @@ const Profile = () => {
     formData.append("avatar", file); // Tên field phải khớp với backend
 
     try {
-      const updatedUser = await uploadAvatar(user.userID, formData);
-      setUser(updatedUser);
+      const updatedUser = await uploadAvatar(userId, formData);
+      // setUser(updatedUser);
       setAvatarTimestamp(Date.now());
     } catch (err) {
       console.error("Lỗi upload avatar:", err);
@@ -57,7 +57,7 @@ const Profile = () => {
     }
 
     try {
-      const updatedUser = await updateUser(user.userID, payload);
+      const updatedUser = await updateUser(userId, payload);
       setUser(updatedUser);
       setEditField(null);
     } catch (err) {

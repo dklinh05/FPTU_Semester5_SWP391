@@ -2,11 +2,13 @@ package com.farm.farmtrade.controller;
 
 
 import com.cloudinary.Cloudinary;
-import com.farm.farmtrade.dto.Request.UserCreationRequest;
-import com.farm.farmtrade.dto.Request.UserUpdateRequest;
-import com.farm.farmtrade.dto.Response.ApiResponse;
+import com.farm.farmtrade.dto.request.authenticationRequest.RoleUpgradeRequest;
+import com.farm.farmtrade.dto.request.authenticationRequest.UserCreationRequest;
+import com.farm.farmtrade.dto.request.authenticationRequest.UserUpdateRequest;
+import com.farm.farmtrade.entity.RoleUpgrade;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.repository.UserRepository;
+import com.farm.farmtrade.service.RoleUpgradeService;
 import com.farm.farmtrade.service.UserService;
 import com.farm.farmtrade.service.cloudinary.CloudinaryService;
 import jakarta.mail.MessagingException;
@@ -36,19 +38,13 @@ public class UserController {
     private CloudinaryService cloudinaryService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleUpgradeService roleUpgradeService;
 
     @PostMapping("/register")
     User createUser(@RequestBody @Valid UserCreationRequest request) throws MessagingException {
         return userService.createRequest(request);
     }
-
-//    ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest request) throws MessagingException {
-//        ApiResponse<User> apiResponse = new ApiResponse<>();
-//
-//        apiResponse.setResult(userService.createRequest(request));
-//
-//        return apiResponse;
-//    }
 
 
     @GetMapping
@@ -62,7 +58,7 @@ public class UserController {
 
     @PutMapping("/google/{userID}")
     User upDateGoogleUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
-        return userService.updateGoogleUser(userID,request);
+        return userService.updateGoogleUser(Integer.valueOf(userID),request);
     }
 //     @PutMapping("/{userID}")
 //     User upDateUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
@@ -71,17 +67,17 @@ public class UserController {
 
     @GetMapping("/{userID}")
     User getUser(@PathVariable String userID) {
-        return userService.getUser(userID);
+        return userService.getUser(Integer.valueOf(userID));
     }
 
 
     @PutMapping("/{userID}")
     public ResponseEntity<?> updateUser(
-            @PathVariable Integer userID,
+            @PathVariable String userID,
             @RequestBody UserUpdateRequest request) {
 
         // Gọi service để cập nhật người dùng
-        boolean isUpdated = userService.updateUser(userID, request);
+        boolean isUpdated = userService.updateUser(Integer.valueOf(userID), request);
 
         if (isUpdated) {
             return ResponseEntity.ok().build(); // Thành công
@@ -93,8 +89,8 @@ public class UserController {
 
     @Transactional
     @DeleteMapping("/{userID}")
-    public ResponseEntity<User> deleteUser(@PathVariable Integer userID) {
-        Optional<User> user = userRepository.findById(String.valueOf(userID));
+    public ResponseEntity<User> deleteUser(@PathVariable String userID) {
+        Optional<User> user = userRepository.findById(Integer.valueOf(userID));
         if (user.isPresent()) {
             userRepository.delete(user.get());
             return ResponseEntity.ok().build();
@@ -108,7 +104,7 @@ public class UserController {
             @PathVariable("userID") String userID,
             @RequestParam("avatar") MultipartFile file) {
         try {
-            User updatedUser = userService.uploadAvatar(userID, file);
+            User updatedUser = userService.uploadAvatar(Integer.valueOf(userID), file);
             return ResponseEntity.ok(updatedUser);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Collections.singletonMap("error", e.getMessage()));
@@ -118,7 +114,7 @@ public class UserController {
     public User updateAvatar(String userId, MultipartFile file) {
         try {
             // 1. Tìm user
-            Optional<User> optionalUser = userRepository.findById(userId);
+            Optional<User> optionalUser = userRepository.findById(Integer.valueOf(userId));
             if (!optionalUser.isPresent()) {
                 throw new RuntimeException("Không tìm thấy user với ID: " + userId);
             }
@@ -144,5 +140,20 @@ public class UserController {
             throw new RuntimeException("Lỗi khi upload avatar: " + e.getMessage(), e);
         }
     }
+
+    // Gửi yêu cầu nâng cấp vai trò (CUSTOMER ➝ SUPPLIER)
+    @PostMapping("/request")
+    public ResponseEntity<RoleUpgrade> submitUpgradeRequest(
+            @RequestBody RoleUpgradeRequest request
+    ) {
+        RoleUpgrade roleUpgrade = roleUpgradeService.submitRequest(
+                request.getUserId(),
+                request.getRequestedRole(),
+                request.getBusinessName(),
+                request.getCertification()
+        );
+        return ResponseEntity.ok(roleUpgrade);
+    }
+
 
 }

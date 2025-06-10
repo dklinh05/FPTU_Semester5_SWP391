@@ -2,17 +2,17 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { renderProductById } from "../../services/productService";
 
-function Product() {
-  const { id } = useParams(); // <-- lấy id từ URL
-  const [product, setProduct] = useState(null);
+function Product({product}) {
+  // const { id } = useParams(); // <-- lấy id từ URL
+  // const [product, setProduct] = useState(null);
 
-  useEffect(() => {
-    renderProductById(id)
-      .then((data) => setProduct(data))
-      .catch((err) => console.error("Lỗi khi lấy sản phẩm:", err));
-  }, [id]);
+  // useEffect(() => {
+  //   renderProductById(id)
+  //     .then((data) => setProduct(data))
+  //     .catch((err) => console.error("Lỗi khi lấy sản phẩm:", err));
+  // }, [id]);
 
-  if (!product) return <p>Đang tải...</p>;
+  // if (!product) return <p>Đang tải...</p>;
 
   return (
     <>

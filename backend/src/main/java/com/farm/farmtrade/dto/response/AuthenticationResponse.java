@@ -1,4 +1,4 @@
-package com.farm.farmtrade.dto.Response;
+package com.farm.farmtrade.dto.response;
 
 
 import lombok.*;

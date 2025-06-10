@@ -27,10 +27,12 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-    private final String[] PUBLIC_POST_ENDPOINTS = {"/api/auth/**", "/oauth2/**", "/users/register", "/auth/**",};
+    
+    
+    private final String[] ADMIN_ENDPOINTS = {"/admin/**","/users","/admin","/voucher/**","/voucher"};
+    private final String[] PUBLIC_POST_ENDPOINTS = {"/api/auth/**", "/oauth2/**", "/users/register", "/auth/**","/orders","/orders/**","/voucher"};
     private final String[] PUBLIC_GET_ENDPOINTS = { "/auth/**", "/products/**"};
-
+    
     @Autowired
     private OAuth2SuccessHandler oAuth2SuccessHandler;
 
@@ -58,8 +60,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST,PUBLIC_POST_ENDPOINTS).permitAll() // cho phép truy cập public chỉ với HttpMethod POST
                         .requestMatchers(HttpMethod.GET,PUBLIC_GET_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.GET,"/users").hasAuthority("ROLE_ADMIN") // chỉ admin mới truy cập được endpoint này(mặc định là ADMIN truy cập được full đường truyền được config cho SUPPLIER và CUSTOMER, tương tự SUPPLIER cũng được truy cập endpoint của CUSTOMER), nhưng phải cung cấp token)
-                        .requestMatchers(HttpMethod.GET,"/users/**").hasAuthority("ROLE_CUSTOMER") // customer chỉ truy cập được endpoint này
+                                .requestMatchers(ADMIN_ENDPOINTS).hasAuthority("ROLE_ADMIN")// chỉ admin mới truy cập được endpoint này(mặc định là ADMIN truy cập được full đường truyền được config cho SUPPLIER và CUSTOMER, tương tự SUPPLIER cũng được truy cập endpoint của CUSTOMER), nhưng phải cung cấp token)
+                        .requestMatchers("/users/**").hasAuthority("ROLE_CUSTOMER")
                         .anyRequest().authenticated()
                 )
                 // Google OAuth2 login

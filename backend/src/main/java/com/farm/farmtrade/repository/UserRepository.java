@@ -2,8 +2,7 @@ package com.farm.farmtrade.repository;
 
 import com.farm.farmtrade.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,13 +10,11 @@ import java.util.Optional;
 
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
     boolean existsByUsername(String username);
     Optional<User> findByUsername(String username);
-    //    boolean existsByEmail(String email);
-//    User findByEmail(String email);
     Optional<User> findByEmail(String email);
-    // Tìm user theo email
+    List<User> findByRole(String role);
 
     // Kiểm tra xem email đã tồn tại chưa
     Boolean existsByEmail(String email);

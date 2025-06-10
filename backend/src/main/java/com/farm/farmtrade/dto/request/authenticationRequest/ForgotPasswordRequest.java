@@ -1,4 +1,4 @@
-package com.farm.farmtrade.dto.Request;
+package com.farm.farmtrade.dto.request.authenticationRequest;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

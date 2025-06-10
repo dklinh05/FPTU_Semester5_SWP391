@@ -1,4 +1,4 @@
-package com.farm.farmtrade.dto.Request;
+package com.farm.farmtrade.dto.response;
 
 
 import lombok.*;
@@ -9,6 +9,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IntrospectRequest{
-    String token;
+public class IntrospectResponse {
+    boolean valid;
 }

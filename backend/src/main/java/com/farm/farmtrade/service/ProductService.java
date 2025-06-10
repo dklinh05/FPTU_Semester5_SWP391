@@ -1,6 +1,7 @@
 package com.farm.farmtrade.service;
 
-import com.farm.farmtrade.dto.Request.ProductRequest.ProductCreateRequest;
+
+import com.farm.farmtrade.dto.request.productRequest.ProductCreateRequest;
 import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.repository.ProductRepository;
@@ -48,7 +49,7 @@ public class ProductService {
 
 
         // Tìm supplier
-        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(Integer.valueOf(request.getUserId())).orElseThrow(() -> new RuntimeException("User not found"));
 
         // Tạo sản phẩm
 

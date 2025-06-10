@@ -1,5 +1,4 @@
-package com.farm.farmtrade.dto.Response;
-
+package com.farm.farmtrade.dto.request.authenticationRequest;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,6 +8,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class IntrospectResponse {
-    boolean valid;
+public class VerifyOTPRequest {
+    String email;
+    String otp;
+    String newPassword;
 }

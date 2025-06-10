@@ -1,13 +1,13 @@
 package com.farm.farmtrade.service;
 
 
-import com.farm.farmtrade.dto.Request.AuthenticationRequest;
-import com.farm.farmtrade.dto.Request.ForgotPasswordRequest;
-import com.farm.farmtrade.dto.Request.IntrospectRequest;
-import com.farm.farmtrade.dto.Request.SendOTPRequest;
+import com.farm.farmtrade.dto.request.authenticationRequest.AuthenticationRequest;
+import com.farm.farmtrade.dto.request.authenticationRequest.ForgotPasswordRequest;
+import com.farm.farmtrade.dto.request.authenticationRequest.IntrospectRequest;
+import com.farm.farmtrade.dto.request.authenticationRequest.SendOTPRequest;
 
-import com.farm.farmtrade.dto.Response.AuthenticationResponse;
-import com.farm.farmtrade.dto.Response.IntrospectResponse;
+import com.farm.farmtrade.dto.response.AuthenticationResponse;
+import com.farm.farmtrade.dto.response.IntrospectResponse;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.entity.VerificationToken;
 import com.farm.farmtrade.enums.Role;
@@ -63,7 +63,7 @@ public class AuthenticationService {
     }
 
     public void sendOTP(SendOTPRequest request) throws MessagingException {
-        User user = userRepository.findById(String.valueOf(Integer.valueOf(request.getUserId()))).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById((Integer.valueOf(request.getUserId()))).orElseThrow(() -> new RuntimeException("User not found"));
 
         String token = String.format("%06d", new Random().nextInt(1000000));
         saveOTPToken(user, token);
@@ -115,8 +115,7 @@ public class AuthenticationService {
 
         boolean authenticated = passwordEncoder.matches(request.getPassword(),
                 user.getPasswordHash());
-
-        if (!authenticated)
+        if (!authenticated||user.getIsLocked())
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         var token = generateToken(user);
 

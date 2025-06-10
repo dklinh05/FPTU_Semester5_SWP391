@@ -1,6 +1,6 @@
-package com.farm.farmtrade.dto.Request;
+package com.farm.farmtrade.dto.request.authenticationRequest;
 
-import jakarta.validation.constraints.Size;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,6 +9,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SendOTPRequest {
-    String userId;
-} 
+public class IntrospectRequest{
+    String token;
+}

@@ -1,29 +1,35 @@
 package com.farm.farmtrade.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Orders")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer orderID;
+    Integer orderID;
 
     @ManyToOne
     @JoinColumn(name = "BuyerID")
-    private User buyer;
+    User buyer;
+
+    LocalDateTime orderDate;
+    String status;
+    BigDecimal totalAmount;
 
     @ManyToOne
-    @JoinColumn(name = "ShipperID")
-    private User shipper;
-
-    private LocalDateTime orderDate;
-    private String status;
-    private BigDecimal totalAmount;
-
-    // Getters and setters...
+    @JoinColumn(name = "VoucherID")
+    Voucher voucher;
 }
 

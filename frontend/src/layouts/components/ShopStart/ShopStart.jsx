@@ -10,8 +10,8 @@ function ShopStart() {
     const getProducts = async () => {
       try {
         const response = await renderProduct();
-        setProducts(response);
-        console.log("Response:", response);
+        setProducts(response.content);
+        console.log("Response:", response.content);
       } catch (error) {
         console.error("Lỗi khi lấy sản phẩm:", error);
       }

@@ -4,11 +4,15 @@ import com.farm.farmtrade.dto.Request.ProductRequest.ProductCreateRequest;
 import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.query.Page;
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -20,21 +24,28 @@ public class ProductController {
     private ProductService productService;
 
     // Lấy danh sách sản phẩm không phân trang
+//    @GetMapping
+//    public ResponseEntity<List<Product>> listProductsForHome() {
+//        List<Product> products = productService.getAllActiveProducts();
+//        return ResponseEntity.ok(products);
+//    }
+
     @GetMapping
-    public ResponseEntity<List<Product>> listProductsForHome() {
-        List<Product> products = productService.getAllActiveProducts();
+    public ResponseEntity<Page<Product>> listProductsForHome(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir
+    ) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
+        );
+        Page products = productService.getActiveProductsWithPagination(pageable);
         return ResponseEntity.ok(products);
     }
 
-    // (Tùy chọn) Lấy danh sách có phân trang
-//    @GetMapping("/home/paged")
-//    public ResponseEntity<Page<Product>> listProductsPaged(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size
-//    ) {
-//        Page<Product> paged = productService.getAllActiveProductsPaged(page, size);
-//        return ResponseEntity.ok(paged);
-//    }
 
     // Add product
     @PostMapping

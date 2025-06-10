@@ -3,22 +3,22 @@ import { useParams, Link } from "react-router-dom";
 import { renderProductBySupplierId } from "../../services/productService";
 import CardItem from "../../components/CardItem/CardItem";
 
-function Shop() {
-  const { id } = useParams();
-  const [products, setProducts] = useState([]);
+function Shop({products}) {
+  // const { id } = useParams();
+  // const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const response = await renderProductBySupplierId(id);
-        setProducts(response);
-        console.log("Response:", response);
-      } catch (error) {
-        console.error("Lỗi khi lấy sản phẩm:", error);
-      }
-    };
-    getProducts();
-  }, []);
+  // useEffect(() => {
+  //   const getProducts = async () => {
+  //     try {
+  //       const response = await renderProductBySupplierId(id);
+  //       setProducts(response);
+  //       console.log("Response:", response);
+  //     } catch (error) {
+  //       console.error("Lỗi khi lấy sản phẩm:", error);
+  //     }
+  //   };
+  //   getProducts();
+  // }, []);
 
   return (
     <div className="col-lg-9">

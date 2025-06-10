@@ -8,20 +8,20 @@ function Hero() {
             <h1 className="mb-5 display-3 text-primary">
               Organic Veggies & Fruits Foods
             </h1>
-            <div className="position-relative mx-auto">
-              <input
-                className="form-control border-2 border-secondary w-75 py-3 px-4 rounded-pill"
-                type="number"
-                placeholder="Search"
-              />
-              <button
-                type="submit"
-                className="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100"
-                style={{ top: 0, right: "25%" }}
-              >
-                Submit Now
-              </button>
-            </div>
+            {/*<div className="position-relative mx-auto">*/}
+            {/*  <input*/}
+            {/*    className="form-control border-2 border-secondary w-75 py-3 px-4 rounded-pill"*/}
+            {/*    type="number"*/}
+            {/*    placeholder="Search"*/}
+            {/*  />*/}
+            {/*  <button*/}
+            {/*    type="submit"*/}
+            {/*    className="btn btn-primary border-2 border-secondary py-3 px-4 position-absolute rounded-pill text-white h-100"*/}
+            {/*    style={{ top: 0, right: "25%" }}*/}
+            {/*  >*/}
+            {/*    Submit Now*/}
+            {/*  </button>*/}
+            {/*</div>*/}
           </div>
 
           <div className="col-md-12 col-lg-5">

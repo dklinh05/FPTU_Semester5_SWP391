@@ -20,6 +20,7 @@ const routes = {
   listProduct: '/listproduct',
   orderList: '/orderlist',
   userList: '/userlist',
+    request: '/request',
 };
 
 export default routes;

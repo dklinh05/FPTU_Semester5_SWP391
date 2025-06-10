@@ -1,4 +1,17 @@
-function CartTotal({total}) {
+import { useNavigate } from "react-router-dom";
+
+function CartTotal({carts}) {
+  const navigate = useNavigate();
+
+  const handleProceedCheckout = ()=>{
+     navigate("/checkout", { state: { cartItems: carts } });
+  }
+
+   const total = carts.reduce((total, cart) => {
+    return total + cart.quantity * cart.product.price;
+  }, 0);
+
+
   return (
     <div className="row g-4 justify-content-end">
       <div className="col-8"></div>
@@ -27,6 +40,7 @@ function CartTotal({total}) {
           <button
             className="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"
             type="button"
+            onClick={handleProceedCheckout}
           >
             Proceed Checkout
           </button>

@@ -9,14 +9,17 @@ const routes = {
   changePassword: '/change-password',
   forgotPassword: '/forgot-password',
   completeGoogleProfile: '/CompleteGoogleProfile',
-  shop: '/shop/',
+  shop: '/shop/:id',
   contact: '/contact/',
   cart: '/cart/',
   testimonial: '/testimonial',
-  product: '/product',
+  product: '/product/:id',
   customerManagement: '/customer',
   dashboard: '/dashboard',
-  addProduct: '/addProduct',
+  addProduct: '/addproduct',
+  listProduct: '/listproduct',
+  orderList: '/orderlist',
+  userList: '/userlist',
 };
 
 export default routes;

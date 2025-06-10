@@ -1,6 +1,24 @@
+import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import CardItem from "../../../components/CardItem/CardItem";
+import { renderProduct } from "../../../services/productService";
 
 function ShopStart() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const getProducts = async () => {
+      try {
+        const response = await renderProduct();
+        setProducts(response.content);
+        console.log("Response:", response.content);
+      } catch (error) {
+        console.error("Lỗi khi lấy sản phẩm:", error);
+      }
+    };
+    getProducts();
+  }, []);
+
   return (
     <div className="container-fluid fruite py-5">
       <div className="container py-5">
@@ -75,78 +93,22 @@ function ShopStart() {
               <div className="row g-4">
                 <div className="col-lg-12">
                   <div className="row g-4">
-                    <div className="col-md-6 col-lg-4 col-xl-3">
-                      <CardItem
-                        category="Fruits"
-                        title="Grapes"
-                        description=" Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod
-        te incididunt"
-                        price="4.99"
-                      />
-                    </div>
-                    <div className="col-md-6 col-lg-4 col-xl-3">
-                      <CardItem
-                        category="Fruits"
-                        title="Grapes"
-                        description=" Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod
-        te incididunt"
-                        price="4.99"
-                      />
-                    </div>
-                    <div className="col-md-6 col-lg-4 col-xl-3">
-                      <CardItem
-                        category="Fruits"
-                        title="Grapes"
-                        description=" Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod
-        te incididunt"
-                        price="4.99"
-                      />
-                    </div>
-                    <div className="col-md-6 col-lg-4 col-xl-3">
-                      <CardItem
-                        category="Fruits"
-                        title="Grapes"
-                        description=" Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod
-        te incididunt"
-                        price="4.99"
-                      />
-                    </div>
-                    <div className="col-md-6 col-lg-4 col-xl-3">
-                      <CardItem
-                        category="Fruits"
-                        title="Grapes"
-                        description=" Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod
-        te incididunt"
-                        price="4.99"
-                      />
-                    </div>
-                    <div className="col-md-6 col-lg-4 col-xl-3">
-                      <CardItem
-                        category="Fruits"
-                        title="Grapes"
-                        description=" Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod
-        te incididunt"
-                        price="4.99"
-                      />
-                    </div>
-                    <div className="col-md-6 col-lg-4 col-xl-3">
-                      <CardItem
-                        category="Fruits"
-                        title="Grapes"
-                        description=" Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod
-        te incididunt"
-                        price="4.99"
-                      />
-                    </div>
-                    <div className="col-md-6 col-lg-4 col-xl-3">
-                      <CardItem
-                        category="Fruits"
-                        title="Grapes"
-                        description=" Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod
-        te incididunt"
-                        price="4.99"
-                      />
-                    </div>
+                    {products?.map((product, index) => (
+                      <Link
+                        to={`/product/${product.productID}`}
+                        className="col-md-6 col-lg-4 col-xl-3"
+                      >
+                        <CardItem
+                          key={index}
+                          id={product.productID}
+                          img={product.imageURL}
+                          category={product.category}
+                          title={product.name}
+                          description={product.description}
+                          price={product.price}
+                        />
+                      </Link>
+                    ))}
                   </div>
                 </div>
               </div>

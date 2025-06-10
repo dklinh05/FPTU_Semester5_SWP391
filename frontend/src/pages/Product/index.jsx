@@ -1,11 +1,26 @@
-function Product() {
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { renderProductById } from "../../services/productService";
+
+function Product({product}) {
+  // const { id } = useParams(); // <-- lấy id từ URL
+  // const [product, setProduct] = useState(null);
+
+  // useEffect(() => {
+  //   renderProductById(id)
+  //     .then((data) => setProduct(data))
+  //     .catch((err) => console.error("Lỗi khi lấy sản phẩm:", err));
+  // }, [id]);
+
+  // if (!product) return <p>Đang tải...</p>;
+
   return (
     <>
       <div className="col-lg-6">
         <div className="border rounded">
           <a href="#">
             <img
-              src="img/single-item.jpg"
+              src={product.imageURL ? product.imageURL : "img/single-item.jpg"}
               className="img-fluid rounded"
               alt="Image"
             />
@@ -13,9 +28,9 @@ function Product() {
         </div>
       </div>
       <div className="col-lg-6">
-        <h4 className="fw-bold mb-3">Brocoli</h4>
-        <p className="mb-3">Category: Vegetables</p>
-        <h5 className="fw-bold mb-3">3,35 $</h5>
+        <h4 className="fw-bold mb-3">{product.name}</h4>
+        <p className="mb-3">Category: {product.category}</p>
+        <h5 className="fw-bold mb-3">{product.price} $</h5>
         <div className="d-flex mb-4">
           <i className="fa fa-star text-secondary"></i>
           <i className="fa fa-star text-secondary"></i>
@@ -23,14 +38,8 @@ function Product() {
           <i className="fa fa-star text-secondary"></i>
           <i className="fa fa-star"></i>
         </div>
-        <p className="mb-4">
-          The generated Lorem Ipsum is therefore always free from repetition
-          injected humour, or non-characteristic words etc.
-        </p>
-        <p className="mb-4">
-          Susp endisse ultricies nisi vel quam suscipit. Sabertooth peacock
-          flounder; chain pickerel hatchetfish, pencilfish snailfish
-        </p>
+        <p className="mb-4">{product.description}</p>
+        <p className="mb-4">{product.description}</p>
         <div className="input-group quantity mb-5" style={{ width: "100px" }}>
           <div className="input-group-btn">
             <button className="btn btn-sm btn-minus rounded-circle bg-light border">

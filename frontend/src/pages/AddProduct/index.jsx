@@ -1,18 +1,22 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useUser } from "../../context/UserContext";
+import { addProduct } from "../../services/productService";
+
 
 function AddProduct() {
+  const { userId } = useUser();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     quantity: "",
-    image: null, // File ảnh
+    origin: "",
+    category: "",
+    image: null,
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -28,40 +32,34 @@ function AddProduct() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-console.log(formData)
+    const productData = new FormData();
+    console.log(userId)
+    productData.append("userId", userId);
+    productData.append("name", formData.name);
+    productData.append("description", formData.description);
+    productData.append("price", formData.price);
+    productData.append("origin", formData.origin);
+    productData.append("category", formData.category);
+    productData.append("stockQuantity", formData.quantity);
+    if (formData.image) {
+      productData.append("image", formData.image);
+    }
+    console.log(userId)
     try {
-      const productData = new FormData();
-      productData.append("name", formData.name);
-      productData.append("description", formData.description);
-      productData.append("price", formData.price);
-      productData.append("stockQuantity", formData.quantity);
-      if (formData.image) {
-        productData.append("image", formData.image);
-      }
-
-      const response = await axios.post("http://localhost:8080/farmtrade/products", productData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        // withCredentials: true, // gửi cookie nếu có xác thực
-      });
-
+      const response = await addProduct(productData);
       alert("Thêm sản phẩm thành công!");
-      console.log(response.data);
+      console.log("Response:", response.data);
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm:", error);
-      alert("Thêm sản phẩm thất bại!");
+      alert("Thêm sản phẩm thất bại.");
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="container mt-4"
-      encType="multipart/form-data"
-    >
+    <form onSubmit={handleSubmit} className="container mt-4" encType="multipart/form-data">
       <h3>Thêm Sản Phẩm Mới</h3>
 
+      {/* Tên sản phẩm */}
       <div className="mb-3">
         <label className="form-label">Tên sản phẩm</label>
         <input
@@ -74,6 +72,7 @@ console.log(formData)
         />
       </div>
 
+      {/* Mô tả */}
       <div className="mb-3">
         <label className="form-label">Mô tả</label>
         <textarea
@@ -82,9 +81,10 @@ console.log(formData)
           rows="3"
           value={formData.description}
           onChange={handleChange}
-        />
+        ></textarea>
       </div>
 
+      {/* Giá */}
       <div className="mb-3">
         <label className="form-label">Giá</label>
         <input
@@ -97,6 +97,7 @@ console.log(formData)
         />
       </div>
 
+      {/* Số lượng */}
       <div className="mb-3">
         <label className="form-label">Số lượng</label>
         <input
@@ -109,6 +110,38 @@ console.log(formData)
         />
       </div>
 
+      {/* Xuất xứ */}
+      <div className="mb-3">
+        <label className="form-label">Xuất xứ</label>
+        <input
+          type="text"
+          name="origin"
+          className="form-control"
+          value={formData.origin}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      {/* Danh mục */}
+      <div className="mb-3">
+        <label className="form-label">Danh mục</label>
+        <select
+          name="category"
+          className="form-select"
+          value={formData.category}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Chọn danh mục</option>
+          <option value="quần áo">Quần áo</option>
+          <option value="giày dép">Giày dép</option>
+          <option value="đồ điện tử">Đồ điện tử</option>
+          <option value="thực phẩm">Thực phẩm</option>
+        </select>
+      </div>
+
+      {/* Hình ảnh */}
       <div className="mb-3">
         <label className="form-label">Hình ảnh</label>
         <input
@@ -120,6 +153,7 @@ console.log(formData)
         />
       </div>
 
+      {/* Nút submit */}
       <button type="submit" className="btn btn-primary">
         Thêm sản phẩm
       </button>

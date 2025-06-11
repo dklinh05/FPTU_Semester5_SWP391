@@ -22,6 +22,8 @@ const routes = {
   userList: '/userlist',
   request: '/request',
   checkout: '/checkout',
+  purchase: '/purchase',
+  feedback: '/reviews'
 
 };
 

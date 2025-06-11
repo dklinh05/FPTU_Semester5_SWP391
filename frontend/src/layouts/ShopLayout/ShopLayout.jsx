@@ -6,34 +6,37 @@ import ShopHero from "../components/ShopHero";
 import SidebarDetail from "../../components/SidebarDetail";
 import Footer from "../../components/Footer";
 import { renderProductBySupplierId } from "../../services/productService";
+import { param } from "jquery";
 
 function ShopLayout({ children }) {
-
   const { id } = useParams();
   const [products, setProducts] = useState([]);
+  const [sortValue, setSortValue] = useState("createdAt");
+
+  const getProducts = async (sortBy) => {
+    try {
+      const response = await renderProductBySupplierId(id, sortBy);
+      setProducts(response.content);
+      console.log("Response:", response);
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm:", error);
+    }
+  };
 
   useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const response = await renderProductBySupplierId(id);
-        setProducts(response);
-        console.log("Response:", response);
-      } catch (error) {
-        console.error("Lỗi khi lấy sản phẩm:", error);
-      }
-    };
-    getProducts();
-  }, []);
+    getProducts(sortValue);
+  }, [sortValue]);
+
   return (
     <div>
       <Header />
-     <ShopBanner name={products[0]?.supplier?.fullName || "Shop"} />
+      <ShopBanner name={products[0]?.supplier?.fullName || "Shop"} />
       <div className="container-fluid fruite py-5">
         <div className="container py-5">
           <h1 className="mb-4">Fresh fruits shop</h1>
           <div className="row g-4">
             <div className="col-lg-12">
-              <ShopHero />
+              <ShopHero sortValue={sortValue} setSortValue={setSortValue} />
               <div className="row g-4">
                 <div className="col-lg-3">
                   <div className="row g-4">

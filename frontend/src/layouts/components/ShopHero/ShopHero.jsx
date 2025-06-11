@@ -1,6 +1,6 @@
 import SearchDetail from "../../../components/SearchDetail";
 
-function ShopHero() {
+function ShopHero({ sortValue, setSortValue }) {
   return (
     <div className="row g-4">
       {/* Search Input */}
@@ -20,11 +20,11 @@ function ShopHero() {
             id="fruits"
             name="fruitlist"
             className="border-0 form-select-sm bg-light me-3"
+            value={sortValue}
+            onChange={(e) => setSortValue(e.target.value)}
           >
-            <option value="volvo">Nothing</option>
-            <option value="saab">Popularity</option>
-            <option value="opel">Organic</option>
-            <option value="audi">Fantastic</option>
+            <option value="createdAt">Newest</option>
+            <option value="price">Price</option>
           </select>
         </div>
       </div>

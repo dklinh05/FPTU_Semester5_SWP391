@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import CardItem from "../../../components/CardItem/CardItem";
 import { renderProduct } from "../../../services/productService";
 

@@ -1,6 +1,7 @@
 function CheckoutItem({ quantity, img, name, price, id, onDeleted }) {
   return (
     <tr>
+      <th></th>
       <th scope="row">
         <div className="d-flex align-items-center mt-2">
           <img

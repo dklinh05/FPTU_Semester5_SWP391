@@ -14,7 +14,6 @@ function Header() {
   const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-const [carts, setCarts] = useState([]);
 
 
   // const handleClickAvatarUser = (e) => {

@@ -30,7 +30,7 @@ export const UserProvider = ({ children }) => {
       }
     } else {
        const token = getTokenFromCookie();
-       localStorage.setItem("token", token)
+       if(token) localStorage.setItem("token", token)
     }
   }, [storedToken]);
 

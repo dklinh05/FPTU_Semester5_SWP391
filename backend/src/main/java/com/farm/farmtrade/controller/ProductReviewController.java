@@ -1,6 +1,6 @@
 package com.farm.farmtrade.controller;
 
-import com.farm.farmtrade.dto.Request.ProductReviewRequest.CreateProductReviewRequest;
+import com.farm.farmtrade.dto.request.ProductReviewRequest.CreateProductReviewRequest;
 import com.farm.farmtrade.entity.ProductReview;
 import com.farm.farmtrade.service.ProductReviewService;
 import jakarta.validation.Valid;

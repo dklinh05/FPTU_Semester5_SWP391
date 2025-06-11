@@ -1,4 +1,4 @@
-package com.farm.farmtrade.dto.Request.ProductReviewRequest;
+package com.farm.farmtrade.dto.request.ProductReviewRequest;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

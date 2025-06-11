@@ -27,6 +27,7 @@ import OrderList from "../pages/OrderList";
 import UserList from "../pages/UserList";
 import Request from '../pages/Request';
 import Checkout from '../pages/Checkout';
+import Feedback from '../pages/Feedback';
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
@@ -47,9 +48,9 @@ const publicRoutes = [
   { path: config.routes.listProduct, component: ListProduct, layout: AdminLayout},
   { path: config.routes.orderList, component: OrderList, layout: AdminLayout },
   { path: config.routes.userList, component: UserList, layout: AdminLayout },
-  { path: config.routes.request, component: Request, layout: AdminLayout }
-  { path: config.routes.checkout, component: Checkout, layout: null }
-
+  { path: config.routes.request, component: Request, layout: null },
+  { path: config.routes.checkout, component: Checkout, layout: null },
+  { path: config.routes.feedback, component: Feedback, layout: null }
 ];
 
 const privateRoutes = [];

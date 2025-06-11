@@ -6,7 +6,6 @@ import { getUserById } from "../services/userService";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  
   const storedToken = localStorage.getItem("token");
 
   const [token, setToken] = useState(storedToken || null);
@@ -14,6 +13,12 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const token = getTokenFromCookie();
+    if (token) {
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("accessToken");
+    }
     if (storedToken) {
       try {
         const decoded = jwtDecode(storedToken);
@@ -28,9 +33,6 @@ export const UserProvider = ({ children }) => {
         setUserId(null);
         setUser(null);
       }
-    } else {
-       const token = getTokenFromCookie();
-       if(token) localStorage.setItem("token", token)
     }
   }, [storedToken]);
 

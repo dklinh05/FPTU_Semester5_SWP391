@@ -1,8 +1,8 @@
 package com.farm.farmtrade.dto.request.authenticationRequest;
 
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Data
@@ -12,8 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoleUpgradeRequest {
     private Integer userId;
-    private String requestedRole;
     private String businessName;
-    private String certification;
+    private MultipartFile certification;
 }
 

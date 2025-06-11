@@ -28,5 +28,5 @@ public class OrderCreationRequest {
     @NotNull(message = "Order items are required")
     @Size(min = 1, message = "At least one item is required")
     List<OrderItemRequest> items;
-    Integer voucherId;
+    Integer userVoucherId;
 }

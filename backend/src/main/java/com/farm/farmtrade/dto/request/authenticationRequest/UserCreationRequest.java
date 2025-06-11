@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -39,7 +40,7 @@ public class UserCreationRequest {
     private String phone;
 
     private String role;
-    private String avatar;
+//    private MultipartFile avatar;
     private LocalDateTime createdAt;
     private Boolean isActive;
 
@@ -48,12 +49,4 @@ public class UserCreationRequest {
     private Integer rewardPoints;
     private Long totalSpend;
 
-    // Supplier
-    private String businessName;
-    private String certification;
-    private Long totalRevenue;
-
-    // Shipper
-    private String vehicle;
-    private String licensePlate;
 }

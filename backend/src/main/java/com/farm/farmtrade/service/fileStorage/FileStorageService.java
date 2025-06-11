@@ -3,7 +3,9 @@ package com.farm.farmtrade.service.fileStorage;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.farm.farmtrade.entity.Product;
+import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.repository.ProductRepository;
+import com.farm.farmtrade.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,7 +24,10 @@ public class FileStorageService {
     ProductRepository productRepository;
 
     @Autowired
-    private Cloudinary cloudinary;
+    Cloudinary cloudinary;
+
+    @Autowired
+    UserRepository userRepository;
 
     public Product uploadProductImage(String id, MultipartFile file) {
         Product product = productRepository.findById(Integer.valueOf(id))
@@ -48,4 +53,30 @@ public class FileStorageService {
             throw new RuntimeException("Lỗi khi upload avatar lên Cloudinary", e);
         }
     }
+
+    public User uploadCertificationImage(String id, MultipartFile file) {
+        User user = userRepository.findById(Integer.valueOf(id))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        try {
+            if (file.isEmpty()) {
+                throw new RuntimeException("File trống hoặc không hợp lệ");
+            }
+
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                    "folder", "users",
+                    "public_id", "user_" + id
+            ));
+
+            String imageUrl = (String) uploadResult.get("secure_url");
+            user.setCertification(imageUrl);
+            return userRepository.save(user);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Lỗi khi đọc file", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Lỗi khi upload avatar lên Cloudinary", e);
+        }
+    }
+
 }

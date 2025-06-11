@@ -1,4 +1,4 @@
-package com.farm.farmtrade.dto.Request.CartRequest;
+package com.farm.farmtrade.dto.request.CartRequest;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

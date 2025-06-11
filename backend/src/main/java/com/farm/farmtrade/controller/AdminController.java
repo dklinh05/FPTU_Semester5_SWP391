@@ -32,7 +32,7 @@ public class AdminController {
     private RoleUpgradeService roleUpgradeService;
 
     //lấy toàn bộ user
-    /*isActive=true → Lọc theo trạng thái tài khoản.
+    /**isActive=true → Lọc theo trạng thái tài khoản.
     role=SUPPLIER → Lọc theo vai trò.
     keyword=bill → Tìm kiếm theo tên hoặc email.
     page=0&size=10 → Phân trang.

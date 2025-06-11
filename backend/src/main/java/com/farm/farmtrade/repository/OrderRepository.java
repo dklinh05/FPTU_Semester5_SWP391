@@ -10,7 +10,5 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Integer> {
-    long countByVoucher(Voucher voucher);
     List<Order> findByBuyer(User buyer);
-
 }

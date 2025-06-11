@@ -143,15 +143,8 @@ public class UserController {
 
     // Gửi yêu cầu nâng cấp vai trò (CUSTOMER ➝ SUPPLIER)
     @PostMapping("/request")
-    public ResponseEntity<RoleUpgrade> submitUpgradeRequest(
-            @RequestBody RoleUpgradeRequest request
-    ) {
-        RoleUpgrade roleUpgrade = roleUpgradeService.submitRequest(
-                request.getUserId(),
-                request.getRequestedRole(),
-                request.getBusinessName(),
-                request.getCertification()
-        );
+    public ResponseEntity<RoleUpgrade> submitUpgradeRequest(@RequestBody RoleUpgradeRequest request) {
+        RoleUpgrade roleUpgrade = roleUpgradeService.submitRequest(request);
         return ResponseEntity.ok(roleUpgrade);
     }
 

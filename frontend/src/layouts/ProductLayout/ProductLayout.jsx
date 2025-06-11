@@ -23,7 +23,7 @@ function ProductLayout({ children }) {
     <div>
       {/* <Spinner/> */}
       <Header />
-      <ShopBanner name={product.supplier.fullName} />
+      <ShopBanner name={product.supplier.fullName} id={product.supplier.userID} />
       <div className="container-fluid py-5 mt-5">
         <div className="container py-5">
           <div className="row g-4 mb-5">

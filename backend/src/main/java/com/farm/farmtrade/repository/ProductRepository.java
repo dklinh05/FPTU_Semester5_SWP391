@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
-    List<Product> findBySupplierUserID(Integer supplierId);
+    Page<Product>  findBySupplierUserIDAndStatus(Integer supplierId, String status, Pageable pageable);
     // Tìm tất cả sản phẩm theo status (không phân trang)
     List<Product> findAllByStatus(String status);
 

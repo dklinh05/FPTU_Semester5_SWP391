@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import styles from "./Header.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
+import { renderCart } from "../../services/cartItemService"; 
 
 const cx = classNames.bind(styles);
 
@@ -13,6 +14,8 @@ function Header() {
   const { user } = useUser();
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+const [carts, setCarts] = useState([]);
+
 
   // const handleClickAvatarUser = (e) => {
   //   if (!user) {

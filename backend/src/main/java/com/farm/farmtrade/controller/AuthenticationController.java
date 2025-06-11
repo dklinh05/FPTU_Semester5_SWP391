@@ -47,7 +47,7 @@ public class AuthenticationController {
                 .httpOnly(false)
                 .secure(false)
                 .path("/")
-                .maxAge(Duration.ofDays(7))
+                .maxAge(Duration.ofHours(1))
                 .sameSite("Lax")
                 .build();
         // Gửi cookie về client

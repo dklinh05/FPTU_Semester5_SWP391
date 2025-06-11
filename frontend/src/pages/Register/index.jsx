@@ -19,6 +19,16 @@ const Register = () => {
     address: "",
   });
 
+  const isValidPassword = (password) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return password.length >= minLength && hasUpperCase && hasNumber && hasSpecialChar;
+  };
+  const [passwordError, setPasswordError] = useState("");
+
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleChange = (e) => {
@@ -31,6 +41,17 @@ const Register = () => {
         ...prev,
         [name]: value,
       }));
+    }
+
+    // Kiểm tra riêng cho mật khẩu
+    if (name === "passwordHash") {
+      if (!isValidPassword(value)) {
+        setPasswordError(
+          "Mật khẩu phải có ít nhất 8 ký tự, chứa chữ in hoa, số và ký tự đặc biệt (!@#$%^&*(),.?\":{}|<>])"
+        );
+      } else {
+        setPasswordError("");
+      }
     }
   };
 
@@ -98,13 +119,16 @@ const Register = () => {
           <label>Mật khẩu</label>
           <input
             type="password"
-            className="form-control"
+            className={`form-control ${passwordError ? "is-invalid" : ""}`}
             name="passwordHash"
             value={formData.passwordHash}
             onChange={handleChange}
             placeholder="Your Password"
             required
           />
+          {passwordError && (
+            <div className="invalid-feedback d-block">{passwordError}</div>
+          )}
         </div>
         <div className="mb-3">
           <label>Nhập lại mật khẩu</label>

@@ -11,7 +11,7 @@ function Footer() {
             <div className="row g-4">
               <div className="col-lg-3">
                 <a href="#">
-                  <h1 className="text-primary mb-0">Fruitables</h1>
+                  <h1 className="text-primary mb-0">Farm Trade</h1>
                   <p className="text-secondary mb-0">Fresh products</p>
                 </a>
               </div>
@@ -67,9 +67,9 @@ function Footer() {
               <div className="footer-item">
                 <h4 className="text-light mb-3">Why People Like us!</h4>
                 <p className="mb-4">
-                  typesetting, remaining essentially unchanged. It was
-                  popularised in the 1960s with the like Aldus PageMaker
-                  including of Lorem Ipsum.
+                  Fresh and organic products are our priority. We ensure that
+                  our products are sourced from the best farms, providing you
+                  with the highest quality and freshest produce available.
                 </p>
                 <a
                   href="#"
@@ -131,9 +131,8 @@ function Footer() {
             <div className="col-lg-3 col-md-6">
               <div className="footer-item">
                 <h4 className="text-light mb-3">Contact</h4>
-                <p>Address: 1429 Netus Rd, NY 48247</p>
-                <p>Email: Example@gmail.com</p>
-                <p>Phone: +0123 4567 8910</p>
+                <p>Address: Da Nang city, Viet Nam</p>
+                <p>Email: farmtrade43@gmail.com</p>
                 <p>Payment Accepted</p>
                 <img
                   src="img/payment.png"
@@ -155,20 +154,10 @@ function Footer() {
               <span className="text-light">
                 <a href="#">
                   <i className="fas fa-copyright text-light me-2"></i>
-                  Your Site Name
+                  Farm Trade
                 </a>
                 , All right reserved.
               </span>
-            </div>
-            <div className="col-md-6 my-auto text-center text-md-end text-white">
-              Designed By{" "}
-              <a className="border-bottom" href="https://htmlcodex.com">
-                HTML Codex
-              </a>{" "}
-              Distributed By{" "}
-              <a className="border-bottom" href="https://themewagon.com">
-                ThemeWagon
-              </a>
             </div>
           </div>
         </div>

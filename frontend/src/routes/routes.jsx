@@ -25,6 +25,9 @@ import CartLayout from '../layouts/CartLayout';
 import AdminLayout from '../layouts/AdminLayout';
 import OrderList from "../pages/OrderList";
 import UserList from "../pages/UserList";
+import Request from '../pages/Request';
+import Checkout from '../pages/Checkout';
+import Feedback from '../pages/Feedback';
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
@@ -32,7 +35,7 @@ const publicRoutes = [
   { path: config.routes.login, component: Login, layout: null },
   { path: config.routes.register, component: Register, layout: null },
   { path: config.routes.changePassword, component: ChangePassword },
-  { path: config.routes.forgotPassword, component: ForgotPassword },
+  { path: config.routes.forgotPassword, component: ForgotPassword, layout: null },
   { path: config.routes.completeGoogleProfile, component: CompleteGoogleProfile },
   { path: config.routes.shop, component: Shop, layout: ShopLayout },
   { path: config.routes.cart, component: Cart, layout: CartLayout },
@@ -44,7 +47,10 @@ const publicRoutes = [
   { path: config.routes.addProduct, component: AddProduct, layout: AdminLayout },
   { path: config.routes.listProduct, component: ListProduct, layout: AdminLayout},
   { path: config.routes.orderList, component: OrderList, layout: AdminLayout },
-  { path: config.routes.userList, component: UserList, layout: AdminLayout }
+  { path: config.routes.userList, component: UserList, layout: AdminLayout },
+  { path: config.routes.request, component: Request, layout: null },
+  { path: config.routes.checkout, component: Checkout, layout: null },
+  { path: config.routes.feedback, component: Feedback, layout: null }
 ];
 
 const privateRoutes = [];

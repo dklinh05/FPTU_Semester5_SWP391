@@ -80,9 +80,22 @@ public class ProductController {
     }
 
     @GetMapping("/supplier/{supplierId}")
-    public List<Product> getProductsBySupplier(@PathVariable Integer supplierId) {
-        return productService.getProductsBySupplierId(supplierId);
+    public ResponseEntity<Page<Product>> getProductsBySupplier(
+            @PathVariable Integer supplierId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir
+    ) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
+        );
+        Page<Product> products = productService.getProductsBySupplierId(supplierId, pageable);
+        return ResponseEntity.ok(products);
     }
+
 
 
 }

@@ -1,41 +1,45 @@
-import React, { useState, useEffect } from "react";
+// src/components/Header/Header.jsx
+
+import React, { useState } from "react";
 import classNames from "classnames/bind";
+import Cookies from 'js-cookie';
 import styles from "./Header.module.scss";
 import { useNavigate } from "react-router-dom";
-import { getUserById } from "../../services/userService";
-import { useUser} from "../../context/UserContext";
+import { useUser } from "../../context/UserContext";
+import { renderCart } from "../../services/cartItemService"; 
 
 const cx = classNames.bind(styles);
 
 function Header() {
   const { user } = useUser();
-
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+const [carts, setCarts] = useState([]);
 
-  const handleClickAvatarUser = (e) => {
-    if (!user) {
-      e.preventDefault();
-      alert("You need to log in");
-      navigate("/login");
-    }
+
+  // const handleClickAvatarUser = (e) => {
+  //   if (!user) {
+  //     e.preventDefault();
+  //     alert("You need to log in");
+  //     navigate("/login");
+  //   }
+  // };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
-
-  const handleSearchChange = (e) => setSearchTerm(e.target.value);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    alert(`Search: ${searchTerm}`);
-  };
-
-  const handleLogoClick = () => {
-    navigate("/");
+    if (searchTerm.trim()) {
+      navigate(`/`);
+    }
   };
 
   const handleLogout = () => {
     alert("Đăng xuất thành công!");
     localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    Cookies.remove('accessToken'); 
     navigate("/");
     window.location.reload();
   };
@@ -47,15 +51,14 @@ function Header() {
         <div className="d-flex justify-content-between">
           <div className="top-info ps-2">
             <small className="me-3">
-              <i className="fas fa-map-marker-alt me-2 text-secondary"></i>
-              <a href="#" className="text-white">
-                123 Street, New York
+              <i className="fas fa-envelope me-2 text-secondary"></i>
+              <a href="/" className="text-white">
+                farmtrade43@gmail.com
               </a>
             </small>
             <small className="me-3">
-              <i className="fas fa-envelope me-2 text-secondary"></i>
-              <a href="#" className="text-white">
-                Email@Example.com
+              <a href="/request" className="text-white">
+                Seller Centre
               </a>
             </small>
           </div>
@@ -76,7 +79,7 @@ function Header() {
       {/* Navbar */}
       <div className="container px-0">
         <nav className="navbar navbar-light bg-white navbar-expand-xl">
-          <a href="index.html" className="navbar-brand">
+          <a href="/" className="navbar-brand">
             <h1 className="text-primary display-6">Fruitables</h1>
           </a>
           <button
@@ -129,77 +132,104 @@ function Header() {
               </a>
             </div>
             <div className="d-flex align-items-center m-3 me-0">
-              <button
-                className="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4"
-                data-bs-toggle="modal"
-                data-bs-target="#searchModal"
-              >
-                <i className="fas fa-search text-primary"></i>
-              </button>
-
-              <a href="/cart" className="position-relative me-4">
-                <i className="fa fa-shopping-bag fa-2x"></i>
-                <span
-                  className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
-                  style={{
-                    top: "-5px",
-                    left: "15px",
-                    height: "20px",
-                    minWidth: "20px",
-                  }}
+              <form onSubmit={handleSearchSubmit} className="d-flex me-4">
+                <input
+                  type="text"
+                  className="form-control border border-secondary rounded-pill"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  style={{ width: "200px", paddingLeft: "15px" }}
+                />
+                <button
+                  type="submit"
+                  className="btn btn-primary rounded-circle ms-2"
+                  style={{ width: "38px", height: "38px" }}
                 >
-                  3
-                </span>
-              </a>
+                  <i className="fas fa-search"></i>
+                </button>
+              </form>
 
-              <li
-                className="dropdown list-unstyled m-0 p-0"
-                onClick={handleClickAvatarUser}
-              >
-                <a
-                  className="nav-link"
-                  href="#"
-                  id="navbarDropdownMenuLink"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  {/* User ava */}
-                  {user?.avatar ? (
-                    <img className={cx(styles.avatar)} src={user.avatar} alt="avatar" />
-                  ) : (
-                    <i className="fas fa-user fa-2x"></i>
-                  )}
-                </a>
-                {user && (
-                  <ul
-                    className="dropdown-menu"
-                    aria-labelledby="navbarDropdownMenuLink"
+              {!user ? (
+                <div className="d-flex align-items-center">
+                  <a
+                    href="/login"
+                    className="text-dark me-3 text-decoration-none"
                   >
-                    <li>
-                      <a className="dropdown-item py-2" href="/profile">
-                        <i className="fa-solid fa-user me-2 text-success"></i>
-                        Profile
-                      </a>
-                    </li>
-                    <li>
-                      <a className="dropdown-item py-2" href="/">
-                        <i className="fa-solid fa-gear me-2 text-info"></i>
-                        Setting
-                      </a>
-                    </li>
-                    <li>
-                      <div
-                        className="dropdown-item py-2"
-                        onClick={handleLogout}
-                      >
-                        <i className="fa-solid fa-right-from-bracket me-2 text-danger"></i>
-                        Logout
-                      </div>
-                    </li>
-                  </ul>
-                )}
-              </li>
+                    Login
+                  </a>
+                  <a
+                    href="/register"
+                    className="text-primary text-decoration-none"
+                  >
+                    Register
+                  </a>
+                </div>
+              ) : (
+                <>
+                  <a href="/cart" className="position-relative me-4">
+                    <i className="fa fa-shopping-bag fa-2x"></i>
+                    <span
+                      className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
+                      style={{
+                        top: "-5px",
+                        left: "15px",
+                        height: "20px",
+                        minWidth: "20px",
+                      }}
+                    >
+                      3
+                    </span>
+                  </a>
+
+                  <li className="dropdown list-unstyled m-0 p-0">
+                    <a
+                      className="nav-link"
+                      href="#"
+                      id="navbarDropdownMenuLink"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      {user?.avatar ? (
+                        <img
+                          className={cx(styles.avatar)}
+                          src={user.avatar}
+                          alt="avatar"
+                        />
+                      ) : (
+                        <i className="fas fa-user fa-2x"></i>
+                      )}
+                    </a>
+                    <ul
+                      className="dropdown-menu"
+                      aria-labelledby="navbarDropdownMenuLink"
+                    >
+                      <li>
+                        <a className="dropdown-item py-2" href="/profile">
+                          <i className="fa-solid fa-user me-2 text-success"></i>
+                          Profile
+                        </a>
+                      </li>
+                      {/*<li>*/}
+                      {/*  <a className="dropdown-item py-2" href="/">*/}
+                      {/*    <i className="fa-solid fa-gear me-2 text-info"></i>*/}
+                      {/*    Setting*/}
+                      {/*  </a>*/}
+                      {/*</li>*/}
+                      <li>
+                        <div
+                          className="dropdown-item py-2"
+                          onClick={handleLogout}
+                        >
+                          <i className="fa-solid fa-right-from-bracket me-2 text-danger"></i>
+                          Logout
+                        </div>
+                      </li>
+                    </ul>
+                  </li>
+                </>
+              )}
             </div>
           </div>
         </nav>

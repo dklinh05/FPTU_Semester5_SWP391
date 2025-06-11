@@ -49,7 +49,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                     .build();
             // Gửi cookie về client
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-            response.sendRedirect("http://localhost:5173/profile");
+            response.sendRedirect("http://localhost:5173/");
         } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found in DB");
         }

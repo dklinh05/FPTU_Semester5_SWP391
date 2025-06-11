@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import { getTokenFromCookie } from "../services/authService";
 import { getUserById } from "../services/userService";
 
 const UserContext = createContext();
@@ -7,14 +8,19 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const storedToken = localStorage.getItem("token");
 
-  const [token, setToken] = useState(storedToken || null);
+  const [token, setToken] = useState(getTokenFromCookie() || null);
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    if (storedToken) {
+    if (token) {
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
+    }
+    if (token) {
       try {
-        const decoded = jwtDecode(storedToken);
+        const decoded = jwtDecode(token);
         if (decoded?.userId) {
           setUserId(decoded.userId);
           getUserById(decoded.userId)
@@ -27,7 +33,7 @@ export const UserProvider = ({ children }) => {
         setUser(null);
       }
     }
-  }, [storedToken]);
+  }, [token]);
 
   return (
     <UserContext.Provider value={{ user, setUser, token, setToken, userId }}>

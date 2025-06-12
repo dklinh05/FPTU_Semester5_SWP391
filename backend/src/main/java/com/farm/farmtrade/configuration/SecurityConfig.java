@@ -33,13 +33,12 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-
     @Value("${jwt.signerKey}")
     private String signerKey;
 
     private final String[] ADMIN_ENDPOINTS = {"/admin/**", "/users", "/admin", "/voucher/**", "/voucher"};
     private final String[] PUBLIC_POST_ENDPOINTS = {"/api/auth/**", "/oauth2/**", "/users/register", "/auth/**", "/orders", "/orders/**", "/voucher", "/voucher/**"};
-    private final String[] PUBLIC_GET_ENDPOINTS = {"/auth/**", "/products/**"};
+    private final String[] PUBLIC_GET_ENDPOINTS = {"/auth/**", "/products/**", "/orders", "/orders/**"};
 
     @Autowired
     private OAuth2SuccessHandler oAuth2SuccessHandler;

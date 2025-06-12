@@ -34,7 +34,6 @@ function AddProduct() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const productData = new FormData();
-    console.log(userId)
     productData.append("userId", userId);
     productData.append("name", formData.name);
     productData.append("description", formData.description);

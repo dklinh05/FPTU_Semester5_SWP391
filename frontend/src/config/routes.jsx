@@ -25,6 +25,7 @@ const routes = {
   requestProduct: '/requestProduct',
   purchase: '/purchase',
   feedback: '/reviews',
+  orders: 'orders',
 };
 
 export default routes;

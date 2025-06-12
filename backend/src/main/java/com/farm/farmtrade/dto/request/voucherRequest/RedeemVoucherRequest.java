@@ -1,4 +1,5 @@
-package com.farm.farmtrade.dto.Request.CartRequest;
+package com.farm.farmtrade.dto.request.voucherRequest;
+
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CartUpdateRequest {
-    private Integer cartItemId;
-    private Integer quantity;
+public class RedeemVoucherRequest {
+    String userId;
+    String voucherId;
 }

@@ -23,7 +23,8 @@ const routes = {
   request: '/request',
   checkout: '/checkout',
   requestProduct: '/requestProduct',
-
+  purchase: '/purchase',
+  feedback: '/reviews',
 };
 
 export default routes;

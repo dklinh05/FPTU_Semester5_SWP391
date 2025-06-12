@@ -27,9 +27,9 @@ public class Order {
     LocalDateTime orderDate;
     String status;
     BigDecimal totalAmount;
-
+    BigDecimal discountAmount;
     @ManyToOne
-    @JoinColumn(name = "VoucherID")
-    Voucher voucher;
+    @JoinColumn(name = "UserVoucherID")
+    UserVoucher userVoucher;
 }
 

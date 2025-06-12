@@ -5,6 +5,7 @@ import Profile from "../../pages/Profile";
 import Spinner from "../../components/Spinner";
 import Footer from "../../components/Footer";
 
+
 const ProfileLayout = ({ children }) => {
   return (
     <>
@@ -17,16 +18,13 @@ const ProfileLayout = ({ children }) => {
               <Sidebar />
             </div>
 
-            {/* Nội dung chính - Bên phải */}
-            <div className="col-md-9">
-              {children}
-            </div>
           </div>
         </div>
       </div>
       <Footer />
     </>
   );
-};
+
+
 
 export default ProfileLayout;

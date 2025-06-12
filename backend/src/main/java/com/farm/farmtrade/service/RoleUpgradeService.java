@@ -4,15 +4,16 @@ package com.farm.farmtrade.service;
 import com.farm.farmtrade.dto.request.authenticationRequest.RoleUpgradeRequest;
 import com.farm.farmtrade.entity.RoleUpgrade;
 import com.farm.farmtrade.entity.User;
+import com.farm.farmtrade.enums.Role;
 import com.farm.farmtrade.exception.AppException;
 import com.farm.farmtrade.exception.ErrorCode;
 import com.farm.farmtrade.repository.RoleUpgradeRepository;
 import com.farm.farmtrade.repository.UserRepository;
+import com.farm.farmtrade.service.fileStorage.FileStorageService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,28 +25,30 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoleUpgradeService {
     @Autowired
-    private final RoleUpgradeRepository roleUpgradeRepository;
+    RoleUpgradeRepository roleUpgradeRepository;
     @Autowired
-    private final UserRepository userRepository;
+    UserRepository userRepository;
+    @Autowired
+    FileStorageService fileStorageService;
 
     //  Người dùng gửi yêu cầu nâng cấp
-    public RoleUpgrade submitRequest(Integer userId, String requestedRole, String businessName, String certification) {
-        User user = userRepository.findById(userId)
+    public RoleUpgrade submitRequest(RoleUpgradeRequest request) {
+        User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_UNEXISTED));
 
         if (!user.getRole().equalsIgnoreCase("CUSTOMER")) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
-        RoleUpgrade request = RoleUpgrade.builder()
+        RoleUpgrade roleUpgrade = RoleUpgrade.builder()
                 .user(user)
-                .businessName(businessName)
-                .certification(certification)
+                .businessName(request.getBusinessName())
+                .requestedRole("SUPPLIER")
                 .status("PENDING")
                 .createdAt(LocalDateTime.now())
                 .build();
-
-        return roleUpgradeRepository.save(request);
+        fileStorageService.uploadCertificationImage(String.valueOf(request.getUserId()), request.getCertification());
+        return roleUpgradeRepository.save(roleUpgrade);
     }
 
     // 2. Admin phê duyệt

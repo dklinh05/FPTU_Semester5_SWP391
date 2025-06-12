@@ -39,6 +39,7 @@ const Login = () => {
       // Chuyển sang trang chính hoặc theo role
       navigate("/");
     } catch (error) {
+      console.log(error)
       alert("Đăng nhập thất bại: ");
     }
   };

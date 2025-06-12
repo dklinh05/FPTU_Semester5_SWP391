@@ -1,10 +1,12 @@
 package com.farm.farmtrade.controller;
 
-
+import com.farm.farmtrade.dto.request.voucherRequest.RedeemVoucherRequest;
 import com.farm.farmtrade.dto.request.voucherRequest.VoucherCreationRequest;
 import com.farm.farmtrade.dto.request.voucherRequest.VoucherUpdateRequest;
+import com.farm.farmtrade.entity.UserVoucher;
 import com.farm.farmtrade.entity.Voucher;
 import com.farm.farmtrade.repository.VoucherRepository;
+import com.farm.farmtrade.service.voucher.UserVoucherService;
 import com.farm.farmtrade.service.voucher.VoucherService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -22,10 +24,11 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class VoucherController {
     @Autowired
-    private VoucherService voucherService;
+    VoucherService voucherService;
     @Autowired
-    private VoucherRepository voucherRepository;
-
+    VoucherRepository voucherRepository;
+    @Autowired
+    UserVoucherService userVoucherService;
     //tạo voucher
     @PostMapping
     public ResponseEntity<Voucher> createVoucher(@Valid @RequestBody VoucherCreationRequest request) {
@@ -49,8 +52,26 @@ public class VoucherController {
 
     //lấy voucher theo id
     @GetMapping("/{id}")
-    public ResponseEntity<Voucher> getVoucherById(@PathVariable("id") Integer id) {
-        Voucher voucher = voucherService.getVoucherById(id);
+    public ResponseEntity<Voucher> getVoucherById(@PathVariable("id") String id) {
+        Voucher voucher = voucherService.getVoucherById(Integer.valueOf(id));
         return ResponseEntity.ok(voucher);
+    }
+
+    /**
+     * Người dùng đổi voucher (đổi bằng điểm thưởng)
+     */
+    @PostMapping("/users/redeem")
+    public ResponseEntity<UserVoucher> redeemVoucher(@RequestBody RedeemVoucherRequest request) {
+        UserVoucher userVoucher = userVoucherService.redeemVoucher(request.getUserId(), request.getVoucherId());
+        return ResponseEntity.ok(userVoucher);
+    }
+
+    /**
+     * Lấy tất cả voucher đã đổi của người dùng
+     */
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<List<UserVoucher>> getAllByUser(@PathVariable String userId) {
+        List<UserVoucher> vouchers = userVoucherService.getVouchersByUser(userId);
+        return ResponseEntity.ok(vouchers);
     }
 }

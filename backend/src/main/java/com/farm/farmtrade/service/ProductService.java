@@ -86,9 +86,10 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public List<Product> getProductsBySupplierId(Integer supplierId) {
-        return productRepository.findBySupplierUserID(supplierId);
+    public Page<Product> getProductsBySupplierId(Integer supplierId, Pageable pageable) {
+        return productRepository.findBySupplierUserIDAndStatus(supplierId, "active", pageable);
     }
+
 
     public Page<Product> getActiveProductsWithPagination(Pageable pageable) {
         return productRepository.findPageByStatus("active", pageable);

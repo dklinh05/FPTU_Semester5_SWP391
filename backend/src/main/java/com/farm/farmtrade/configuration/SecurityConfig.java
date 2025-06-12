@@ -33,8 +33,13 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+
     @Value("${jwt.signerKey}")
     private String signerKey;
+
+    private final String[] ADMIN_ENDPOINTS = {"/admin/**", "/users", "/admin", "/voucher/**", "/voucher"};
+    private final String[] PUBLIC_POST_ENDPOINTS = {"/api/auth/**", "/oauth2/**", "/users/register", "/auth/**", "/orders", "/orders/**", "/voucher", "/voucher/**"};
+    private final String[] PUBLIC_GET_ENDPOINTS = {"/auth/**", "/products/**"};
 
     @Autowired
     private OAuth2SuccessHandler oAuth2SuccessHandler;
@@ -42,22 +47,7 @@ public class SecurityConfig {
     @Autowired
     private CustomOAuth2UserService customOAuth2UserService;
 
-    // Danh sách endpoint công khai
-    private static final String[] PUBLIC_POST_ENDPOINTS = {
-            "/api/auth/**",
-            "/oauth2/**",
-            "/users/register",
-            "/auth/**",
-            "/orders",
-            "/orders/**",
-            "/voucher"
-    };
-
-    private static final String[] PUBLIC_GET_ENDPOINTS = {
-            "/auth/**",
-            "/products/**"
-    };
-
+  
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -67,18 +57,11 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // Admin endpoints
-                        .requestMatchers("/admin", "/admin/*", "/admin/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/voucher", "/voucher/*", "/voucher/**").hasAuthority("ROLE_ADMIN")
-                                .requestMatchers("/products/{id}/status").permitAll() // tạm thời để all role
-//                        .requestMatchers("/products/{id}/status").hasAuthority("ROLE_ADMIN")
-                        // User endpoints
-                        .requestMatchers("/users/**").hasAuthority("ROLE_CUSTOMER")
-
-                        // Public endpoints
-                        .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                        .requestMatchers("/products/{id}/status").permitAll() // tạm thời để all role
+                        .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll() // cho phép truy cập public chỉ với HttpMethod POST
                         .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
-
+                        .requestMatchers(ADMIN_ENDPOINTS).hasAuthority("ROLE_ADMIN")// chỉ admin mới truy cập được endpoint này(mặc định là ADMIN truy cập được full đường truyền được config cho SUPPLIER và CUSTOMER, tương tự SUPPLIER cũng được truy cập endpoint của CUSTOMER), nhưng phải cung cấp token)
+                        .requestMatchers("/users/**").hasAuthority("ROLE_CUSTOMER")
                         // Mặc định yêu cầu đăng nhập
                         .anyRequest().authenticated()
                 )
@@ -89,13 +72,7 @@ public class SecurityConfig {
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwtConfigurer ->
                                 jwtConfigurer.decoder(jwtDecoder())
-                                        .jwtAuthenticationConverter(jwtAuthenticationConverter())
-                        )
-                )
-                .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint((request, response, ex) -> {
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                        })
+                                        .jwtAuthenticationConverter((jwtAuthenticationConverter())))
                 );
 
         return http.build();

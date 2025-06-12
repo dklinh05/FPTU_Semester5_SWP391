@@ -115,6 +115,7 @@ public class AuthenticationService {
 
         boolean authenticated = passwordEncoder.matches(request.getPassword(),
                 user.getPasswordHash());
+
         if (!authenticated||user.getIsLocked())
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         var token = generateToken(user);
@@ -124,9 +125,6 @@ public class AuthenticationService {
                 .authenticated(true)
                 .build();
     }
-
-
-
 
     public String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);

@@ -23,7 +23,7 @@ public class RoleUpgrade {
     @JoinColumn(name = "userID")
     private User user;
 
-//    private String requestedRole; // e.g., SUPPLIER
+    private String requestedRole; // e.g., SUPPLIER
     private String businessName;
     private String certification;
 

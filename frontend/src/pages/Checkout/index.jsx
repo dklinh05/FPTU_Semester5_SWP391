@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import Header from "../../components/Header";
@@ -11,6 +11,7 @@ function Checkout() {
   const { userId } = useUser();
   const location = useLocation();
   const chooseCartItems = location.state?.cartItems || [];
+
   // Group cart items by supplier name
   const groupedBySupplier = chooseCartItems.reduce((groups, cart) => {
     const supplierName = cart.product.supplier.fullName;
@@ -41,7 +42,7 @@ function Checkout() {
         const orderData = {
           buyerId: userId,
           status: "pending",
-          userVoucherId: 2,
+          userVoucherId: 3,
           items: items.map((item) => ({
             productId: item.product.productID, // hoặc item.productId nếu có
             quantity: item.quantity,

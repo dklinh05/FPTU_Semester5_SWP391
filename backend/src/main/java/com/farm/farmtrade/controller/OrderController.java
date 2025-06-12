@@ -2,6 +2,7 @@ package com.farm.farmtrade.controller;
 
 import com.farm.farmtrade.dto.request.orderRequest.OrderCreationRequest;
 import com.farm.farmtrade.entity.Order;
+import com.farm.farmtrade.entity.OrderItem;
 import com.farm.farmtrade.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,10 +51,18 @@ public class OrderController {
         List<Order> orders = orderService.getOrdersByBuyerId(buyerId);
         return ResponseEntity.ok(orders);
     }
+
 //    //lấy đơn hàng theo ID shipper
 //    @GetMapping("/shipper/{shipperId}")
 //    public ResponseEntity<List<Order>> getOrdersByShipper(@PathVariable Integer shipperId) {
 //        List<Order> orders = orderService.getOrdersByShipperId(shipperId);
 //        return ResponseEntity.ok(orders);
 //    }
+
+    @GetMapping("/{orderId}/items")
+    public ResponseEntity<List<OrderItem>> getOrderItemsByOrderId(@PathVariable Integer orderId) {
+        List<OrderItem> orderItems = orderService.getOrderItemsByOrderId(orderId);
+        return ResponseEntity.ok(orderItems);
+    }
+
 }

@@ -173,4 +173,9 @@ public class OrderService {
 //
 //        return orderRepository.findByShipper(shipper);
 //    }
+
+    public List<OrderItem> getOrderItemsByOrderId(Integer orderId) {
+        return orderItemRepository.findByOrderOrderID(orderId);
+    }
+
 }

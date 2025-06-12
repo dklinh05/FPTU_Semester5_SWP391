@@ -28,6 +28,7 @@ import Request from '../pages/Request';
 import Checkout from '../pages/Checkout';
 import RequestProduct from '../pages/RequestProduct';
 import Feedback from '../pages/Feedback';
+import Orders from '../pages/Orders';
 
 
 const publicRoutes = [
@@ -52,7 +53,8 @@ const publicRoutes = [
   { path: config.routes.request, component: Request, layout: AdminLayout },
   { path: config.routes.checkout, component: Checkout, layout: null },
   { path: config.routes.requestProduct, component: RequestProduct, layout: AdminLayout },
-  { path: config.routes.feedback, component: Feedback, layout: null }
+  { path: config.routes.feedback, component: Feedback, layout: null },
+  { path: config.routes.orders, component: Orders, layout: null },
 ];
 
 const privateRoutes = [];

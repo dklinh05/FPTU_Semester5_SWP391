@@ -17,7 +17,10 @@ const ProfileLayout = ({ children }) => {
             <div className="col-md-3">
               <Sidebar />
             </div>
-
+            {/* Nội dung chính - Bên phải */}
+            <div className="col-md-9">
+              {children}
+            </div>
           </div>
         </div>
       </div>

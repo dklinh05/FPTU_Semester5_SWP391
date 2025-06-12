@@ -6,9 +6,8 @@ import { getUserById } from "../services/userService";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const storedToken = localStorage.getItem("token");
 
-  const [token, setToken] = useState(getTokenFromCookie() || null);
+  const [token, setToken] = useState(getTokenFromCookie());
   const [userId, setUserId] = useState(null);
   const [user, setUser] = useState(null);
 

@@ -22,6 +22,7 @@ const routes = {
   userList: '/userlist',
   request: '/request',
   checkout: '/checkout',
+  requestProduct: '/requestProduct',
 
 };
 

@@ -24,7 +24,7 @@ const ProfileLayout = ({ children }) => {
       <Footer />
     </>
   );
-
+};
 
 
 export default ProfileLayout;

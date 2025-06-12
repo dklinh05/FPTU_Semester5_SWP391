@@ -22,9 +22,9 @@ const routes = {
   userList: '/userlist',
   request: '/request',
   checkout: '/checkout',
+  requestProduct: '/requestProduct',
   purchase: '/purchase',
-  feedback: '/reviews'
-
+  feedback: '/reviews',
 };
 
 export default routes;

@@ -9,9 +9,10 @@ function AddProduct() {
     name: "",
     description: "",
     price: "",
-    quantity: "",
+    stockQuantity: "",
     origin: "",
     category: "",
+    unit: "", // Thêm unit vào formData
     image: null,
   });
 
@@ -40,14 +41,15 @@ function AddProduct() {
     productData.append("price", formData.price);
     productData.append("origin", formData.origin);
     productData.append("category", formData.category);
-    productData.append("stockQuantity", formData.quantity);
+    productData.append("unit", formData.unit);
+    productData.append("stockQuantity", formData.stockQuantity);
     if (formData.image) {
       productData.append("image", formData.image);
     }
     console.log(userId)
     try {
       const response = await addProduct(productData);
-      alert("Thêm sản phẩm thành công!");
+      alert("Thêm sản phẩm thành công! Yêu cầu duyệt sẽ được gửi đến admin.");
       console.log("Response:", response.data);
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm:", error);
@@ -97,14 +99,32 @@ function AddProduct() {
         />
       </div>
 
-      {/* Số lượng */}
+      {/* Đơn vị */}
       <div className="mb-3">
-        <label className="form-label">Số lượng</label>
+        <label className="form-label">Đơn vị</label>
+        <select
+          name="unit"
+          className="form-select"
+          value={formData.unit}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Chọn đơn vị</option>
+          <option value="kg">kg</option>
+          <option value="g">g</option>
+          <option value="cái">cái</option>
+          <option value="chục">chục</option>
+        </select>
+      </div>
+
+      {/* Số lượng tồn kho */}
+      <div className="mb-3">
+        <label className="form-label">Số lượng tồn kho</label>
         <input
           type="number"
-          name="quantity"
+          name="stockQuantity"
           className="form-control"
-          value={formData.quantity}
+          value={formData.stockQuantity}
           onChange={handleChange}
           required
         />
@@ -134,9 +154,9 @@ function AddProduct() {
           required
         >
           <option value="">Chọn danh mục</option>
-          <option value="quần áo">Quần áo</option>
-          <option value="giày dép">Giày dép</option>
-          <option value="đồ điện tử">Đồ điện tử</option>
+          <option value="rau">Rau</option>
+          <option value="củ, quả">Củ, quả</option>
+          <option value="trái cây">Trái cây</option>
           <option value="thực phẩm">Thực phẩm</option>
         </select>
       </div>

@@ -30,6 +30,7 @@ public class Product {
     private LocalDateTime createdAt;
     private Integer stockQuantity;
     private Integer sales;
+    @Column(name = "status", nullable = false)
     private String status;
 
     // Getters and setters...

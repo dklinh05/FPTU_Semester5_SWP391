@@ -44,27 +44,30 @@ public class ProductService {
 //    }
 
     public Product addProduct(ProductCreateRequest request) {
-
         Product product = new Product();
 
-
-        // Tìm supplier
-        User user = userRepository.findById(Integer.valueOf(request.getUserId())).orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Tạo sản phẩm
+        User user = userRepository.findById(Integer.valueOf(request.getUserId()))
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
         product.setCategory(request.getCategory());
+
+        // ✅ Bổ sung các dòng này
+        product.setOrigin(request.getOrigin());
+        product.setUnit(request.getUnit());
         product.setStockQuantity(request.getStockQuantity());
+
         product.setSupplier(user);
+        product.setStatus("Pending");
 
         productRepository.save(product);
+
         product = fileStorageService.uploadProductImage(String.valueOf(product.getProductID()), request.getImage());
+
         return product;
     }
-
 
     public Product updateProduct(Integer id, Product updatedProduct) {
         Product product = productRepository.findById(id)
@@ -106,5 +109,18 @@ public class ProductService {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với id: " + id));
     }
+    public List<Product> getProductsByStatus(String status) {
+        return productRepository.findAllByStatus(status);
+    }
 
+    public Product updateProductStatus(Integer productId, String status) {
+        if (productId == null || status == null || status.trim().isEmpty()) {
+            throw new IllegalArgumentException("ID hoặc status không hợp lệ");
+        }
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với ID: " + productId));
+
+        product.setStatus(status.trim());
+        return productRepository.save(product);
+    }
 }

@@ -1,5 +1,4 @@
 import config from '../config';
-
 import Home from '../pages/Home';
 import Profile from '../pages/Profile';
 import Login from '../pages/Login';
@@ -27,7 +26,9 @@ import OrderList from "../pages/OrderList";
 import UserList from "../pages/UserList";
 import Request from '../pages/Request';
 import Checkout from '../pages/Checkout';
+import RequestProduct from '../pages/RequestProduct';
 import Feedback from '../pages/Feedback';
+
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
@@ -45,11 +46,12 @@ const publicRoutes = [
   { path: config.routes.customerManagement, component: CustomerManagement, layout: AdminLayout },
   { path: config.routes.dashboard, component: Dashboard, layout: AdminLayout },
   { path: config.routes.addProduct, component: AddProduct, layout: AdminLayout },
-  { path: config.routes.listProduct, component: ListProduct, layout: AdminLayout},
+  { path: config.routes.listProduct, component: ListProduct, layout: AdminLayout },
   { path: config.routes.orderList, component: OrderList, layout: AdminLayout },
   { path: config.routes.userList, component: UserList, layout: AdminLayout },
-  { path: config.routes.request, component: Request, layout: null },
+  { path: config.routes.request, component: Request, layout: AdminLayout },
   { path: config.routes.checkout, component: Checkout, layout: null },
+  { path: config.routes.requestProduct, component: RequestProduct, layout: AdminLayout },
   { path: config.routes.feedback, component: Feedback, layout: null }
 ];
 

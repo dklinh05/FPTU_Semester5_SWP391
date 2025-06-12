@@ -49,10 +49,17 @@ public class ProductController {
 
 
     // Add product
+//    @PostMapping
+//    public ResponseEntity<Product> addProduct(@ModelAttribute ProductCreateRequest product) {
+//        log.warn(product.toString());
+//        return ResponseEntity.ok(productService.addProduct(product));
+//    }
+
     @PostMapping
-    public ResponseEntity<Product> addProduct(@ModelAttribute ProductCreateRequest product) {
-        log.warn(product.toString());
-        return ResponseEntity.ok(productService.addProduct(product));
+    public ResponseEntity<Product> addProduct(@ModelAttribute ProductCreateRequest request) {
+        log.warn("Received product data: {}", request);
+        Product product = productService.addProduct(request);
+        return ResponseEntity.ok(product);
     }
 
     @GetMapping("/{id}")
@@ -96,6 +103,17 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/pending")
+    public ResponseEntity<List<Product>> getPendingProducts() {
+        List<Product> products = productService.getProductsByStatus("Pending");
+        return ResponseEntity.ok(products);
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Product> updateProductStatus(@PathVariable Integer id, @RequestParam String status) {
+        Product updatedProduct = productService.updateProductStatus(id, status);
+        return ResponseEntity.ok(updatedProduct);
+    }
 
 
 }

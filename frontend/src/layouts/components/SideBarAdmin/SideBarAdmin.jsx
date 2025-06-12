@@ -52,7 +52,7 @@ const SidebarAdmin = () => {
             >
               <i className="fa-brands fa-microsoft"></i>
               <p>
-                Products <i className="fa-solid fa-angle-down right-icon"></i>
+                Product Management <i className="fa-solid fa-angle-down right-icon"></i>
               </p>
             </a>
             <ul className={`sidebar-submenu ${activeSubmenu === 2 ? "open" : ""}`}>
@@ -64,6 +64,11 @@ const SidebarAdmin = () => {
               <li>
                 <a href="/listproduct" className="submenu-link">
                   List
+                </a>
+              </li>
+              <li>
+                <a href="/requestproduct" className="submenu-link">
+                  Request Product
                 </a>
               </li>
             </ul>

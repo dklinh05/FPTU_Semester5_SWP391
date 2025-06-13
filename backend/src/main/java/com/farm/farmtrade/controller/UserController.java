@@ -21,14 +21,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @Slf4j
-@RequestMapping("/users")
+@RequestMapping("/api/users") // ←←← URL gốc thống nhất
 public class UserController {
     @Autowired
     private UserService userService;
@@ -50,42 +47,43 @@ public class UserController {
     @GetMapping
     List<User> getAllUsers() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("Username: "+ authentication.getName());
+        log.info("Username: " + authentication.getName());
         authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
         return userService.getAllUsers();
     }
 
-
-    @PutMapping("/google/{userID}")
-    User upDateGoogleUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
-        return userService.updateGoogleUser(Integer.valueOf(userID),request);
-    }
+//
+//    @PutMapping("/google/{userID}")
+//    User upDateGoogleUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
+//        return userService.updateGoogleUser(Integer.valueOf(userID),request);
+//    }
 //     @PutMapping("/{userID}")
 //     User upDateUser(@PathVariable String userID,@RequestBody UserUpdateRequest request) {
 //         return userService.updateUser(userID,request);
 //     }
 
-    @GetMapping("/{userID}")
-    User getUser(@PathVariable String userID) {
-        return userService.getUser(Integer.valueOf(userID));
-    }
 
+    @GetMapping("/{userID}")
+    public ResponseEntity<User> getUser(@PathVariable Integer userID) {
+        User user = userService.getUserById(userID);
+        return ResponseEntity.ok(user);
+    }
 
     @PutMapping("/{userID}")
-    public ResponseEntity<?> updateUser(
-            @PathVariable String userID,
-            @RequestBody UserUpdateRequest request) {
+    public ResponseEntity<?> updateUser(@PathVariable Integer userID, @RequestBody UserUpdateRequest request) {
+        boolean isUpdated = userService.updateUser(userID, request);
 
-        // Gọi service để cập nhật người dùng
-        boolean isUpdated = userService.updateUser(Integer.valueOf(userID), request);
-
+        Map<String, Object> response = new HashMap<>();
         if (isUpdated) {
-            return ResponseEntity.ok().build(); // Thành công
+            response.put("success", true);
+            response.put("message", "Cập nhật thành công");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.notFound().build(); // Không tìm thấy người dùng
+            response.put("success", false);
+            response.put("error", "Không tìm thấy người dùng");
+            return ResponseEntity.status(404).body(response);
         }
     }
-
 
     @Transactional
     @DeleteMapping("/{userID}")
@@ -99,15 +97,14 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{userID}/avatar")
-    public ResponseEntity<?> uploadAvatar(
-            @PathVariable("userID") String userID,
-            @RequestParam("avatar") MultipartFile file) {
+    @PostMapping("/{userId}/avatar")
+    public ResponseEntity<?> uploadAvatar(@PathVariable Integer userId,
+                                          @RequestParam("avatar") MultipartFile file) {
         try {
-            User updatedUser = userService.uploadAvatar(Integer.valueOf(userID), file);
-            return ResponseEntity.ok(updatedUser);
+            String avatarUrl = userService.updateAvatar(userId, file);
+            return ResponseEntity.ok().body(Map.of("avatarUrl", avatarUrl));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Collections.singletonMap("error", e.getMessage()));
+            return ResponseEntity.status(500).body(Map.of("error", "Upload avatar thất bại: " + e.getMessage()));
         }
     }
 
@@ -141,12 +138,12 @@ public class UserController {
         }
     }
 
-    // Gửi yêu cầu nâng cấp vai trò (CUSTOMER ➝ SUPPLIER)
-    @PostMapping("/request")
-    public ResponseEntity<RoleUpgrade> submitUpgradeRequest(@RequestBody RoleUpgradeRequest request) {
-        RoleUpgrade roleUpgrade = roleUpgradeService.submitRequest(request);
-        return ResponseEntity.ok(roleUpgrade);
-    }
-
-
 }
+    // Gửi yêu cầu nâng cấp vai trò (CUSTOMER ➝ SUPPLIER)
+//    @PostMapping("/request")
+//    public ResponseEntity<RoleUpgrade> submitUpgradeRequest(@RequestBody RoleUpgradeRequest request) {
+//        RoleUpgrade roleUpgrade = roleUpgradeService.submitRequest(request);
+//        return ResponseEntity.ok(roleUpgrade);
+//    }
+//
+

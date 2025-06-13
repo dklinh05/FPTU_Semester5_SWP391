@@ -39,15 +39,15 @@ public class AdminController {
     sort=createdAt,desc → Sắp xếp theo thời gian tạo.
     test -> GET /admin/users?isActive=true
     */
-    @GetMapping("/users")
-    public Page<User> getFilteredUsers(
-            @RequestParam(required = false) Boolean isActive,
-            @RequestParam(required = false) String role,
-            @RequestParam(required = false) String keyword,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
-    ) {
-        return userService.filterUsers(isActive, role, keyword, pageable);
-    }
+//    @GetMapping("/users")
+//    public Page<User> getFilteredUsers(
+//            @RequestParam(required = false) Boolean isActive,
+//            @RequestParam(required = false) String role,
+//            @RequestParam(required = false) String keyword,
+//            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+//    ) {
+//        return userService.filterUsers(isActive, role, keyword, pageable);
+//    }
 
     @PutMapping("/users/role/{userId}")
     public ResponseEntity<?> updateSupplierRole(@PathVariable Integer userId) {

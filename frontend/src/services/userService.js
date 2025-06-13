@@ -7,6 +7,7 @@ export const getUserById = async (id) => {
   return res.data;
 };
 
+
 export const updateUser = async (userId, data) => {
   try {
     const response = await request.put(`/api/users/${userId}`, data);
@@ -15,6 +16,7 @@ export const updateUser = async (userId, data) => {
     if (response.data && response.data.success === true) {
       return response.data; // Trả về dữ liệu thành công
     }
+
 
     // Nếu backend trả về lỗi rõ ràng
     throw new Error(response.data.error || "Cập nhật thất bại");
@@ -35,12 +37,12 @@ export const uploadAvatar = async (userId, formData) => {
     if (error.response && error.response.data) {
       errorMessage = error.response.data.error || errorMessage;
     }
-
+    
     console.error("Phản hồi lỗi từ backend:", errorMessage);
     alert(errorMessage);
     throw new Error(errorMessage);
   }
-};
+
 
 export const updateUserExtra = async (userId, extraData) => {
   try {

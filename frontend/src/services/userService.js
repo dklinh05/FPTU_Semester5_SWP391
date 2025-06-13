@@ -1,6 +1,6 @@
 import { request, formRequest } from "../utils/httpRequest";
 
-const API_BASE = "/api/users"; // ←←← Gọi đến backend qua http://localhost:8080/farmtrade/api/users
+const API_BASE = "/users"; // ←←← Gọi đến backend qua http://localhost:8080/farmtrade/api/users
 
 export const getUserById = async (id) => {
   const res = await request.get(`${API_BASE}/${id}`);
@@ -10,7 +10,7 @@ export const getUserById = async (id) => {
 
 export const updateUser = async (userId, data) => {
   try {
-    const response = await request.put(`/api/users/${userId}`, data);
+    const response = await request.put(`/users/${userId}`, data);
 
     // Nếu backend trả về { success: true }
     if (response.data && response.data.success === true) {
@@ -28,7 +28,7 @@ export const updateUser = async (userId, data) => {
 
 export const uploadAvatar = async (userId, formData) => {
   try {
-    const res = await formRequest.post(`/api/users/${userId}/avatar`, formData);
+    const res = await formRequest.post(`/users/${userId}/avatar`, formData);
     return res.data; // { avatarUrl: '...' }
   } catch (error) {
     let errorMessage = "Upload avatar thất bại";
@@ -42,7 +42,7 @@ export const uploadAvatar = async (userId, formData) => {
     alert(errorMessage);
     throw new Error(errorMessage);
   }
-
+}
 
 export const updateUserExtra = async (userId, extraData) => {
   try {

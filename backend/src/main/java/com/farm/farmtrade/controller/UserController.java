@@ -25,7 +25,7 @@ import java.util.*;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/users") // ←←← URL gốc thống nhất
+@RequestMapping("/users") // ←←← URL gốc thống nhất
 public class UserController {
     @Autowired
     private UserService userService;

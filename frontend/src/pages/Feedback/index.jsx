@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useLocation } from "react-router-dom";
 import styles from "./Feedback.module.scss";
 import { Camera } from "lucide-react";
+import {submitReview} from "../../services/feedbackService.js";
 
 function Feedback() {
   const location = useLocation();
@@ -14,12 +14,6 @@ function Feedback() {
   const [comment, setComment] = useState("");
   const [images, setImages] = useState([]);
   const maxImages = 5;
-
-  const rawToken = localStorage.getItem("token") || "";
-
-  const accessToken = rawToken.startsWith("Bearer ")
-    ? rawToken
-    : `Bearer ${rawToken}`;
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -41,12 +35,7 @@ function Feedback() {
     images.forEach((img) => formData.append("images", img));
 
     try {
-      await axios.post(`/reviews?productId=${productId}`, formData, {
-        headers: {
-          Authorization: accessToken,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+        await submitReview(productId, formData);
       alert("Review submitted successfully!");
     } catch (error) {
       console.error(error);

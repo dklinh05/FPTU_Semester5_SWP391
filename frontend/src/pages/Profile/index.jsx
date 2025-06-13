@@ -8,7 +8,7 @@ import {
 } from "../../services/userService";
 
 const Profile = () => {
-  const { user,userId, setUser } = useUser();
+  const { user, userId, setUser } = useUser();
   const [editField, setEditField] = useState(null); // "username", "email"
   const [fieldValue, setFieldValue] = useState("");
   const location = useLocation();
@@ -28,9 +28,10 @@ const Profile = () => {
     formData.append("avatar", file); // Tên field phải khớp với backend
 
     try {
-      const updatedUser = await uploadAvatar(userId, formData);
-      // setUser(updatedUser);
-      setAvatarTimestamp(Date.now());
+      const response = await uploadAvatar(userId, formData); // Gọi API
+      const updatedUser = await getUserById(userId); // Lấy lại user mới nhất
+      setUser(updatedUser); // Cập nhật context
+      setAvatarTimestamp(Date.now()); // Làm mới hình ảnh
     } catch (err) {
       console.error("Lỗi upload avatar:", err);
       alert("Upload avatar thất bại");
@@ -93,19 +94,17 @@ const Profile = () => {
   // Gửi chỉ những field đã thay đổi
   const handleSave = async (e) => {
     e.preventDefault();
-
     if (Object.keys(dirtyFields).length === 0) {
       alert("Không có thông tin nào được thay đổi!");
       return;
     }
-
     try {
       await updateUser(user.userID, dirtyFields);
       alert("Cập nhật thành công!");
       setDirtyFields({});
     } catch (error) {
       console.error("Lỗi khi lưu:", error);
-      alert("Cập nhật thất bại: " + error.message);
+      alert("Cập nhật thất bại: " + error.message); // <-- đây là nơi sinh ra lỗi
     } finally {
       setDirtyFields({});
     }

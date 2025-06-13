@@ -10,6 +10,7 @@ import com.farm.farmtrade.entity.UserSpecification;
 import com.farm.farmtrade.enums.Role;
 import com.farm.farmtrade.exception.AppException;
 import com.farm.farmtrade.exception.ErrorCode;
+import com.farm.farmtrade.service.cloudinary.CloudinaryService;
 import com.farm.farmtrade.service.email.EmailService;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.entity.VerificationToken;
@@ -40,6 +41,9 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private Cloudinary cloudinary;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
     @Autowired
     private VerificationTokenRepository verificationTokenRepository;
     @Autowired
@@ -82,8 +86,8 @@ public class UserService {
                 .orElseThrow(()-> new RuntimeException("User Not Found"));
     }
 
-    public User uploadAvatar(Integer id, MultipartFile file) {
-        User user = userRepository.findById(id)
+    public User uploadAvatar(String id, MultipartFile file) {
+        User user = userRepository.findById(Integer.valueOf(id))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         try {
@@ -107,19 +111,21 @@ public class UserService {
         }
     }
 
-    public User updateGoogleUser(Integer userId, UserUpdateRequest request) {
-        User user = getUser(userId);
-        user.setPhone(request.getPhone());
-        user.setRole(Role.CUSTOMER.name());
 
-        user.setAddress(request.getAddress());
-        user.setBusinessName(request.getBusinessName());
-        user.setCertification(request.getCertification());
-        user.setVehicle(request.getVehicle());
-        user.setLicensePlate(request.getLicensePlate());
-        return userRepository.save(user);
-    }
-  
+//    public User updateGoogleUser(Integer userId, UserUpdateRequest request) {
+//        User user = getUser(userId);
+//        user.setPhone(request.getPhone());
+//        user.setRole(Role.CUSTOMER.name());
+//
+//        user.setAddress(request.getAddress());
+//        user.setBusinessName(request.getBusinessName());
+//        user.setCertification(request.getCertification());
+//        user.setVehicle(request.getVehicle());
+//        user.setLicensePlate(request.getLicensePlate());
+//        return userRepository.save(user);
+//    }
+
+
     public boolean updateUser(Integer userID, UserUpdateRequest request) {
         Optional<User> userOpt = userRepository.findById(userID);
 
@@ -144,6 +150,11 @@ public class UserService {
 
         userRepository.save(user); // Lưu lại người dùng sau khi cập nhật
         return true;
+    }
+
+    public User getUserById(Integer userID) {
+        return userRepository.findById(userID)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public void saveVerificationToken(User user, String token) {
@@ -214,20 +225,15 @@ public class UserService {
         verificationTokenRepository.delete(verificationToken);
     }
 
-    public User updateEmail(String userID, String newEmail) {
-        User user = userRepository.findById(Integer.valueOf(userID))
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+    public String updateAvatar(Integer userId, MultipartFile file) throws IOException {
+        User user = getUserById(userId);
 
-        if (userRepository.existsByEmail(newEmail)) {
-            throw new RuntimeException("Email này đã tồn tại");
-        }
+        String avatarUrl = cloudinaryService.uploadFile(file);
 
-        user.setEmail(newEmail);
-        return userRepository.save(user);
+        // Cập nhật avatar URL trong DB
+        user.setAvatar(avatarUrl);
+        userRepository.save(user);
+
+        return avatarUrl;
     }
-    public Page<User> filterUsers(Boolean isActive, String role, String keyword, Pageable pageable) {
-        Specification<User> spec = UserSpecification.filterUsers(isActive, role, keyword);
-        return userRepository.findAll(spec, pageable);
-    }
-
 }

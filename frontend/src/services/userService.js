@@ -14,7 +14,7 @@ export const getUserById = async (id) => {
 
 export const uploadAvatar = async (userId, formData) => {
   const res = await formRequest.post(`users/${userId}/avatar`, {
-    body: formData,
+    formData,
   });
 
   if (!res.ok) {
@@ -23,7 +23,7 @@ export const uploadAvatar = async (userId, formData) => {
     throw new Error("Upload avatar thất bại");
   }
 
-  return await res.json();
+  return await res.data;
 };
 
 // export const updateUser = async (userID, userData) => {
@@ -45,7 +45,7 @@ export const uploadAvatar = async (userId, formData) => {
 // }; 
 
 export const updateUser = async (userId, data) => {
-  const response = await formRequest.put(`users/${userId}`, {
+  const response = await request.put(`users/${userId}`, {
     body: data,
   });
   if (!response.ok) throw new Error("Failed to update user");

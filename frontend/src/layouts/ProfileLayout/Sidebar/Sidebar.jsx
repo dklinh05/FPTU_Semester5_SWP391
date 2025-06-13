@@ -10,22 +10,22 @@ function Sidebar() {
       </div>
 
       <div className="list-group list-group-flush" role="tablist">
-        <a
+        <Link
           className="list-group-item list-group-item-action active"
           data-bs-toggle="list"
-          href="#account"
+          to="/profile"
           role="tab"
         >
           Account
-        </a>
-        <a
+        </Link>
+        <Link
           className="list-group-item list-group-item-action"
           data-bs-toggle="list"
-          href="#password"
+          to="/change-password"
           role="tab"
         >
           Password
-        </a>
+        </Link>
         <a
           className="list-group-item list-group-item-action"
           data-bs-toggle="list"

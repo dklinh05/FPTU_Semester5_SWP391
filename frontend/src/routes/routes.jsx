@@ -36,7 +36,7 @@ const publicRoutes = [
   { path: config.routes.profile, component: Profile, layout: ProfileLayout },
   { path: config.routes.login, component: Login, layout: null },
   { path: config.routes.register, component: Register, layout: null },
-  { path: config.routes.changePassword, component: ChangePassword },
+  { path: config.routes.changePassword, component:ChangePassword , layout: ProfileLayout },
   { path: config.routes.forgotPassword, component: ForgotPassword, layout: null },
   { path: config.routes.completeGoogleProfile, component: CompleteGoogleProfile },
   { path: config.routes.shop, component: Shop, layout: ShopLayout },

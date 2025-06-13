@@ -106,6 +106,7 @@ function ShopStart() {
                           title={product.name}
                           description={product.description}
                           price={product.price}
+                          shopName={product.supplier.fullName}
                         />
                       </Link>
                     ))}

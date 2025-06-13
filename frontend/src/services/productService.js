@@ -42,3 +42,12 @@ export const renderProductBySupplierId = async (id, sortBy, sortDir, page, size)
     throw error.response?.data || error.message;
   }
 };
+
+export const deleteProduct = async (id) => {
+  try {
+    const response = await request.delete(`/products/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

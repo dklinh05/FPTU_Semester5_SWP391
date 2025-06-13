@@ -29,13 +29,7 @@ function Checkout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const orderData = {
-    //   buyerId: userId, // lấy từ context hoặc state
-    //   status: "pending",
-    //   items: productOrderList,
-    //   voucherId: null, // hoặc để undefined nếu không dùng
-    // };
-
+    
     try {
       // Bước 2: Gửi đơn hàng cho từng nhóm
       for (const [supplierName, items] of Object.entries(groupedBySupplier)) {

@@ -96,13 +96,27 @@ const OrderList = () => {
             <table className="table align-middle">
               <thead>
                 <tr>
-                  <th scope="col" className="py-3">Invoice No</th>
-                  <th scope="col" className="py-3">Customer Name</th>
-                  <th scope="col" className="py-3">Method</th>
-                  <th scope="col" className="py-3">Amount</th>
-                  <th scope="col" className="py-3">Order Time</th>
-                  <th scope="col" className="py-3">Status</th>
-                  <th scope="col" className="py-3">Actions</th>
+                  <th scope="col" className="py-3">
+                    Invoice No
+                  </th>
+                  <th scope="col" className="py-3">
+                    Customer Name
+                  </th>
+                  <th scope="col" className="py-3">
+                    Method
+                  </th>
+                  <th scope="col" className="py-3">
+                    Amount
+                  </th>
+                  <th scope="col" className="py-3">
+                    Order Time
+                  </th>
+                  <th scope="col" className="py-3">
+                    Status
+                  </th>
+                  <th scope="col" className="py-3">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -160,7 +174,10 @@ const OrderList = () => {
                             </a>
                           </li>
                           <li>
-                            <a className="dropdown-item py-2" href="invoice.html">
+                            <a
+                              className="dropdown-item py-2"
+                              href="invoice.html"
+                            >
                               Invoice
                             </a>
                           </li>

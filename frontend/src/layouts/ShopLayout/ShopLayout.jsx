@@ -6,7 +6,6 @@ import ShopHero from "../components/ShopHero";
 import SidebarDetail from "../../components/SidebarDetail";
 import Footer from "../../components/Footer";
 import { renderProductBySupplierId } from "../../services/productService";
-import { param } from "jquery";
 
 function ShopLayout({ children }) {
   const { id } = useParams();

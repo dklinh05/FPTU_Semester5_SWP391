@@ -1,30 +1,29 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
+import { useUser } from "../../context/UserContext";
+import {
+  renderProductBySupplierId,
+  deleteProduct,
+} from "../../services/productService";
 
 const ListProduct = () => {
+  const { userId } = useUser();
   const [selectedItems, setSelectedItems] = useState(new Set());
+  const [sortValue, setSortValue] = useState("createdAt");
+  const [products, setProducts] = useState([]);
 
-  const products = [
-    {
-      id: "#12598",
-      name: "Off-white shoulder wide...",
-      category: "Women",
-      price: "₹4,099",
-      stock: 25,
-      sku: "123456",
-      status: "In Stock",
-      image: "./assets/images/p1.jfif",
-    },
-    {
-      id: "#12599",
-      name: "Blue denim jacket",
-      category: "Men",
-      price: "₹3,299",
-      stock: 15,
-      sku: "654321",
-      status: "Out of Stock",
-      image: "./assets/images/p1.jfif",
-    },
-  ];
+  const getProducts = async (sortBy) => {
+    try {
+      const response = await renderProductBySupplierId(userId, sortBy);
+      setProducts(response.content);
+      console.log("Response:", response);
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm:", error);
+    }
+  };
+
+  useEffect(() => {
+    getProducts(sortValue);
+  }, [sortValue, userId]);
 
   const handleSelectAll = (e) => {
     const newSelected = new Set();
@@ -44,9 +43,10 @@ const ListProduct = () => {
     setSelectedItems(updated);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async (id) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa các sản phẩm đã chọn?")) {
-      alert("Xóa thành công!");
+      const response = await deleteProduct(id);
+      // alert("Xóa thành công!", response.content);
     }
   };
 
@@ -65,7 +65,10 @@ const ListProduct = () => {
                 <i className="fa-solid fa-cloud-arrow-down"></i> Export
               </button>
               {/* Add Product Button */}
-              <a href="/add-product" className="btn btn-light d-flex align-items-center gap-2">
+              <a
+                href="/add-product"
+                className="btn btn-light d-flex align-items-center gap-2"
+              >
                 <i className="fas fa-plus"></i> Add Product
               </a>
             </div>
@@ -94,9 +97,10 @@ const ListProduct = () => {
                   <h5 className="fw-bold text-start">Product List</h5>
                   <button
                     className="btn bg-disabled d-flex align-items-center ms-4"
-                    onClick={handleDelete}
+                    // onClick={handleDelete}
                   >
-                    <i className="fas fa-trash"></i> <span className="ms-2">Delete</span>
+                    <i className="fas fa-trash"></i>{" "}
+                    <span className="ms-2">Delete</span>
                   </button>
                 </div>
 
@@ -145,29 +149,47 @@ const ListProduct = () => {
                           checked={selectedItems.size === products.length}
                         />
                       </th>
-                      <th scope="col" className="py-3">Product ID</th>
-                      <th scope="col" className="py-3">Image</th>
-                      <th scope="col" className="py-3">Product Name</th>
-                      <th scope="col" className="py-3">Category</th>
-                      <th scope="col" className="py-3">Price</th>
-                      <th scope="col" className="py-3">Stock</th>
-                      <th scope="col" className="py-3">SKU</th>
-                      <th scope="col" className="py-3">Status</th>
-                      <th scope="col" className="py-3">Actions</th>
+                      <th scope="col" className="py-3">
+                        Product ID
+                      </th>
+                      <th scope="col" className="py-3">
+                        Image
+                      </th>
+                      <th scope="col" className="py-3">
+                        Product Name
+                      </th>
+                      <th scope="col" className="py-3">
+                        Category
+                      </th>
+                      <th scope="col" className="py-3">
+                        Price
+                      </th>
+                      <th scope="col" className="py-3">
+                        Stock
+                      </th>
+                      <th scope="col" className="py-3">
+                        Sales
+                      </th>
+                      <th scope="col" className="py-3">
+                        Status
+                      </th>
+                      <th scope="col" className="py-3">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {products.map((product) => (
-                      <tr key={product.id}>
+                      <tr key={product.productID}>
                         <td>
                           <input
                             type="checkbox"
                             className="custom-checkbox row-checkbox"
-                            checked={selectedItems.has(product.id)}
-                            onChange={() => handleSelectRow(product.id)}
+                            checked={selectedItems.has(product.productID)}
+                            onChange={() => handleSelectRow(product.productID)}
                           />
                         </td>
-                        <td>{product.id}</td>
+                        <td>{product.productID}</td>
                         <td>
                           <img
                             src={product.image}
@@ -179,8 +201,8 @@ const ListProduct = () => {
                         <td>{product.name}</td>
                         <td>{product.category}</td>
                         <td>{product.price}</td>
-                        <td>{product.stock}</td>
-                        <td>{product.sku}</td>
+                        <td>{product.stockQuantity}</td>
+                        <td>{product?.sales}</td>
                         <td>
                           <span
                             className={`status-badge ${
@@ -196,9 +218,12 @@ const ListProduct = () => {
                           <a href="#" className="btn btn-sm me-1">
                             <i className="fa-solid fa-edit"></i>
                           </a>
-                          <a href="#" className="btn btn-sm">
+                          <btn
+                            className="btn btn-sm"
+                            onClick={() => handleDelete(product.productID)}
+                          >
                             <i className="fa-solid fa-trash"></i>
-                          </a>
+                          </btn>
                         </td>
                       </tr>
                     ))}
@@ -244,8 +269,7 @@ const ListProduct = () => {
                     </a>
                   </li>
                   <li>
-                    <a href="#" className="pagination-link">
-                    </a>
+                    <a href="#" className="pagination-link"></a>
                   </li>
                 </ul>
               </div>

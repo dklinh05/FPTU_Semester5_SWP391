@@ -1,7 +1,7 @@
 import { useUser } from "../../context/UserContext";
 import { addProductToCart } from "../../services/cartItemService";
 
-function CardItem({ id, category, title, description, price, img }) {
+function CardItem({ id, category, title, description, price, img, shopName }) {
   const { userId } = useUser();
 
   const addToCart = async (e) => {
@@ -20,8 +20,6 @@ function CardItem({ id, category, title, description, price, img }) {
     }
   };
 
-  
-
   return (
     <div className="rounded position-relative fruite-item">
       <div className="fruite-img" style={{ height: "250px" }}>
@@ -36,6 +34,12 @@ function CardItem({ id, category, title, description, price, img }) {
         style={{ top: "10px", left: "10px" }}
       >
         {category}
+      </div>
+       <div
+        className="text-white bg-primary px-3 py-1 rounded position-absolute"
+        style={{ top: "10px", right: "10px" }}
+      >
+        {shopName}
       </div>
       <div className="p-4 border border-secondary border-top-0 rounded-bottom">
         <h4>{title}</h4>

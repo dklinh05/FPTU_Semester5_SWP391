@@ -29,7 +29,7 @@ const Profile = () => {
 
     try {
       const updatedUser = await uploadAvatar(userId, formData);
-      // setUser(updatedUser);
+      setUser(updatedUser);
       setAvatarTimestamp(Date.now());
     } catch (err) {
       console.error("Lỗi upload avatar:", err);

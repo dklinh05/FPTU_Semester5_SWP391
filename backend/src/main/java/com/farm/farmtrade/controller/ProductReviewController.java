@@ -17,7 +17,7 @@ public class ProductReviewController {
     @Autowired
     private ProductReviewService reviewService;
 
-//    @PostMapping("/{productId}/reviews")
+    @PostMapping("/{productId}/reviews")
     public ResponseEntity<?> createReview(@PathVariable Integer productId,
                                           @RequestBody @Valid CreateProductReviewRequest request,
                                           Principal principal) {

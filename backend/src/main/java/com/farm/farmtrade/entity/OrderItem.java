@@ -17,19 +17,16 @@ import java.math.BigDecimal;
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer orderItemID;
-
+    Integer orderItemID;
     @ManyToOne
     @JoinColumn(name = "OrderID")
-    private Order order;
+    Order order;
 
     @ManyToOne
     @JoinColumn(name = "ProductID")
-    private Product product;
+    Product product;
+    Integer quantity;
+    BigDecimal price;
 
-    private Integer quantity;
-    private BigDecimal price;
-
-    // Getters and setters...
 }
 

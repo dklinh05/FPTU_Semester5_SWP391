@@ -2,7 +2,7 @@ package com.farm.farmtrade.service.order;
 
 import com.farm.farmtrade.dto.request.orderRequest.OrderCreationRequest;
 import com.farm.farmtrade.dto.request.orderRequest.OrderItemRequest;
-import com.farm.farmtrade.dto.response.OrderItemResponse;
+import com.farm.farmtrade.dto.response.orderResponse.OrderItemResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderResponse;
 import com.farm.farmtrade.entity.*;
 import com.farm.farmtrade.repository.*;
@@ -172,7 +172,8 @@ public class OrderService {
                         order.getSupplier() != null ? order.getSupplier().getUserID() : null,
                         order.getOrderDate(),
                         order.getStatus(),
-                        order.getTotalAmount()
+                        order.getTotalAmount(),
+                        order.getOrderGroup().getOrderGroupID()
                 ))
                 .collect(Collectors.toList());
 

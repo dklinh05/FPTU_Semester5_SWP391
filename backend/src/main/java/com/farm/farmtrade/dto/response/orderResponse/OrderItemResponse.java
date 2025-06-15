@@ -15,10 +15,10 @@ import java.math.BigDecimal;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderItemResponse {
-
-    Integer orderItemID;
-    Integer orderId;
-    Integer productId;
-    Integer quantity;
-    BigDecimal price;
+    private Integer orderItemID;
+    private Integer quantity;
+    private BigDecimal price;
+    private Integer productId;
+    private String productName;
+    private String productImage;
 }

@@ -65,21 +65,21 @@ public class AdminController {
     }
 
 
-    //khóa tài khoản
-    @PutMapping("/users/lock/{userId}")
-    public ResponseEntity<?> lockUser(@PathVariable Integer userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        User user = optionalUser.get();
-        user.setIsLocked(true); // Tạm thời khóa tài khoản
-        userRepository.save(user);
-
-        log.info("User {} has been locked by admin.", user.getUsername());
-        return ResponseEntity.ok("User account locked successfully.");
-    }
+//    //khóa tài khoản
+//    @PutMapping("/users/lock/{userId}")
+//    public ResponseEntity<?> lockUser(@PathVariable Integer userId) {
+//        Optional<User> optionalUser = userRepository.findById(userId);
+//        if (optionalUser.isEmpty()) {
+//            return ResponseEntity.notFound().build();
+//        }
+//
+//        User user = optionalUser.get();
+//        user.setIsLocked(true); // Tạm thời khóa tài khoản
+//        userRepository.save(user);
+//
+//        log.info("User {} has been locked by admin.", user.getUsername());
+//        return ResponseEntity.ok("User account locked successfully.");
+//    }
 
     //mở khóa tài khoản
     @PutMapping("/users/unlock/{userId}")

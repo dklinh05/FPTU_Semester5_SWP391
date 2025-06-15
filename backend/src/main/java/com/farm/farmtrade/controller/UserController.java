@@ -15,6 +15,7 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -87,13 +88,13 @@ public class UserController {
 
     @Transactional
     @DeleteMapping("/{userID}")
-    public ResponseEntity<User> deleteUser(@PathVariable String userID) {
-        Optional<User> user = userRepository.findById(Integer.valueOf(userID));
+    public ResponseEntity<?> deleteUser(@PathVariable Integer userID) {
+        Optional<User> user = userRepository.findById(userID);
         if (user.isPresent()) {
             userRepository.delete(user.get());
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("Xóa người dùng thành công");
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy người dùng");
         }
     }
 

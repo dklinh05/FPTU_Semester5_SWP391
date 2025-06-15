@@ -43,4 +43,33 @@ public class ProductReviewService {
 
         return productReviewRepository.save(review);
     }
+
+    public ProductReview updateReview(Integer reviewId, com.farm.farmtrade.dto.request.ProductReviewRequest.UpdateProductReviewRequest request, String username) {
+        ProductReview existingReview = productReviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        if (!existingReview.getBuyer().getUsername().equals(username)) {
+            throw new RuntimeException("You don't have permission to edit this review");
+        }
+
+        existingReview.setProductQuality(request.getProductQuality());
+        existingReview.setSellerService(request.getSellerService());
+        existingReview.setDeliverySpeed(request.getDeliverySpeed());
+        existingReview.setComment(request.getComment());
+        existingReview.setImage(request.getImage());
+
+        return productReviewRepository.save(existingReview);
+    }
+
+    // Xóa đánh giá
+    public void deleteReview(Integer reviewId, String username) {
+        ProductReview existingReview = productReviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        if (!existingReview.getBuyer().getUsername().equals(username)) {
+            throw new RuntimeException("You don't have permission to delete this review");
+        }
+
+        productReviewRepository.delete(existingReview);
+    }
 }

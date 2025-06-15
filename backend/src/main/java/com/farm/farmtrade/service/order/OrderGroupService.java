@@ -3,6 +3,8 @@ package com.farm.farmtrade.service.order;
 import com.farm.farmtrade.dto.request.orderRequest.OrderCreationRequest;
 import com.farm.farmtrade.dto.request.orderRequest.OrderGroupRequest;
 import com.farm.farmtrade.dto.request.orderRequest.OrderItemRequest;
+import com.farm.farmtrade.dto.response.orderResponse.OrderGroupResponse;
+import com.farm.farmtrade.dto.response.orderResponse.OrderResponse;
 import com.farm.farmtrade.entity.*;
 import com.farm.farmtrade.repository.*;
 import jakarta.transaction.Transactional;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -29,7 +32,7 @@ public class OrderGroupService {
     VoucherRepository voucherRepository;
 
     @Transactional
-    public OrderGroup createOrderGroup(OrderGroupRequest request) {
+    public OrderGroupResponse createOrderGroup(OrderGroupRequest request) {
         User buyer = userRepository.findById(request.getBuyerId())
                 .orElseThrow(() -> new IllegalArgumentException("Buyer not found with ID: " + request.getBuyerId()));
 
@@ -68,7 +71,7 @@ public class OrderGroupService {
 
         for (OrderCreationRequest orderReq : request.getOrders()) {
             User supplier = userRepository.findById(orderReq.getSupplierId())
-                    .orElseThrow(() -> new IllegalArgumentException("Supplier not found with ID: " + request.getBuyerId()));
+                    .orElseThrow(() -> new IllegalArgumentException("Supplier not found with ID: " + orderReq.getSupplierId()));
             Order order = Order.builder()
                     .buyer(buyer)
                     .supplier(supplier)
@@ -94,6 +97,9 @@ public class OrderGroupService {
                 orderItemRepository.save(item);
 
                 // Update stock
+                if (product.getStockQuantity() < itemReq.getQuantity()) {
+                    throw new IllegalArgumentException("Not enough stock for product ID: " + product.getProductID());
+                }
                 product.setStockQuantity(product.getStockQuantity() - itemReq.getQuantity());
                 // Update sales
                 product.setSales(product.getSales() + itemReq.getQuantity());
@@ -108,38 +114,92 @@ public class OrderGroupService {
 
         // Apply discount
         BigDecimal discount = BigDecimal.ZERO;
-        if (voucher != null) {
-            if (voucher.getMinOrderAmount() != null && groupTotal.compareTo(voucher.getMinOrderAmount()) < 0)
-                throw new IllegalArgumentException("Order amount doesn't meet voucher minimum requirement");
-
-            if ("PERCENT".equalsIgnoreCase(voucher.getDiscountType())) {
-                discount = groupTotal.multiply(voucher.getDiscountValue()).divide(BigDecimal.valueOf(100));
-            } else if ("AMOUNT".equalsIgnoreCase(voucher.getDiscountType())) {
-                discount = voucher.getDiscountValue();
-            }
-            if (discount.compareTo(groupTotal) > 0) discount = groupTotal;
-
-            userVoucher.setIsUsed(true);
-            userVoucherRepository.save(userVoucher);
-            if (voucher.getMaxUsage() != null && voucher.getMaxUsage() > 0) {
-                voucher.setMaxUsage(voucher.getMaxUsage() - 1);
-                voucherRepository.save(voucher);
-            }
+        if (voucher != null && userVoucher != null) {
+            discount = applyVoucherDiscount(voucher, userVoucher, groupTotal);
         }
 
         orderGroup.setTotalAmount(groupTotal);
         orderGroup.setDiscountAmount(discount);
         orderGroup.setFinalAmount(groupTotal.subtract(discount));
-
-        return orderGroupRepository.save(orderGroup);
+        orderGroupRepository.save(orderGroup);
+        OrderGroupResponse orderGroupResponse = toOrderGroupResponse(orderGroup);
+        return orderGroupResponse;
     }
 
-    public List<OrderGroup> getAllOrderGroups() {
-        return orderGroupRepository.findAll();
+    public List<OrderGroupResponse> getAllOrderGroups() {
+        List<OrderGroup> orderGroups = orderGroupRepository.findAll();
+        return orderGroups.stream()
+                .map(this::toOrderGroupResponse)
+                .collect(Collectors.toList());
     }
 
-    public OrderGroup getOrderGroupById(String id) {
-        return orderGroupRepository.findById(Integer.valueOf(id))
+    public OrderGroupResponse getOrderGroupById(String id) {
+        OrderGroup orderGroup = orderGroupRepository.findById(Integer.valueOf(id))
                 .orElseThrow(() -> new IllegalArgumentException("OrderGroup not found with ID: " + id));
+        return toOrderGroupResponse(orderGroup);
     }
+
+
+    public OrderGroupResponse toOrderGroupResponse(OrderGroup orderGroup) {
+        return OrderGroupResponse.builder()
+                .orderGroupID(orderGroup.getOrderGroupID())
+                .buyerId(orderGroup.getBuyer().getUserID())
+                .totalAmount(orderGroup.getTotalAmount())
+                .discountAmount(orderGroup.getDiscountAmount())
+                .finalAmount(orderGroup.getFinalAmount())
+                .status(orderGroup.getStatus())
+                .createdAt(orderGroup.getCreatedAt())
+                .userVoucherId(orderGroup.getUserVoucher() != null ? orderGroup.getUserVoucher().getUserVoucherID() : null)
+                .orders(orderGroup.getOrders().stream()
+                        .map(this::toOrderResponse)
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    public OrderResponse toOrderResponse(Order order) {
+        return OrderResponse.builder()
+                .orderID(order.getOrderID())
+                .buyerId(order.getBuyer() != null ? order.getBuyer().getUserID() : null)
+                .supplierId(order.getSupplier() != null ? order.getSupplier().getUserID() : null)
+                .status(order.getStatus())
+                .orderDate(order.getOrderDate())
+                .totalAmount(order.getTotalAmount())
+                .orderGroupId(order.getOrderGroup()!= null ? order.getOrderGroup().getOrderGroupID() : null)
+                .build();
+    }
+    private BigDecimal applyVoucherDiscount(Voucher voucher, UserVoucher userVoucher, BigDecimal groupTotal) {
+        if (voucher == null) return BigDecimal.ZERO;
+
+        // Kiểm tra tổng tiền đơn hàng có đủ điều kiện giảm
+        if (voucher.getMinOrderAmount() != null && groupTotal.compareTo(voucher.getMinOrderAmount()) < 0) {
+            throw new IllegalArgumentException("Order amount doesn't meet voucher minimum requirement");
+        }
+
+        BigDecimal discount;
+        if ("PERCENT".equalsIgnoreCase(voucher.getDiscountType())) {
+            discount = groupTotal.multiply(voucher.getDiscountValue()).divide(BigDecimal.valueOf(100));
+        } else if ("AMOUNT".equalsIgnoreCase(voucher.getDiscountType())) {
+            discount = voucher.getDiscountValue();
+        } else {
+            throw new IllegalArgumentException("Unknown discount type: " + voucher.getDiscountType());
+        }
+
+        // Không cho giảm vượt quá tổng tiền
+        if (discount.compareTo(groupTotal) > 0) {
+            discount = groupTotal;
+        }
+
+        // Đánh dấu voucher đã được sử dụng
+        userVoucher.setIsUsed(true);
+        userVoucherRepository.save(userVoucher);
+
+        // Giảm MaxUsage nếu > 0
+        if (voucher.getMaxUsage() != null && voucher.getMaxUsage() > 0) {
+            voucher.setMaxUsage(voucher.getMaxUsage() - 1);
+            voucherRepository.save(voucher);
+        }
+
+        return discount;
+    }
+
 }

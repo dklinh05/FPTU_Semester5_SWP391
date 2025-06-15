@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -48,6 +49,17 @@ public class ProductService {
 //        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 //        return productRepository.findAllByStatus("active", pageable);
 //    }
+
+//    public List<Product> searchProducts(String keyword) {
+//        return productRepository.findProductsByName(keyword);
+//    }
+
+    public List<Product> searchProducts(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        return productRepository.findByNameContainingIgnoreCase(keyword);
+    }
 
     public Product addProduct(ProductCreateRequest request) {
         Product product = new Product();

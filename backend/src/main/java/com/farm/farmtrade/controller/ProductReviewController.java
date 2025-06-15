@@ -17,12 +17,31 @@ public class ProductReviewController {
     @Autowired
     private ProductReviewService reviewService;
 
-//    @PostMapping("/{productId}/reviews")
+    @PostMapping("/{productId}/reviews")
     public ResponseEntity<?> createReview(@PathVariable Integer productId,
                                           @RequestBody @Valid CreateProductReviewRequest request,
                                           Principal principal) {
         String username = principal.getName();
         ProductReview review = reviewService.createReview(productId, request, username);
         return ResponseEntity.ok(review);
+    }
+
+
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<ProductReview> updateReview(@PathVariable Integer reviewId,
+                                                      @RequestBody @Valid com.farm.farmtrade.dto.request.ProductReviewRequest.UpdateProductReviewRequest request,
+                                                      Principal principal) {
+        String username = principal.getName();
+        ProductReview updatedReview = reviewService.updateReview(reviewId, request, username);
+        return ResponseEntity.ok(updatedReview);
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Void> deleteReview(
+            @PathVariable Integer reviewId,
+            Principal principal) {
+        String username = principal.getName();
+        reviewService.deleteReview(reviewId, username);
+        return ResponseEntity.noContent().build();
     }
 }

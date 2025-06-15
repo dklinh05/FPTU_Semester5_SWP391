@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,33 +38,31 @@ public class OrderService {
         User buyer = userRepository.findById(request.getBuyerId())
                 .orElseThrow(() -> new IllegalArgumentException("Buyer not found with ID: " + request.getBuyerId()));
 
-        UserVoucher userVoucher = null;
-        Voucher voucher = null;
-        if (request.getUserVoucherId() != null) {
-            userVoucher = userVoucherRepository.findById(request.getUserVoucherId())
-                    .orElseThrow(() -> new IllegalArgumentException("UserVoucher not found with ID: " + request.getUserVoucherId()));
-            if (userVoucher.getIsUsed()) {
-                throw new IllegalArgumentException("Voucher has already been used");
-            }
-            if (!userVoucher.getUser().getUserID().equals(request.getBuyerId())) {
-                throw new IllegalArgumentException("This voucher does not belong to the buyer");
-            }
-            voucher = userVoucher.getVoucher();
-            if (voucher.getExpirationDate() != null && voucher.getExpirationDate().isBefore(LocalDateTime.now())) {
-                throw new IllegalArgumentException("Voucher has expired");
-            }
-            if (voucher.getMaxUsage() != null && voucher.getMaxUsage() == 0) {
-                throw new IllegalArgumentException("This voucher has reached its maximum number of uses");
-            }
-        }
+//        UserVoucher userVoucher = null;
+//        Voucher voucher = null;
+//        if (request.getUserVoucherId() != null) {
+//            userVoucher = userVoucherRepository.findById(request.getUserVoucherId())
+//                    .orElseThrow(() -> new IllegalArgumentException("UserVoucher not found with ID: " + request.getUserVoucherId()));
+//            if (userVoucher.getIsUsed()) {
+//                throw new IllegalArgumentException("Voucher has already been used");
+//            }
+//            if (!userVoucher.getUser().getUserID().equals(request.getBuyerId())) {
+//                throw new IllegalArgumentException("This voucher does not belong to the buyer");
+//            }
+//            voucher = userVoucher.getVoucher();
+//            if (voucher.getExpirationDate() != null && voucher.getExpirationDate().isBefore(LocalDateTime.now())) {
+//                throw new IllegalArgumentException("Voucher has expired");
+//            }
+//            if (voucher.getMaxUsage() != null && voucher.getMaxUsage() == 0) {
+//                throw new IllegalArgumentException("This voucher has reached its maximum number of uses");
+//            }
+//        }
 
         Order order = Order.builder()
                 .buyer(buyer)
-                .userVoucher(userVoucher)
                 .orderDate(LocalDateTime.now())
                 .status(request.getStatus())
                 .totalAmount(BigDecimal.ZERO)
-                .discountAmount(BigDecimal.ZERO)
                 .build();
 
         order = orderRepository.save(order); // tạo order trước để có ID
@@ -102,39 +99,39 @@ public class OrderService {
             totalAmount = totalAmount.add(unitPrice.multiply(BigDecimal.valueOf(orderedQuantity)));
         }
 
-        // Áp dụng giảm giá nếu có
-        BigDecimal discountAmount = BigDecimal.ZERO;
-        if (voucher != null) {
-            // Check min order
-            if (voucher.getMinOrderAmount() != null && totalAmount.compareTo(voucher.getMinOrderAmount()) < 0) {
-                throw new IllegalArgumentException("Order amount does not meet the minimum for this voucher");
-            }
-
-            if ("PERCENT".equalsIgnoreCase(voucher.getDiscountType())) {
-                discountAmount = totalAmount.multiply(voucher.getDiscountValue())
-                        .divide(BigDecimal.valueOf(100));
-            } else if ("AMOUNT".equalsIgnoreCase(voucher.getDiscountType())) {
-                discountAmount = voucher.getDiscountValue();
-            }
-
-            // Không để giảm vượt tổng tiền
-            if (discountAmount.compareTo(totalAmount) > 0) {
-                discountAmount = totalAmount;
-            }
-
-            // Đánh dấu đã dùng
-            userVoucher.setIsUsed(true);
-            userVoucherRepository.save(userVoucher);
-            // Giảm MaxUsage trong bảng Voucher (nếu đang > 0)
-            if (voucher.getMaxUsage() != null && voucher.getMaxUsage() > 0) {
-                voucher.setMaxUsage(voucher.getMaxUsage() - 1);
-                voucherRepository.save(voucher);
-            }
-        }
+//        // Áp dụng giảm giá nếu có
+//        BigDecimal discountAmount = BigDecimal.ZERO;
+//        if (voucher != null) {
+//            // Check min order
+//            if (voucher.getMinOrderAmount() != null && totalAmount.compareTo(voucher.getMinOrderAmount()) < 0) {
+//                throw new IllegalArgumentException("Order amount does not meet the minimum for this voucher");
+//            }
+//
+//            if ("PERCENT".equalsIgnoreCase(voucher.getDiscountType())) {
+//                discountAmount = totalAmount.multiply(voucher.getDiscountValue())
+//                        .divide(BigDecimal.valueOf(100));
+//            } else if ("AMOUNT".equalsIgnoreCase(voucher.getDiscountType())) {
+//                discountAmount = voucher.getDiscountValue();
+//            }
+//
+//            // Không để giảm vượt tổng tiền
+//            if (discountAmount.compareTo(totalAmount) > 0) {
+//                discountAmount = totalAmount;
+//            }
+//
+//            // Đánh dấu đã dùng
+//            userVoucher.setIsUsed(true);
+//            userVoucherRepository.save(userVoucher);
+//            // Giảm MaxUsage trong bảng Voucher (nếu đang > 0)
+//            if (voucher.getMaxUsage() != null && voucher.getMaxUsage() > 0) {
+//                voucher.setMaxUsage(voucher.getMaxUsage() - 1);
+//                voucherRepository.save(voucher);
+//            }
+//        }
 
         // Lưu lại các giá trị
-        order.setDiscountAmount(discountAmount);
-        order.setTotalAmount(totalAmount.subtract(discountAmount));
+//        order.setDiscountAmount(discountAmount);
+        order.setTotalAmount(totalAmount);
         return orderRepository.save(order);
     }
 

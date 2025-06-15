@@ -1,36 +1,40 @@
 package com.farm.farmtrade.entity;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "Orders")
+@Table(name = "OrderGroups")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Order {
+public class OrderGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer orderID;
+    Integer orderGroupID;
 
     @ManyToOne
     @JoinColumn(name = "BuyerID")
     User buyer;
-    @ManyToOne
-    @JoinColumn(name = "SupplierID")
-    private User supplier;
-    LocalDateTime orderDate;
-    String status;
     BigDecimal totalAmount;
+    BigDecimal discountAmount;
+    BigDecimal finalAmount;
+    String status;
+    LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "orderGroup")
+    List<Order> orders;
     @ManyToOne
-    @JoinColumn(name = "orderGroupID")
-    private OrderGroup orderGroup;
+    @JoinColumn(name = "userVoucherID")
+    UserVoucher userVoucher;
 }
 

@@ -29,6 +29,8 @@ const routes = {
   shipperList: '/shipperlist',
   customerList: '/customerlist',
   supplierList: '/supplierlist',
+  productSearch: '/products/search',
+
 };
 
 export default routes;

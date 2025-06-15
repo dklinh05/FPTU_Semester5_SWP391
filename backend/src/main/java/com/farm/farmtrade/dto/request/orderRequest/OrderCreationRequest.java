@@ -19,7 +19,8 @@ public class OrderCreationRequest {
 
     @NotNull(message = "Buyer ID is required")
     Integer buyerId;
-
+    @NotNull(message = "Supplier ID is required")
+    Integer supplierId;
     @NotNull(message = "Order date is required")
     LocalDateTime orderDate;
 
@@ -28,5 +29,4 @@ public class OrderCreationRequest {
     @NotNull(message = "Order items are required")
     @Size(min = 1, message = "At least one item is required")
     List<OrderItemRequest> items;
-    Integer userVoucherId;
 }

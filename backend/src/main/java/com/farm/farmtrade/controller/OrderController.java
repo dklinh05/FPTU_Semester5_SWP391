@@ -1,8 +1,11 @@
 package com.farm.farmtrade.controller;
 
 import com.farm.farmtrade.dto.request.orderRequest.OrderCreationRequest;
+import com.farm.farmtrade.dto.request.orderRequest.OrderGroupRequest;
 import com.farm.farmtrade.entity.Order;
+import com.farm.farmtrade.entity.OrderGroup;
 import com.farm.farmtrade.entity.OrderItem;
+import com.farm.farmtrade.service.order.OrderGroupService;
 import com.farm.farmtrade.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,8 @@ import java.util.List;
 public class OrderController {
     @Autowired
     private final OrderService orderService;
-
+    @Autowired
+    private final OrderGroupService orderGroupService;
     // Tạo đơn hàng mới
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody OrderCreationRequest request) {
@@ -63,6 +67,22 @@ public class OrderController {
     public ResponseEntity<List<OrderItem>> getOrderItemsByOrderId(@PathVariable Integer orderId) {
         List<OrderItem> orderItems = orderService.getOrderItemsByOrderId(orderId);
         return ResponseEntity.ok(orderItems);
+    }
+
+    @PostMapping("/ordersGroup")
+    public ResponseEntity<OrderGroup> createOrderGroup(@RequestBody OrderGroupRequest request) {
+        OrderGroup created = orderGroupService.createOrderGroup(request);
+        return ResponseEntity.ok(created);
+    }
+
+    @GetMapping("/ordersGroup")
+    public ResponseEntity<List<OrderGroup>> getAllOrderGroups() {
+        return ResponseEntity.ok(orderGroupService.getAllOrderGroups());
+    }
+
+    @GetMapping("/ordersGroup/{id}")
+    public ResponseEntity<OrderGroup> getOrderGroupById(@PathVariable String id) {
+        return ResponseEntity.ok(orderGroupService.getOrderGroupById(id));
     }
 
 }

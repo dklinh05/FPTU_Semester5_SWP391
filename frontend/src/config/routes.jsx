@@ -26,6 +26,9 @@ const routes = {
   purchase: '/purchase',
   feedback: '/reviews',
   orders: 'orders',
+  shipperList: '/shipperlist',
+  customerList: '/customerlist',
+  supplierList: '/supplierlist',
 };
 
 export default routes;

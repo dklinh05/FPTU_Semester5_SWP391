@@ -1,0 +1,171 @@
+import React, { useEffect, useState } from "react";
+import { request } from "../../utils/httpRequest";
+
+const SupplierList = () => {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          setError("Vui lòng đăng nhập.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await request.get("/users");
+        const data = response.data;
+
+        // Lọc ra chỉ những người có role là SUPPLIER
+        const suppliers = data.filter(user => user.role === "SUPPLIER");
+
+        setUsers(suppliers);
+      } catch (err) {
+        console.error(err);
+        setError("Không thể tải danh sách nhà cung cấp. Vui lòng thử lại sau.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  // Hàm lọc người dùng theo từ khóa tìm kiếm
+  const filteredUsers = users.filter(user =>
+    user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.userID?.toString().includes(searchTerm)
+  );
+
+  if (loading) return <p>Đang tải dữ liệu...</p>;
+  if (error) return <p className="text-danger">{error}</p>;
+
+  return (
+    <div className="main-content">
+      {/* Header Section */}
+      <div className="card-service-section px-0 px-md-0 px-lg-3">
+        <div className="container-fluid">
+          <div className="d-flex justify-content-between align-items-center bg-teal py-3">
+            {/* Import Button */}
+            <div className="d-flex gap-2">
+              <button className="btn btn-light d-flex align-items-center gap-2">
+                <i className="fa-solid fa-cloud-arrow-up"></i> Import
+              </button>
+            </div>
+
+            {/* Search Input */}
+            <div className="search-box d-flex align-items-center flex-fill me-3">
+              <i className="fas fa-search text-light me-2"></i>
+              <input
+                type="text"
+                className="form-control border-0 bg-transparent text-light w-100"
+                placeholder="Search supplier (ID, Username, Full Name, Email, Phone)"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* User Table Section */}
+      <div className="product-section px-0 px-md-0 px-lg-3 mt-5">
+        <div className="container">
+          <div className="card shadow-sm border-0 border-radius-12">
+            <div className="card-body p-4">
+              <h5 className="fw-bold">Supplier List</h5>
+
+              {/* Hiển thị số lượng kết quả */}
+              <p className="text-muted ms-4">Tổng: {filteredUsers.length} kết quả</p>
+
+              <div className="table-responsive">
+                <table className="table align-middle">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Username</th>
+                      <th>Full Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Join Date</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredUsers.length > 0 ? (
+                      filteredUsers.map((user) => (
+                        <tr key={user.userID}>
+                          <td>{user.userID ? `#${user.userID}` : "-"}</td>
+                          <td>{user.username || "-"}</td>
+                          <td>{user.fullName || "-"}</td>
+                          <td>{user.email || "-"}</td>
+                          <td>{user.phone || "-"}</td>
+                          <td>
+                            {user.createdAt
+                              ? new Date(user.createdAt).toLocaleString()
+                              : "-"}
+                          </td>
+                          <td>
+                            {user.isLocked ? (
+                              <span className="badge bg-danger">Blocked</span>
+                            ) : user.isActive ? (
+                              <span className="badge bg-success">Active</span>
+                            ) : (
+                              <span className="badge bg-secondary">Inactive</span>
+                            )}
+                          </td>
+                          <td className="d-flex">
+                            <a href={`/edit-user/${user.userID}`} className="btn btn-sm me-2">
+                              <i className="fa-solid fa-edit"></i>
+                            </a>
+                            <a href="#" className="btn btn-sm me-2">
+                              <i className="fa-solid fa-trash"></i>
+                            </a>
+                            <div className="dropdown">
+                              <a
+                                className="nav-link px-3 pt-1 pb-2"
+                                href="#"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false"
+                              >
+                                <i className="fa-solid fa-ellipsis-vertical"></i>
+                              </a>
+                              <ul className="dropdown-menu">
+                                <li>
+                                  <a className="dropdown-item" href="#">
+                                    Block
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="8" className="text-center">
+                          Không tìm thấy nhà cung cấp nào phù hợp.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SupplierList;

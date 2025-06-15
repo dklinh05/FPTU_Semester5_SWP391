@@ -98,11 +98,38 @@ const SidebarAdmin = () => {
             </ul>
           </li>
 
+          {/* User Management */}
           <li>
-            <a href="/userlist" className="text-black sidebar-link">
+            <a
+              href="#"
+              className="text-black sidebar-link submenu-parent"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleSubmenu(5); // Dùng index 5 cho submenu này
+              }}
+            >
               <i className="fa-regular fa-user"></i>
-              <p>Customers</p>
+              <p>
+                User Management <i className="fa-solid fa-angle-down right-icon"></i>
+              </p>
             </a>
+            <ul className={`sidebar-submenu ${activeSubmenu === 5 ? "open" : ""}`}>
+              <li>
+                <a href="/customerlist" className="submenu-link">
+                  Customer
+                </a>
+              </li>
+              <li>
+                <a href="/supplierlist" className="submenu-link">
+                  Supplier
+                </a>
+              </li>
+              <li>
+                <a href="/shipperlist" className="submenu-link">
+                  Shipper
+                </a>
+              </li>
+            </ul>
           </li>
 
           {/* Page */}

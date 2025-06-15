@@ -27,11 +27,14 @@ function Orders() {
       setOrderItemsMap(itemsMap);
     } catch (error) {
       console.error("Error loading orders:", error);
-    } 
+    }
   };
 
   useEffect(() => {
-    fetchOrders();
+    if (userId) {
+      console.log(userId);
+      fetchOrders();
+    }
   }, [userId]);
 
   return (
@@ -53,7 +56,9 @@ function Orders() {
               {orderItemsMap[order.orderID]?.map((item) => (
                 <div className="d-flex mb-3" key={item.orderItemID}>
                   <img
-                    src={item.product.imageURL || "https://via.placeholder.com/60"}
+                    src={
+                      item.productImage || "https://via.placeholder.com/60"
+                    }
                     alt="item"
                     width={60}
                     height={60}
@@ -61,7 +66,7 @@ function Orders() {
                   />
                   <div>
                     <div>
-                      <strong>{item.product.name}</strong>
+                      <strong>{item.productName}</strong>
                     </div>
                     <div className="text-muted">Số lượng: {item.quantity}</div>
                     <div className="text-muted">

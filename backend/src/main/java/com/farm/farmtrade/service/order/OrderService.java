@@ -2,6 +2,8 @@ package com.farm.farmtrade.service.order;
 
 import com.farm.farmtrade.dto.request.orderRequest.OrderCreationRequest;
 import com.farm.farmtrade.dto.request.orderRequest.OrderItemRequest;
+import com.farm.farmtrade.dto.response.OrderItemResponse;
+import com.farm.farmtrade.dto.response.OrderResponse;
 import com.farm.farmtrade.entity.*;
 import com.farm.farmtrade.repository.*;
 import jakarta.transaction.Transactional;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -156,11 +159,23 @@ public class OrderService {
     }
 
     // tìm order theo buyerID
-    public List<Order> getOrdersByBuyerId(Integer buyerId) {
+    public List<OrderResponse> getOrdersByBuyerId(Integer buyerId) {
         User buyer = userRepository.findById(buyerId)
                 .orElseThrow(() -> new IllegalArgumentException("Buyer not found with ID: " + buyerId));
 
-        return orderRepository.findByBuyer(buyer);
+        List<Order> orders = orderRepository.findByBuyer(buyer);
+
+        return orders.stream()
+                .map(order -> new OrderResponse(
+                        order.getOrderID(),
+                        order.getBuyer() != null ? order.getBuyer().getUserID() : null,
+                        order.getSupplier() != null ? order.getSupplier().getUserID() : null,
+                        order.getOrderDate(),
+                        order.getStatus(),
+                        order.getTotalAmount()
+                ))
+                .collect(Collectors.toList());
+
     }
 
 //    // tìm order theo shipperID
@@ -171,8 +186,20 @@ public class OrderService {
 //        return orderRepository.findByShipper(shipper);
 //    }
 
-    public List<OrderItem> getOrderItemsByOrderId(Integer orderId) {
-        return orderItemRepository.findByOrderOrderID(orderId);
+    public List<OrderItemResponse> getOrderItemsByOrderId(Integer orderId) {
+        List<OrderItem> items = orderItemRepository.findByOrderOrderID(orderId);
+
+        return items.stream().map(item -> {
+            Product product = item.getProduct();
+            return new OrderItemResponse(
+                    item.getOrderItemID(),
+                    item.getQuantity(),
+                    item.getPrice(),
+                    product.getProductID(),
+                    product.getName(),
+                    product.getImageURL()
+            );
+        }).collect(Collectors.toList());
     }
 
 }

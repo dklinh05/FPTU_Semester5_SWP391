@@ -2,7 +2,7 @@ import {request, formRequest} from '../utils/httpRequest';
 
 export const addOrder = async (data) =>{
   try {
-    const response = await request.post('/orders', data);
+    const response = await request.post('/orders/ordersGroup', data);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

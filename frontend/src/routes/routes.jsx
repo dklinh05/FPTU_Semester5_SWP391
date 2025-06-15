@@ -29,7 +29,11 @@ import Checkout from '../pages/Checkout';
 import RequestProduct from '../pages/RequestProduct';
 import Feedback from '../pages/Feedback';
 import Orders from '../pages/Orders';
+import CustomerList from "../pages/CustomerList";
+import SupplierList from "../pages/SupplierList";
+import ShipperList from "../pages/ShipperList";
 import ProductSearch from '../pages/ProductSearch';
+
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
@@ -55,7 +59,11 @@ const publicRoutes = [
   { path: config.routes.requestProduct, component: RequestProduct, layout: AdminLayout },
   { path: config.routes.feedback, component: Feedback, layout: null },
   { path: config.routes.orders, component: Orders, layout: null },
+  { path: config.routes.shipperList, component: ShipperList, layout: AdminLayout },
+  { path: config.routes.customerList, component: CustomerList, layout: AdminLayout },
+  { path: config.routes.supplierList, component: SupplierList, layout: AdminLayout },
   { path: config.routes.productSearch, component: ProductSearch, layout: null },
+
 ];
 
 const privateRoutes = [];

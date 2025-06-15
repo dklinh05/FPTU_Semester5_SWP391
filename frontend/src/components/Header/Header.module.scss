@@ -4,3 +4,36 @@
     width: 45px;
 
 }
+.searchResults {
+    position: absolute;
+    top: 70px;
+    right: 100px;
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    min-width: 300px;
+
+    .list-group {
+        border-radius: 0;
+    }
+
+    li:hover {
+        background-color: #f8f9fa;
+    }
+}
+
+.noResults {
+    position: absolute;
+    top: 70px;
+    right: 100px;
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    min-width: 300px;
+    color: #666;
+}

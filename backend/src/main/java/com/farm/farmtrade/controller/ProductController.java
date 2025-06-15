@@ -31,6 +31,18 @@ public class ProductController {
 //        return ResponseEntity.ok(products);
 //    }
 
+    //    @GetMapping("/search")
+//    public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword) {
+//        List<Product> products = productService.searchProducts(keyword);
+//        return ResponseEntity.ok(products);
+//    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword) {
+        List<Product> products = productService.searchProducts(keyword);
+        return ResponseEntity.ok(products);
+    }
+
     @GetMapping
     public ResponseEntity<Page<Product>> listProductsForHome(
             @RequestParam(defaultValue = "0") int page,

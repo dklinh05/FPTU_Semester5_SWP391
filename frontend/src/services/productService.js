@@ -51,3 +51,14 @@ export const deleteProduct = async (id) => {
     throw error.response?.data || error.message;
   }
 };
+
+export const searchProducts = async (keyword) => {
+  try {
+    const response = await request.get("/products/search", {
+      params: { keyword },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

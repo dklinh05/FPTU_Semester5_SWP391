@@ -3,6 +3,8 @@ package com.farm.farmtrade.repository;
 import com.farm.farmtrade.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import org.springframework.data.domain.Pageable;
@@ -18,5 +20,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     // Tìm sản phẩm theo status có phân trang
     Page<Product> findPageByStatus(String status, Pageable pageable);
 
+    //    @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+//    List<Product> findProductsByName(@Param("keyword") String keyword);
+    List<Product> findByNameContainingIgnoreCase(String keyword);
 
+    
 }

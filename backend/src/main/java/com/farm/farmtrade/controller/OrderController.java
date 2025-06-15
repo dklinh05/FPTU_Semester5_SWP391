@@ -2,6 +2,8 @@ package com.farm.farmtrade.controller;
 
 import com.farm.farmtrade.dto.request.orderRequest.OrderCreationRequest;
 import com.farm.farmtrade.dto.request.orderRequest.OrderGroupRequest;
+import com.farm.farmtrade.dto.response.OrderItemResponse;
+import com.farm.farmtrade.dto.response.OrderResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderGroupResponse;
 import com.farm.farmtrade.entity.Order;
 import com.farm.farmtrade.entity.OrderGroup;
@@ -24,11 +26,11 @@ public class OrderController {
     @Autowired
     private final OrderGroupService orderGroupService;
     // Tạo đơn hàng mới
-    @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody OrderCreationRequest request) {
-        Order createdOrder = orderService.createOrder(request);
-        return ResponseEntity.ok(createdOrder);
-    }
+//    @PostMapping
+//    public ResponseEntity<Order> createOrder(@RequestBody OrderCreationRequest request) {
+//        Order createdOrder = orderService.createOrder(request);
+//        return ResponseEntity.ok(createdOrder);
+//    }
 
     //  Lấy toàn bộ đơn hàng
     @GetMapping
@@ -52,15 +54,15 @@ public class OrderController {
     }
     //lấy đơn hàng theo ID người mua
     @GetMapping("/buyer/{buyerId}")
-    public ResponseEntity<List<Order>> getOrdersByBuyer(@PathVariable Integer buyerId) {
-        List<Order> orders = orderService.getOrdersByBuyerId(buyerId);
+    public ResponseEntity<List<OrderResponse>> getOrdersByBuyer(@PathVariable Integer buyerId) {
+        List<OrderResponse> orders = orderService.getOrdersByBuyerId(buyerId);
         return ResponseEntity.ok(orders);
     }
 
 
     @GetMapping("/{orderId}/items")
-    public ResponseEntity<List<OrderItem>> getOrderItemsByOrderId(@PathVariable Integer orderId) {
-        List<OrderItem> orderItems = orderService.getOrderItemsByOrderId(orderId);
+    public ResponseEntity<List<OrderItemResponse>> getOrderItemsByOrderId(@PathVariable Integer orderId) {
+        List<OrderItemResponse> orderItems = orderService.getOrderItemsByOrderId(orderId);
         return ResponseEntity.ok(orderItems);
     }
 

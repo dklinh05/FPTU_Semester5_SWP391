@@ -14,38 +14,38 @@ function Checkout() {
 
   // Group cart items by supplier name
   const groupedBySupplier = chooseCartItems.reduce((groups, cart) => {
-    const supplierName = cart.product.supplier.fullName;
-    if (!groups[supplierName]) {
-      groups[supplierName] = [];
+    const supplierId = cart.product.supplier.userID;
+    if (!groups[supplierId]) {
+      groups[supplierId] = [];
     }
-    groups[supplierName].push(cart);
+    groups[supplierId].push(cart);
     return groups;
   }, {});
 
-  const productOrderList = chooseCartItems.map((item) => ({
-    productId: item.product.productID, // hoặc item.productId tùy vào cấu trúc
-    quantity: item.quantity,
-  }));
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     try {
       // Bước 2: Gửi đơn hàng cho từng nhóm
-      for (const [supplierName, items] of Object.entries(groupedBySupplier)) {
-        const orderData = {
-          buyerId: userId,
+      const orderList = Object.entries(groupedBySupplier).map(
+        ([supplierId, items]) => ({
+          supplierId: parseInt(supplierId),
           status: "pending",
-          userVoucherId: 3,
           items: items.map((item) => ({
-            productId: item.product.productID, // hoặc item.productId nếu có
+            productId: item.product.productID,
             quantity: item.quantity,
           })),
-        };
+        })
+      );
 
-        const response = await addOrder(orderData);
-        console.log(`✅ Đã tạo đơn hàng cho ${supplierName}:`, response.data);
-      }
+      const orderGroupData = {
+        buyerId: userId,
+        userVoucherId: null,
+        orders: orderList,
+      };
+
+      const response = await addOrder(orderGroupData);
+      console.log(` Đã tạo đơn hàng cho:`, response.data);
 
       alert("Tạo đơn hàng theo nhà cung cấp thành công!");
     } catch (error) {

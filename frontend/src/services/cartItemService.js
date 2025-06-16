@@ -35,3 +35,15 @@ export const deleteCartItem = async (id) =>{
     throw error.response?.data || error.message;
   }
 }
+
+export const countCartItems = async (userId) => {
+  try {
+    const response = await request.get(`/cart/count-items`, {
+      params: { buyerId: userId }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Lỗi khi đếm giỏ hàng:", error);
+    return 0;
+  }
+};

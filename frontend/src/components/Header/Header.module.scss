@@ -4,17 +4,16 @@
     width: 45px;
 
 }
-.searchResults {
+
+.suggestions {
     position: absolute;
-    top: 70px;
-    right: 100px;
+    top: 40px;
+    left: 0;
     z-index: 1000;
+    background-color: white;
+    min-width: 900px;
     max-height: 300px;
     overflow-y: auto;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    min-width: 300px;
 
     .list-group {
         border-radius: 0;
@@ -27,13 +26,27 @@
 
 .noResults {
     position: absolute;
-    top: 70px;
-    right: 100px;
+    top: 40px;
+    left: 0;
     z-index: 1000;
     background-color: white;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    min-width: 900px;
+    max-height: 300px;
     padding: 10px;
-    min-width: 300px;
     color: #666;
+}
+
+.cartBadge {
+    position: absolute;
+    top: -5px;
+    left: 15px;
+    background-color: #ffc107 !important;
+    color: white;
+    font-size: 12px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 50%;
 }

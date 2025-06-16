@@ -29,6 +29,7 @@ function Checkout() {
       // Bước 2: Gửi đơn hàng cho từng nhóm
       const orderList = Object.entries(groupedBySupplier).map(
         ([supplierId, items]) => ({
+          buyerId: userId,
           supplierId: parseInt(supplierId),
           status: "pending",
           items: items.map((item) => ({

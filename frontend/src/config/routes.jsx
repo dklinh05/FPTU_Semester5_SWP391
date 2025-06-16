@@ -25,12 +25,12 @@ const routes = {
   requestProduct: '/requestProduct',
   purchase: '/purchase',
   feedback: '/reviews',
-  orders: 'orders',
+  orders: '/orders',
   shipperList: '/shipperlist',
   customerList: '/customerlist',
   supplierList: '/supplierlist',
   productSearch: '/products/search',
-
+  ordersNotPayment: '/orders/not-payment'
 };
 
 export default routes;

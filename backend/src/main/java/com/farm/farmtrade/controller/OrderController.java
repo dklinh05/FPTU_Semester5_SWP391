@@ -38,8 +38,8 @@ public class OrderController {
 
     // Lấy đơn hàng theo ID
     @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable Integer id) {
-        Order order = orderService.getOrderById(id);
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable Integer id) {
+        OrderResponse order = orderService.getOrderById(id);
         return ResponseEntity.ok(order);
     }
 
@@ -78,5 +78,18 @@ public class OrderController {
     public ResponseEntity<OrderGroupResponse> getOrderGroupById(@PathVariable String id) {
         return ResponseEntity.ok(orderGroupService.getOrderGroupById(id));
     }
+
+    @GetMapping("/ordersGroup/buyer/{buyerId}")
+    public ResponseEntity<List<OrderGroupResponse>> getOrderGroupsByBuyerId(@PathVariable Integer buyerId) {
+        List<OrderGroupResponse> responses = orderGroupService.getOrderGroupsByBuyerId(buyerId);
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/group/{orderGroupId}")
+    public ResponseEntity<List<OrderResponse>> getOrdersByOrderGroupId(@PathVariable Integer orderGroupId) {
+        List<OrderResponse> orders = orderService.getOrdersByOrderGroupId(orderGroupId);
+        return ResponseEntity.ok(orders);
+    }
+
 
 }

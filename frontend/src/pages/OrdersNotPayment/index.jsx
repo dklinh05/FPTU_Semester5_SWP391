@@ -6,25 +6,34 @@ import ShopBanner from "../../layouts/components/ShopBanner";
 import {
   renderOrderByBuyerId,
   renderOrderItemsByOrderId,
+  renderOrderGroupByBuyerId,
+  renderOrdersByOrderGroupId,
 } from "../../services/orderService";
 
-function ordersNotPayment() {
+function OrdersNotPayment() {
   const { userId } = useUser();
-  const [orders, setOrders] = useState([]);
-  const [orderItemsMap, setOrderItemsMap] = useState({});
+  const [orderGroupsData, setOrderGroupsData] = useState([]);
 
   const fetchOrders = async () => {
     try {
-      const fetchedOrders = await renderOrderByBuyerId(userId);
-      setOrders(fetchedOrders);
+      const fetchedOrderGroups = await renderOrderGroupByBuyerId(userId);
 
-      // Fetch items for each order
-      const itemsMap = {};
-      for (const order of fetchedOrders) {
-        const items = await renderOrderItemsByOrderId(order.orderID);
-        itemsMap[order.orderID] = items;
-      }
-      setOrderItemsMap(itemsMap);
+      const orderGroupsWithOrders = await Promise.all(
+        fetchedOrderGroups.map(async (group) => {
+          const orders = await renderOrdersByOrderGroupId(group.orderGroupID);
+
+          const ordersWithItems = await Promise.all(
+            orders.map(async (order) => {
+              const items = await renderOrderItemsByOrderId(order.orderID);
+              return { ...order, items };
+            })
+          );
+
+          return { ...group, orders: ordersWithItems };
+        })
+      );
+
+      setOrderGroupsData(orderGroupsWithOrders);
     } catch (error) {
       console.error("Error loading orders:", error);
     }
@@ -32,7 +41,6 @@ function ordersNotPayment() {
 
   useEffect(() => {
     if (userId) {
-      console.log(userId);
       fetchOrders();
     }
   }, [userId]);
@@ -42,51 +50,64 @@ function ordersNotPayment() {
       <Header />
       <ShopBanner />
       <div className="container mt-4">
-        {orders.map((order) => (
-          <Card className="mb-4" key={order.orderID}>
-            <Card.Header className="d-flex justify-content-between">
-              <div>
-                <strong>Đơn hàng #{order.orderID}</strong>
-              </div>
-              <Badge bg={order.status === "CANCELLED" ? "danger" : "success"}>
-                {order.status}
-              </Badge>
+        {orderGroupsData.map((group) => (
+          <Card className="mb-5" key={group.orderGroupID}>
+            <Card.Header className="bg-dark text-white">
+              <strong>Order Group #{group.orderGroupID}</strong> – Tổng tiền: ₫
+              {group.finalAmount.toLocaleString()}
             </Card.Header>
-            <Card.Body>
-              {orderItemsMap[order.orderID]?.map((item) => (
-                <div className="d-flex mb-3" key={item.orderItemID}>
-                  <img
-                    src={
-                      item.productImage || "https://via.placeholder.com/60"
-                    }
-                    alt="item"
-                    width={60}
-                    height={60}
-                    className="me-3"
-                  />
+
+            {group.orders.map((order) => (
+              <Card className="m-3" key={order.orderID}>
+                <Card.Header className="d-flex justify-content-between">
                   <div>
-                    <div>
-                      <strong>{item.productName}</strong>
-                    </div>
-                    <div className="text-muted">Số lượng: {item.quantity}</div>
-                    <div className="text-muted">
-                      Giá: ₫{item.price.toLocaleString()}
-                    </div>
+                    <strong>Đơn hàng #{order.orderID}</strong>
                   </div>
-                </div>
-              ))}
-              <div className="text-end">
-                <strong>
-                  Tổng tiền: ₫{order.totalAmount.toLocaleString()}
-                </strong>
-              </div>
-            </Card.Body>
-            <Card.Footer className="text-end">
-              <Button variant="outline-primary" className="me-2">
-                Chi tiết
-              </Button>
-              <Button variant="danger">Mua lại</Button>
-            </Card.Footer>
+                  <Badge
+                    bg={order.status === "CANCELLED" ? "danger" : "success"}
+                  >
+                    {order.status}
+                  </Badge>
+                </Card.Header>
+                <Card.Body>
+                  {order.items.map((item) => (
+                    <div className="d-flex mb-3" key={item.orderItemID}>
+                      <img
+                        src={
+                          item.productImage || "https://via.placeholder.com/60"
+                        }
+                        alt="item"
+                        width={60}
+                        height={60}
+                        className="me-3"
+                      />
+                      <div>
+                        <div>
+                          <strong>{item.productName}</strong>
+                        </div>
+                        <div className="text-muted">
+                          Số lượng: {item.quantity}
+                        </div>
+                        <div className="text-muted">
+                          Giá: ₫{item.price.toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="text-end">
+                    <strong>
+                      Tổng đơn: ₫{order.totalAmount.toLocaleString()}
+                    </strong>
+                  </div>
+                </Card.Body>
+                <Card.Footer className="text-end">
+                  <Button variant="outline-primary" className="me-2">
+                    Chi tiết
+                  </Button>
+                  <Button variant="danger">Mua lại</Button>
+                </Card.Footer>
+              </Card>
+            ))}
           </Card>
         ))}
       </div>
@@ -94,4 +115,4 @@ function ordersNotPayment() {
   );
 }
 
-export default ordersNotPayment;
+export default OrdersNotPayment;

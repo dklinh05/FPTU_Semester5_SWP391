@@ -145,10 +145,21 @@ public class OrderService {
     }
 
     //Lấy đơn hàng theo ID.
-    public Order getOrderById(Integer id) {
-        return orderRepository.findById(id)
+    public OrderResponse getOrderById(Integer id) {
+        Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + id));
+
+        return OrderResponse.builder()
+                .orderID(order.getOrderID())
+                .buyerId(order.getBuyer() != null ? order.getBuyer().getUserID() : null)
+                .supplierId(order.getSupplier() != null ? order.getSupplier().getUserID() : null)
+                .orderDate(order.getOrderDate())
+                .status(order.getStatus())
+                .totalAmount(order.getTotalAmount())
+                .orderGroupId(order.getOrderGroup() != null ? order.getOrderGroup().getOrderGroupID() : null)
+                .build();
     }
+
 
     // Xóa đơn hàng theo ID.
     public void deleteOrder(Integer id) {
@@ -202,4 +213,22 @@ public class OrderService {
             );
         }).collect(Collectors.toList());
     }
+
+    public List<OrderResponse> getOrdersByOrderGroupId(Integer orderGroupId) {
+
+
+        List<Order> orders = orderRepository.findByOrderGroupOrderGroupID(orderGroupId);
+
+        return orders.stream().map(order -> OrderResponse.builder()
+                .orderID(order.getOrderID())
+                .buyerId(order.getBuyer() != null ? order.getBuyer().getUserID() : null)
+                .supplierId(order.getSupplier() != null ? order.getSupplier().getUserID() : null)
+                .orderDate(order.getOrderDate())
+                .status(order.getStatus())
+                .totalAmount(order.getTotalAmount())
+                .orderGroupId(order.getOrderGroup() != null ? order.getOrderGroup().getOrderGroupID() : null)
+                .build()
+        ).collect(Collectors.toList());
+    }
+
 }

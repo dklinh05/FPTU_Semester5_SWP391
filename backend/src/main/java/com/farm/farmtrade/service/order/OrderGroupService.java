@@ -204,5 +204,11 @@ public class OrderGroupService {
         return discount;
     }
 
+    public List<OrderGroupResponse> getOrderGroupsByBuyerId(Integer buyerId) {
+        List<OrderGroup> orderGroups = orderGroupRepository.findByBuyerUserID(buyerId);
+        return orderGroups.stream()
+                .map(this::toOrderGroupResponse)
+                .collect(Collectors.toList());
+    }
 
 }

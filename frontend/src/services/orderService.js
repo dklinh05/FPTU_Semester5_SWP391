@@ -9,6 +9,15 @@ export const addOrder = async (data) =>{
   }
 }
 
+export const renderOrdersByOrderGroupId = async (id) => {
+  try {
+    const response = await request.get(`/orders/group/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 export const renderOrderByBuyerId = async (id) => {
   try {
     const response = await request.get(`/orders/buyer/${id}`);
@@ -21,6 +30,15 @@ export const renderOrderByBuyerId = async (id) => {
 export const renderOrderItemsByOrderId = async (id) => {
   try {
     const response = await request.get(`/orders/${id}/items`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const renderOrderGroupByBuyerId = async (id) => {
+  try {
+    const response = await request.get(`/orders/ordersGroup/buyer/${id}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

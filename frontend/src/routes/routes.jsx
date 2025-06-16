@@ -29,7 +29,7 @@ import Checkout from '../pages/Checkout';
 import RequestProduct from '../pages/RequestProduct';
 import Feedback from '../pages/Feedback';
 import Orders from '../pages/Orders';
-
+import OrdersNotPayment from '../pages/OrdersNotPayment';
 import CustomerList from "../pages/CustomerList";
 import SupplierList from "../pages/SupplierList";
 import ShipperList from "../pages/ShipperList";
@@ -60,6 +60,7 @@ const publicRoutes = [
   { path: config.routes.requestProduct, component: RequestProduct, layout: AdminLayout },
   { path: config.routes.feedback, component: Feedback, layout: null },
   { path: config.routes.orders, component: Orders, layout: null },
+   { path: config.routes.ordersNotPayment, component: OrdersNotPayment, layout: null },
   { path: config.routes.shipperList, component: ShipperList, layout: AdminLayout },
   { path: config.routes.customerList, component: CustomerList, layout: AdminLayout },
   { path: config.routes.supplierList, component: SupplierList, layout: AdminLayout },

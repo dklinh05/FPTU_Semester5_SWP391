@@ -110,7 +110,17 @@ public class ProductService {
 
 
     public Page<Product> getActiveProductsWithPagination(Pageable pageable) {
+
         return productRepository.findPageByStatus("active", pageable);
+    }
+
+    public Page<Product> getActiveProductsByCategory(String category, Pageable pageable) {
+        if (category == null || category.trim().isEmpty()) {
+            return productRepository.findPageByStatus("active", pageable);
+        }else{
+            return productRepository.findPageByCategoryAndStatus(category, "active", pageable);
+        }
+
     }
 
 

@@ -18,6 +18,23 @@ export const renderProduct = async () => {
   }
 };
 
+export const renderProductByCategory = async (category, sortBy, sortDir, page, size) => {
+  try {
+    const response = await request.get("/products/category", {
+      params: {
+        category,
+        sortBy,
+        sortDir,
+        page,
+        size,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 export const renderProductById = async (id) => {
   try {
     const response = await request.get(`/products/${id}`);
@@ -27,7 +44,13 @@ export const renderProductById = async (id) => {
   }
 };
 
-export const renderProductBySupplierId = async (id, sortBy, sortDir, page, size) => {
+export const renderProductBySupplierId = async (
+  id,
+  sortBy,
+  sortDir,
+  page,
+  size
+) => {
   try {
     const response = await request.get(`/products/supplier/${id}`, {
       params: {

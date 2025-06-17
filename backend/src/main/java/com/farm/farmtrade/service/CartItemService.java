@@ -73,4 +73,8 @@ public class CartItemService {
         return cartItemRepository.findByBuyerUserID(buyerId);
     }
 
+    public Integer countProductsInCart(Integer buyerId) {
+        List<CartItem> items = cartItemRepository.findByBuyerUserID(buyerId);
+        return items.size();
+    }
 }

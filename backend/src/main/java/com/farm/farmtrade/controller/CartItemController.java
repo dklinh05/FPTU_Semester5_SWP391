@@ -53,4 +53,10 @@ public class CartItemController {
     public List<CartItem> getCartItems(@PathVariable Integer buyerId) {
         return cartItemService.getCartItems(buyerId);
     }
+
+    @GetMapping("/count-items")
+    public ResponseEntity<Integer> countCartItems(@RequestParam Integer buyerId) {
+        Integer count = cartItemService.countProductsInCart(buyerId);
+        return ResponseEntity.ok(count);
+    }
 }

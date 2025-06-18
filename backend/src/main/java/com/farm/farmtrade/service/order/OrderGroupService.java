@@ -207,6 +207,7 @@ public class OrderGroupService {
     public List<OrderGroupResponse> getOrderGroupsByBuyerId(Integer buyerId) {
         List<OrderGroup> orderGroups = orderGroupRepository.findByBuyerUserID(buyerId);
         return orderGroups.stream()
+                .filter(group -> "PENDING".equalsIgnoreCase(group.getStatus()))
                 .map(this::toOrderGroupResponse)
                 .collect(Collectors.toList());
     }

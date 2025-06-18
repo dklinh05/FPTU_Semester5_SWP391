@@ -115,7 +115,7 @@ const publicRoutes = [
     component: SupplierList,
     layout: AdminLayout,
   },
-  { path: config.routes.productSearch, component: ProductSearch, layout: null },
+  { path: config.routes.productSearch, component: ProductSearch, layout: SearchResultLayout },
 ];
 
 const privateRoutes = [];

@@ -21,6 +21,7 @@ public class OrderResponse {
     Integer orderID;
     Integer buyerId;
     Integer supplierId;
+    String supplierName;
     LocalDateTime orderDate;
     String status;
     BigDecimal totalAmount;

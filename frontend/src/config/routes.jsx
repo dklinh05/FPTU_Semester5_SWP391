@@ -20,7 +20,7 @@ const routes = {
   listProduct: '/listproduct',
   orderList: '/orderlist',
   userList: '/userlist',
-  request: '/request',
+  requestupdaterole: '/requestupdaterole',
   checkout: '/checkout',
   requestProduct: '/requestProduct',
   purchase: '/purchase',

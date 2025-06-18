@@ -1,18 +1,18 @@
 // src/components/Header/Header.jsx
 
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import Cookies from 'js-cookie';
 import styles from "./Header.module.scss";
-import {useNavigate} from "react-router-dom";
-import {useUser} from "../../context/UserContext";
-import {searchProducts} from "../../services/productService";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
+import { searchProducts } from "../../services/productService";
 import { countCartItems } from "../../services/cartItemService";
 
 const cx = classNames.bind(styles);
 
 function Header() {
-    const {user} = useUser();
+    const { user } = useUser();
     const [searchTerm, setSearchTerm] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -107,7 +107,7 @@ function Header() {
                             </a>
                         </small>
                         <small className="me-3">
-                            <a href="/request" className="text-white">
+                            <a href="/requestupdaterole" className="text-white">
                                 Seller Centre
                             </a>
                         </small>
@@ -145,12 +145,12 @@ function Header() {
                             }}
                             className="form-control border border-secondary rounded-pill"
                             placeholder="Search..."
-                            style={{width: "900px", paddingLeft: "15px"}}
+                            style={{ width: "900px", paddingLeft: "15px" }}
                         />
                         <button
                             type="submit"
                             className="btn btn-primary rounded-circle ms-2"
-                            style={{width: "38px", height: "38px"}}
+                            style={{ width: "38px", height: "38px" }}
                         >
                             <i className="fas fa-search"></i>
                         </button>
@@ -164,7 +164,7 @@ function Header() {
                                             key={product.productID}
                                             onClick={() => handleProductClick(product.productID)}
                                             className="list-group-item list-group-item-action d-flex align-items-center"
-                                            style={{cursor: "pointer"}}
+                                            style={{ cursor: "pointer" }}
                                         >
                                             {product.imageURL && (
                                                 <img
@@ -212,17 +212,17 @@ function Header() {
                                 <a href="/cart" className="position-relative me-4">
                                     <i className="fa fa-shopping-bag fa-2x"></i>
                                     {cartItemCount > 0 && (
-                                    <span
-                                      className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
-                                      style={{
-                                        top: "-5px",
-                                        left: "15px",
-                                        height: "20px",
-                                        minWidth: "20px",
-                                      }}
-                                    >
-                                    {cartItemCount}
-                                    </span>
+                                        <span
+                                            className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
+                                            style={{
+                                                top: "-5px",
+                                                left: "15px",
+                                                height: "20px",
+                                                minWidth: "20px",
+                                            }}
+                                        >
+                                            {cartItemCount}
+                                        </span>
                                     )}
                                 </a>
 

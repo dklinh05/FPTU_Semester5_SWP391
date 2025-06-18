@@ -1,6 +1,6 @@
 // src/components/Header/Header.jsx
 
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import Cookies from 'js-cookie';
 import styles from "./Header.module.scss";
@@ -91,7 +91,7 @@ function Header() {
                             </a>
                         </small>
                         <small className="me-3">
-                            <a href="/request" className="text-white">
+                            <a href="/requestupdaterole" className="text-white">
                                 Seller Centre
                             </a>
                         </small>
@@ -129,12 +129,12 @@ function Header() {
                             }}
                             className="form-control border border-secondary rounded-pill"
                             placeholder="Search..."
-                            style={{width: "900px", paddingLeft: "15px"}}
+                            style={{ width: "900px", paddingLeft: "15px" }}
                         />
                         <button
                             type="submit"
                             className="btn btn-primary rounded-circle ms-2"
-                            style={{width: "38px", height: "38px"}}
+                            style={{ width: "38px", height: "38px" }}
                         >
                             <i className="fas fa-search"></i>
                         </button>
@@ -148,7 +148,7 @@ function Header() {
                                             key={product.productID}
                                             onClick={() => handleProductClick(product.productID)}
                                             className="list-group-item list-group-item-action d-flex align-items-center"
-                                            style={{cursor: "pointer"}}
+                                            style={{ cursor: "pointer" }}
                                         >
                                             {product.imageURL && (
                                                 <img

@@ -25,12 +25,12 @@ import AdminLayout from "../layouts/AdminLayout";
 import OrdersLayout from "../layouts/OrdersLayout"
 import OrderList from "../pages/OrderList";
 import UserList from "../pages/UserList";
-import Request from "../pages/Request";
-import Checkout from "../pages/Checkout";
-import RequestProduct from "../pages/RequestProduct";
-import Feedback from "../pages/Feedback";
-import Orders from "../pages/Orders";
-import OrdersNotPayment from "../pages/OrdersNotPayment";
+import RequestUpdateRole from '../pages/RequestUpdateRole/index.jsx';
+import Checkout from '../pages/Checkout';
+import RequestProduct from '../pages/RequestProduct';
+import Feedback from '../pages/Feedback';
+import Orders from '../pages/Orders';
+import OrdersNotPayment from '../pages/OrdersNotPayment';
 import CustomerList from "../pages/CustomerList";
 import SupplierList from "../pages/SupplierList";
 import ShipperList from "../pages/ShipperList";
@@ -85,7 +85,7 @@ const publicRoutes = [
   },
   { path: config.routes.orderList, component: OrderList, layout: AdminLayout },
   { path: config.routes.userList, component: UserList, layout: AdminLayout },
-  { path: config.routes.request, component: Request, layout: AdminLayout },
+  { path: config.routes.requestupdaterole, component: RequestUpdateRole, layout: AdminLayout },
   { path: config.routes.checkout, component: Checkout, layout: null },
   {
     path: config.routes.requestProduct,

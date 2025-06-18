@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Spinner, Badge } from "react-bootstrap";
 import { useUser } from "../../context/UserContext";
-import Header from "../../components/Header";
-import ShopBanner from "../../layouts/components/ShopBanner";
 import {
   renderOrderByBuyerId,
   renderOrderItemsByOrderId,
@@ -46,9 +44,7 @@ function OrdersNotPayment() {
   }, [userId]);
 
   return (
-    <div>
-      <Header />
-      <ShopBanner />
+
       <div className="container mt-4">
         {orderGroupsData.map((group) => (
           <Card className="mb-5" key={group.orderGroupID}>
@@ -61,7 +57,7 @@ function OrdersNotPayment() {
               <Card className="m-3" key={order.orderID}>
                 <Card.Header className="d-flex justify-content-between">
                   <div>
-                    <strong>Đơn hàng #{order.orderID}</strong>
+                    <strong>Đơn hàng từ {order.supplierName}</strong>
                   </div>
                   <Badge
                     bg={order.status === "CANCELLED" ? "danger" : "success"}
@@ -104,14 +100,14 @@ function OrdersNotPayment() {
                   <Button variant="outline-primary" className="me-2">
                     Chi tiết
                   </Button>
-                  <Button variant="danger">Mua lại</Button>
+                  <Button variant="danger">Thanh toán</Button>
                 </Card.Footer>
               </Card>
             ))}
           </Card>
         ))}
       </div>
-    </div>
+ 
   );
 }
 

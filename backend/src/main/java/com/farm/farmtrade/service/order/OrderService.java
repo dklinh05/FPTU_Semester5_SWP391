@@ -181,6 +181,7 @@ public class OrderService {
                         order.getOrderID(),
                         order.getBuyer() != null ? order.getBuyer().getUserID() : null,
                         order.getSupplier() != null ? order.getSupplier().getUserID() : null,
+                        order.getSupplier() != null ? order.getSupplier().getFullName(): null,
                         order.getOrderDate(),
                         order.getStatus(),
                         order.getTotalAmount(),

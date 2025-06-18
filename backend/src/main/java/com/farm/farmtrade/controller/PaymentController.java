@@ -28,9 +28,9 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     // FE REACT URLS
-    private static final String SUCCESS_REACT_URL = "http://localhost:5173/payment/success";
+    private static final String SUCCESS_REACT_URL = "http://localhost:5173/orders";
     private static final String FAILURE_REACT_URL = "http://localhost:5173/payment/failure";
-    private static final String CANCEL_REACT_URL = "http://localhost:5173/payment/cancel";
+    private static final String CANCEL_REACT_URL = "http://localhost:5173/orders/not-payment";
 
     // BE SPRING URLs (PayPal redirect về đây)
     private static final String SUCCESS_API_URL = "http://localhost:8080/farmtrade/payment/success";

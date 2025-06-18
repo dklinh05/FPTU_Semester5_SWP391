@@ -6,18 +6,19 @@ import Cookies from 'js-cookie';
 import styles from "./Header.module.scss";
 import {useNavigate} from "react-router-dom";
 import {useUser} from "../../context/UserContext";
+import { useCart } from "../../context/CartContext"; 
 import {searchProducts} from "../../services/productService";
-import { countCartItems } from "../../services/cartItemService";
+
 
 const cx = classNames.bind(styles);
 
 function Header() {
     const {user} = useUser();
+    const { cartsLength } = useCart();
     const [searchTerm, setSearchTerm] = useState("");
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const navigate = useNavigate();
-    const [cartItemCount, setCartItemCount] = useState(0);
 
     // const handleClickAvatarUser = (e) => {
     //   if (!user) {
@@ -67,23 +68,6 @@ function Header() {
         setSearchTerm("");
         setShowSuggestions(false);
         setSuggestions([]);
-    };
-
-    useEffect(() => {
-        if (user && user.userId) {
-            fetchCartCount(user.userId);
-        }
-    }, [user]);
-
-    const fetchCartCount = async (userId) => {
-        try {
-            const count = await countCartItems(userId);
-            console.log("Số lượng mặt hàng trong giỏ:", count);
-            setCartItemCount(count);
-        } catch (err) {
-            console.error("Lỗi khi lấy số lượng giỏ hàng:", err);
-            setCartItemCount(0);
-        }
     };
 
     const handleLogout = () => {
@@ -211,7 +195,7 @@ function Header() {
                             <>
                                 <a href="/cart" className="position-relative me-4">
                                     <i className="fa fa-shopping-bag fa-2x"></i>
-                                    {cartItemCount > 0 && (
+                                    {cartsLength> 0 && (
                                     <span
                                       className="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
                                       style={{
@@ -221,7 +205,7 @@ function Header() {
                                         minWidth: "20px",
                                       }}
                                     >
-                                    {cartItemCount}
+                                    {cartsLength}
                                     </span>
                                     )}
                                 </a>

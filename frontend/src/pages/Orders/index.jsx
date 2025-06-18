@@ -28,6 +28,10 @@ function Orders() {
     }
   };
 
+  const handleProceedCheckout = () => {
+    navigate("/checkout", { state: {} });
+  };
+
   useEffect(() => {
     if (userId) {
       console.log(userId);
@@ -36,57 +40,53 @@ function Orders() {
   }, [userId]);
 
   return (
-    
-      <div className="container mt-4">
-        {orders.map((order) => (
-          <Card className="mb-4" key={order.orderID}>
-            <Card.Header className="d-flex justify-content-between">
-              <div>
-                <strong>Đơn hàng từ {order.supplierName}</strong>
-              </div>
-              <Badge bg={order.status === "CANCELLED" ? "danger" : "success"}>
-                {order.status}
-              </Badge>
-            </Card.Header>
-            <Card.Body>
-              {orderItemsMap[order.orderID]?.map((item) => (
-                <div className="d-flex mb-3" key={item.orderItemID}>
-                  <img
-                    src={
-                      item.productImage || "https://via.placeholder.com/60"
-                    }
-                    alt="item"
-                    width={60}
-                    height={60}
-                    className="me-3"
-                  />
+    <div className="container mt-4">
+      {orders.map((order) => (
+        <Card className="mb-4" key={order.orderID}>
+          <Card.Header className="d-flex justify-content-between">
+            <div>
+              <strong>Đơn hàng từ {order.supplierName}</strong>
+            </div>
+            <Badge bg={order.status === "CANCELLED" ? "danger" : "success"}>
+              {order.status}
+            </Badge>
+          </Card.Header>
+          <Card.Body>
+            {orderItemsMap[order.orderID]?.map((item) => (
+              <div className="d-flex mb-3" key={item.orderItemID}>
+                <img
+                  src={item.productImage || "https://via.placeholder.com/60"}
+                  alt="item"
+                  width={60}
+                  height={60}
+                  className="me-3"
+                />
+                <div>
                   <div>
-                    <div>
-                      <strong>{item.productName}</strong>
-                    </div>
-                    <div className="text-muted">Số lượng: {item.quantity}</div>
-                    <div className="text-muted">
-                      Giá: ₫{item.price.toLocaleString()}
-                    </div>
+                    <strong>{item.productName}</strong>
+                  </div>
+                  <div className="text-muted">Số lượng: {item.quantity}</div>
+                  <div className="text-muted">
+                    Giá: ₫{item.price.toLocaleString()}
                   </div>
                 </div>
-              ))}
-              <div className="text-end">
-                <strong>
-                  Tổng tiền: ₫{order.totalAmount.toLocaleString()}
-                </strong>
               </div>
-            </Card.Body>
-            <Card.Footer className="text-end">
-              <Button variant="outline-primary" className="me-2">
-                Chi tiết
-              </Button>
-              <Button variant="danger">Mua lại</Button>
-            </Card.Footer>
-          </Card>
-        ))}
-      </div>
-    
+            ))}
+            <div className="text-end">
+              <strong>Tổng tiền: ₫{order.totalAmount.toLocaleString()}</strong>
+            </div>
+          </Card.Body>
+          <Card.Footer className="text-end">
+            <Button variant="outline-primary" className="me-2">
+              Chi tiết
+            </Button>
+            <Button variant="danger" onClick={handleProceedCheckout}>
+              Mua lại
+            </Button>
+          </Card.Footer>
+        </Card>
+      ))}
+    </div>
   );
 }
 

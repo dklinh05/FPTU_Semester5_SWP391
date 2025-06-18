@@ -216,11 +216,10 @@ public class OrderService {
     }
 
     public List<OrderResponse> getOrdersByOrderGroupId(Integer orderGroupId) {
-
-
         List<Order> orders = orderRepository.findByOrderGroupOrderGroupID(orderGroupId);
 
-        return orders.stream().map(order -> OrderResponse.builder()
+        return orders.stream()
+                .map(order -> OrderResponse.builder()
                 .orderID(order.getOrderID())
                 .buyerId(order.getBuyer() != null ? order.getBuyer().getUserID() : null)
                 .supplierId(order.getSupplier() != null ? order.getSupplier().getUserID() : null)

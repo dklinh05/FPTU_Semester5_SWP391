@@ -7,6 +7,7 @@ import {
   renderOrderGroupByBuyerId,
   renderOrdersByOrderGroupId,
 } from "../../services/orderService";
+import { createPayment } from "../../services/paymentService";
 
 function OrdersNotPayment() {
   const { userId } = useUser();
@@ -37,6 +38,16 @@ function OrdersNotPayment() {
     }
   };
 
+  const handlePayment = async (amount, groupId) => {
+    try {
+      const response = await createPayment(amount, groupId);
+      window.location.href = response.redirectUrl;
+      console.log("Response:", response);
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm:", error);
+    }
+  };
+
   useEffect(() => {
     if (userId) {
       fetchOrders();
@@ -44,70 +55,77 @@ function OrdersNotPayment() {
   }, [userId]);
 
   return (
+    <div className="container mt-4">
+      {orderGroupsData.map((group) => (
+        <Card className="mb-5" key={group.orderGroupID}>
+          <Card.Header className="bg-dark text-white">
+            <strong>Order Group #{group.orderGroupID}</strong> – Tổng tiền: ₫
+            {group.finalAmount.toLocaleString()}
+          </Card.Header>
 
-      <div className="container mt-4">
-        {orderGroupsData.map((group) => (
-          <Card className="mb-5" key={group.orderGroupID}>
-            <Card.Header className="bg-dark text-white">
-              <strong>Order Group #{group.orderGroupID}</strong> – Tổng tiền: ₫
-              {group.finalAmount.toLocaleString()}
-            </Card.Header>
-
-            {group.orders.map((order) => (
-              <Card className="m-3" key={order.orderID}>
-                <Card.Header className="d-flex justify-content-between">
-                  <div>
-                    <strong>Đơn hàng từ {order.supplierName}</strong>
-                  </div>
-                  <Badge
-                    bg={order.status === "CANCELLED" ? "danger" : "success"}
-                  >
-                    {order.status}
-                  </Badge>
-                </Card.Header>
-                <Card.Body>
-                  {order.items.map((item) => (
-                    <div className="d-flex mb-3" key={item.orderItemID}>
-                      <img
-                        src={
-                          item.productImage || "https://via.placeholder.com/60"
-                        }
-                        alt="item"
-                        width={60}
-                        height={60}
-                        className="me-3"
-                      />
+          {group.orders.map((order) => (
+            <Card className="m-3" key={order.orderID}>
+              <Card.Header className="d-flex justify-content-between">
+                <div>
+                  <strong>Đơn hàng từ {order.supplierName}</strong>
+                </div>
+                <Badge bg={order.status === "CANCELLED" ? "danger" : "success"}>
+                  {order.status}
+                </Badge>
+              </Card.Header>
+              <Card.Body>
+                {order.items.map((item) => (
+                  <div className="d-flex mb-3" key={item.orderItemID}>
+                    <img
+                      src={
+                        item.productImage || "https://via.placeholder.com/60"
+                      }
+                      alt="item"
+                      width={60}
+                      height={60}
+                      className="me-3"
+                    />
+                    <div>
                       <div>
-                        <div>
-                          <strong>{item.productName}</strong>
-                        </div>
-                        <div className="text-muted">
-                          Số lượng: {item.quantity}
-                        </div>
-                        <div className="text-muted">
-                          Giá: ₫{item.price.toLocaleString()}
-                        </div>
+                        <strong>{item.productName}</strong>
+                      </div>
+                      <div className="text-muted">
+                        Số lượng: {item.quantity}
+                      </div>
+                      <div className="text-muted">
+                        Giá: ₫{item.price.toLocaleString()}
                       </div>
                     </div>
-                  ))}
-                  <div className="text-end">
-                    <strong>
-                      Tổng đơn: ₫{order.totalAmount.toLocaleString()}
-                    </strong>
                   </div>
-                </Card.Body>
-                <Card.Footer className="text-end">
-                  <Button variant="outline-primary" className="me-2">
-                    Chi tiết
-                  </Button>
-                  <Button variant="danger">Thanh toán</Button>
-                </Card.Footer>
-              </Card>
-            ))}
-          </Card>
-        ))}
-      </div>
- 
+                ))}
+                <div className="text-end">
+                  <strong>
+                    Tổng đơn: ₫{order.totalAmount.toLocaleString()}
+                  </strong>
+                </div>
+              </Card.Body>
+              
+            </Card>
+          ))}
+          <Card.Footer className="text-end">
+                <Button variant="outline-primary" className="me-2">
+                  Chi tiết
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() =>
+                    handlePayment(
+                      group.finalAmount,
+                      group.orderGroupID
+                    )
+                  }
+                >
+                  Thanh toán
+                </Button>
+              </Card.Footer>
+        </Card>
+      ))}
+    </div>
   );
 }
 

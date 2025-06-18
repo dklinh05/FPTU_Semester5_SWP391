@@ -1,9 +1,7 @@
 import { useEffect, useCallback, useState } from "react";
 import debounce from "lodash/debounce";
-import {
-  deleteCartItem,
-  updateQuantityCart,
-} from "../../../services/cartItemService";
+import { useCart } from "../../../context/CartContext"; 
+import { deleteCartItem, updateQuantityCart} from "../../../services/cartItemService";
 
 function CartItem({
   quantity,
@@ -15,11 +13,13 @@ function CartItem({
   checked,
   onCheck,
 }) {
+  const { setReload } = useCart();
   const [localQuantity, setLocalQuantity] = useState(quantity);
 
   const handleDeleteCartItem = async () => {
     try {
       const response = await deleteCartItem(id);
+      setReload(prev => !prev);
       console.log("Response:", response);
       onDeleted();
     } catch (error) {
@@ -34,6 +34,7 @@ function CartItem({
         cartItemId: id,
         quantity: newQuantity,
       });
+      setReload(prev => !prev);
       console.log("Response:", response);
       onDeleted();
     } catch (error) {

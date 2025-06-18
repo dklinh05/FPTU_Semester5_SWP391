@@ -98,7 +98,6 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-
     // Update product
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Integer id, @RequestBody Product product) {

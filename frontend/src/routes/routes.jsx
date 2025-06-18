@@ -34,6 +34,7 @@ import CustomerList from "../pages/CustomerList";
 import SupplierList from "../pages/SupplierList";
 import ShipperList from "../pages/ShipperList";
 import ProductSearch from '../pages/ProductSearch';
+import SearchResultLayout from "../layouts/SearchResultLayout/index.js";
 
 
 const publicRoutes = [
@@ -64,7 +65,7 @@ const publicRoutes = [
   { path: config.routes.shipperList, component: ShipperList, layout: AdminLayout },
   { path: config.routes.customerList, component: CustomerList, layout: AdminLayout },
   { path: config.routes.supplierList, component: SupplierList, layout: AdminLayout },
-  { path: config.routes.productSearch, component: ProductSearch, layout: null },
+  { path: config.routes.productSearch, component: ProductSearch, layout: SearchResultLayout },
 
 ];
 

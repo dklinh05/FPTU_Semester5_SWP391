@@ -52,65 +52,38 @@ export const updateUserExtra = async (userId, extraData) => {
     throw error.response?.data || error.message;
   }
 };
-// import axios from "axios";
-// import { request, formRequest } from "../utils/httpRequest";
-// const API_BASE = "http://localhost:8080/farmtrade/users";
 
-// // export const getUserById = async (id) => {
-// //   const res = await axios.get(`${API_BASE}/${id}`);
-// //   return res.data;
-// // };
-// export const getUserById = async (id) => {
-//   const res = await request.get(`users/${id}`);
+// Hàm khóa tài khoản người dùng
+export const blockUser = async (userId) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("Vui lòng đăng nhập.");
+    }
 
-//   return res.data;
-// };
+    // Gọi API khóa tài khoản
+    await request.put(`/admin/users/lock/${userId}`);
+    return true;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Không thể khóa người dùng. Vui lòng thử lại.");
+  }
+};
 
-// export const uploadAvatar = async (userId, formData) => {
-//   const res = await formRequest.post(`users/${userId}/avatar`, {
-//     body: formData,
-//   });
+// Hàm mở khóa tài khoản người dùng
+export const unblockUser = async (userId) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("Vui lòng đăng nhập.");
+    }
 
-//   if (!res.ok) {
-//     const errorText = await res.text(); // <- Đoạn text gây lỗi
-//     console.error("Phản hồi lỗi từ backend:", errorText); // <-- In ra lỗi thật sự
-//     throw new Error("Upload avatar thất bại");
-//   }
+    // Gọi API mở khóa tài khoản
+    await request.put(`/admin/users/unlock/${userId}`);
+    return true;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Không thể mở khóa người dùng. Vui lòng thử lại.");
+  }
+};
 
-//   return await res.json();
-// };
-
-// // export const updateUser = async (userID, userData) => {
-// //   const response = await fetch(`http://localhost:8080/farmtrade/Users/${userID}`, {
-// //     method: "PUT",
-// //     headers: {
-// //       "Content-Type": "application/json"
-// //     },
-// //     body: JSON.stringify(userData),
-// //   });
-
-// //   if (!response.ok) {
-// //     const errorText = await response.text();
-// //     console.error("Phản hồi lỗi từ server:", errorText);
-// //     throw new Error(errorText || "Cập nhật thất bại");
-// //   }
-
-// //   return await response.json();
-// // }; 
-
-// export const updateUser = async (userId, data) => {
-//   const response = await formRequest.put(`users/${userId}`, {
-//     body: data,
-//   });
-//   if (!response.ok) throw new Error("Failed to update user");
-//   return await response.json();
-// };
-
-// export const updateUserExtra = async (userId, extraData) => {
-//   try {
-//     const response = await request.put(`Users/google/${userId}`, extraData);
-//     return response.data;
-//   } catch (error) {
-//     throw error.response?.data || error.message;
-//   }
-// };

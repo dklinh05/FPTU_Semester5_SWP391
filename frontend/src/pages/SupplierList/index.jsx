@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { request } from "../../utils/httpRequest";
+import { blockUser, unblockUser } from "../../services/userService"; // Import từ userService.js
 
 const SupplierList = () => {
   const [users, setUsers] = useState([]);
@@ -43,6 +44,37 @@ const SupplierList = () => {
     user.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.userID?.toString().includes(searchTerm)
   );
+
+  // Xử lý khóa/mở khóa người dùng
+  const handleBlockOrUnblockUser = async (userId, isBlocking) => {
+    try {
+      const isConfirmed = window.confirm(
+        isBlocking
+          ? "Bạn có chắc chắn muốn khóa tài khoản này?"
+          : "Bạn có chắc chắn muốn mở khóa tài khoản này?"
+      );
+      if (!isConfirmed) return;
+
+      if (isBlocking) {
+        await blockUser(userId);
+      } else {
+        await unblockUser(userId);
+      }
+
+      // Cập nhật trạng thái trực tiếp trong state
+      setUsers(prevUsers =>
+        prevUsers.map(user =>
+          user.userID === userId
+            ? { ...user, isLocked: isBlocking }
+            : user
+        )
+      );
+
+      alert(isBlocking ? "Khóa người dùng thành công!" : "Mở khóa người dùng thành công!");
+    } catch (err) {
+      alert(err.message || "Đã xảy ra lỗi khi thực hiện hành động.");
+    }
+  };
 
   if (loading) return <p>Đang tải dữ liệu...</p>;
   if (error) return <p className="text-danger">{error}</p>;
@@ -141,8 +173,15 @@ const SupplierList = () => {
                               </a>
                               <ul className="dropdown-menu">
                                 <li>
-                                  <a className="dropdown-item" href="#">
-                                    Block
+                                  <a
+                                    className="dropdown-item"
+                                    href="#"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      handleBlockOrUnblockUser(user.userID, !user.isLocked);
+                                    }}
+                                  >
+                                    {user.isLocked ? "Unblock" : "Block"}
                                   </a>
                                 </li>
                               </ul>

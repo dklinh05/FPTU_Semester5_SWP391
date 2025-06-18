@@ -2,10 +2,9 @@ package com.farm.farmtrade.service.payment;
 
 import com.farm.farmtrade.entity.Order;
 import com.farm.farmtrade.entity.OrderGroup;
+import com.farm.farmtrade.entity.OrderItem;
 import com.farm.farmtrade.entity.Payment;
-import com.farm.farmtrade.repository.OrderGroupRepository;
-import com.farm.farmtrade.repository.OrderRepository;
-import com.farm.farmtrade.repository.PaymentRepository;
+import com.farm.farmtrade.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +22,8 @@ public class PaymentService {
     PaymentRepository paymentRepository;
     OrderRepository orderRepository;
     OrderGroupRepository orderGroupRepository;
+    OrderItemRepository orderItemRepository;
+    CartItemRepository cartItemRepository;
 
     @Transactional
     public void savePayPalPayment(Integer orderGroupId) {
@@ -42,13 +44,22 @@ public class PaymentService {
                     .status("COMPLETED")
                     .paymentDate(LocalDateTime.now())
                     .build();
-
             paymentRepository.save(payment);
+
+            // Xoá cart item theo buyerId và productId
+            List<OrderItem> orderItems = orderItemRepository.findByOrderOrderID(order.getOrderID());
+            for (OrderItem item : orderItems) {
+                cartItemRepository.deleteByBuyerUserIDAndProductProductID(
+                        order.getBuyer().getUserID(),
+                        item.getProduct().getProductID()
+                );
+            }
         }
 
         // Cập nhật trạng thái nhóm đơn hàng
         orderGroup.setStatus("PAID");
         orderGroupRepository.save(orderGroup);
+
     }
 
 }

@@ -33,13 +33,15 @@ public class AdminController {
     private RoleUpgradeService roleUpgradeService;
 
     //lấy toàn bộ user
-    /**isActive=true → Lọc theo trạng thái tài khoản.
-    role=SUPPLIER → Lọc theo vai trò.
-    keyword=bill → Tìm kiếm theo tên hoặc email.
-    page=0&size=10 → Phân trang.
-    sort=createdAt,desc → Sắp xếp theo thời gian tạo.
-    test -> GET /admin/users?isActive=true
-    */
+
+    /**
+     * isActive=true → Lọc theo trạng thái tài khoản.
+     * role=SUPPLIER → Lọc theo vai trò.
+     * keyword=bill → Tìm kiếm theo tên hoặc email.
+     * page=0&size=10 → Phân trang.
+     * sort=createdAt,desc → Sắp xếp theo thời gian tạo.
+     * test -> GET /admin/users?isActive=true
+     */
 //    @GetMapping("/users")
 //    public Page<User> getFilteredUsers(
 //            @RequestParam(required = false) Boolean isActive,
@@ -49,7 +51,6 @@ public class AdminController {
 //    ) {
 //        return userService.filterUsers(isActive, role, keyword, pageable);
 //    }
-
     @PutMapping("/users/role/{userId}")
     public ResponseEntity<?> updateSupplierRole(@PathVariable Integer userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -114,11 +115,13 @@ public class AdminController {
         return ResponseEntity.ok("User account deleted permanently.");
     }
 
-    /**XỬ LÝ REQUEST ROLE CỦA CUSTOMER**/
+    /**
+     * XỬ LÝ REQUEST ROLE CỦA CUSTOMER
+     **/
     // Admin phê duyệt request
     @PutMapping("users/request/approve")
     public ResponseEntity<RoleUpgrade> approveRequest(@RequestBody AdminNoteRequest request) {
-        RoleUpgrade approved = roleUpgradeService.approveRequest(request.getRequestId(),request.getAdminNote());
+        RoleUpgrade approved = roleUpgradeService.approveRequest(request.getRequestId(), request.getAdminNote());
         return ResponseEntity.ok(approved);
     }
 

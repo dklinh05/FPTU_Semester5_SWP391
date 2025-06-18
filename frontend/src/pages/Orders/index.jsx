@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button, Card, Spinner, Badge } from "react-bootstrap";
 import { useUser } from "../../context/UserContext";
-import Header from "../../components/Header";
-import ShopBanner from "../../layouts/components/ShopBanner";
 import {
   renderOrderByBuyerId,
   renderOrderItemsByOrderId,
@@ -38,15 +36,13 @@ function Orders() {
   }, [userId]);
 
   return (
-    <div>
-      <Header />
-      <ShopBanner />
+    
       <div className="container mt-4">
         {orders.map((order) => (
           <Card className="mb-4" key={order.orderID}>
             <Card.Header className="d-flex justify-content-between">
               <div>
-                <strong>Đơn hàng #{order.orderID}</strong>
+                <strong>Đơn hàng từ {order.supplierName}</strong>
               </div>
               <Badge bg={order.status === "CANCELLED" ? "danger" : "success"}>
                 {order.status}
@@ -90,7 +86,7 @@ function Orders() {
           </Card>
         ))}
       </div>
-    </div>
+    
   );
 }
 

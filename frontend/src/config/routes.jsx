@@ -30,7 +30,7 @@ const routes = {
   customerList: '/customerlist',
   supplierList: '/supplierlist',
   productSearch: '/products/search',
-  ordersNotPayment: '/orders/not-payment'
+  ordersPending: '/orders/pending'
 };
 
 export default routes;

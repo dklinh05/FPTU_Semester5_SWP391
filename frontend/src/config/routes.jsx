@@ -20,7 +20,7 @@ const routes = {
   listProduct: '/listproduct',
   orderList: '/orderlist',
   userList: '/userlist',
-  request: '/request',
+  requestupdaterole: '/requestupdaterole',
   checkout: '/checkout',
   requestProduct: '/requestProduct',
   purchase: '/purchase',
@@ -30,7 +30,7 @@ const routes = {
   customerList: '/customerlist',
   supplierList: '/supplierlist',
   productSearch: '/products/search',
-  ordersNotPayment: '/orders/not-payment'
+  ordersPending: '/orders/pending'
 };
 
 export default routes;

@@ -36,7 +36,6 @@ public class CartItemController {
         }
     }
 
-
     @DeleteMapping("/{cartItemId}")
     public ResponseEntity<?> removeFromCart(@PathVariable Integer cartItemId) {
         try {

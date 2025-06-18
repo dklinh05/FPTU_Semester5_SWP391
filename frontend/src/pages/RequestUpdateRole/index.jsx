@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-function Request() {
+function RequestUpdateRole() {
   const [formData, setFormData] = useState({
     businessName: "",
     city: "Da Nang",
@@ -225,4 +225,4 @@ function Request() {
   );
 }
 
-export default Request;
+export default RequestUpdateRole;

@@ -33,7 +33,7 @@ function Hero() {
               <div className="carousel-inner" role="listbox">
                 <div className="carousel-item active rounded">
                   <img
-                    src="/public/img/hero-img-1.png"
+                    src="/img/hero-img-1.png"
                     className="img-fluid w-100 h-100 bg-secondary rounded"
                     alt="First slide"
                   />
@@ -44,7 +44,7 @@ function Hero() {
 
                 <div className="carousel-item rounded">
                   <img
-                    src="/public/img/hero-img-2.jpg"
+                    src="/img/hero-img-2.jpg"
                     className="img-fluid w-100 h-100 rounded"
                     alt="Second slide"
                   />

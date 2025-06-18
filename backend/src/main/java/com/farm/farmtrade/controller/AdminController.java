@@ -84,7 +84,6 @@ public class AdminController {
         return ResponseEntity.ok(response);
     }
 
-
     @PutMapping("/users/unlock/{userId}")
     public ResponseEntity<UserLockResponse> unlockUser(@PathVariable Integer userId) {
         Optional<User> optionalUser = userRepository.findById(userId);

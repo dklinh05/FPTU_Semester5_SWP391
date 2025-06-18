@@ -109,42 +109,13 @@ public class UserController {
         }
     }
 
-    public User updateAvatar(String userId, MultipartFile file) {
-        try {
-            // 1. Tìm user
-            Optional<User> optionalUser = userRepository.findById(Integer.valueOf(userId));
-            if (!optionalUser.isPresent()) {
-                throw new RuntimeException("Không tìm thấy user với ID: " + userId);
-            }
 
-            User user = optionalUser.get();
-
-            // 2. Upload file lên Cloudinary
-            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), Map.of(
-                    "folder", "avatars",
-                    "public_id", "user_" + userId,
-                    "overwrite", true
-            ));
-
-            String avatarUrl = (String) uploadResult.get("secure_url");
-
-            // 3. Cập nhật avatar URL
-            user.setAvatar(avatarUrl);
-
-            // 4. Lưu lại user
-            return userRepository.save(user);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Lỗi khi upload avatar: " + e.getMessage(), e);
-        }
+//     Gửi yêu cầu nâng cấp vai trò (CUSTOMER ➝ SUPPLIER)
+    @PostMapping("/request")
+    public ResponseEntity<RoleUpgrade> submitUpgradeRequest(@RequestBody RoleUpgradeRequest request) {
+        RoleUpgrade roleUpgrade = roleUpgradeService.submitRequest(request);
+        return ResponseEntity.ok(roleUpgrade);
     }
 
-}
-    // Gửi yêu cầu nâng cấp vai trò (CUSTOMER ➝ SUPPLIER)
-//    @PostMapping("/request")
-//    public ResponseEntity<RoleUpgrade> submitUpgradeRequest(@RequestBody RoleUpgradeRequest request) {
-//        RoleUpgrade roleUpgrade = roleUpgradeService.submitRequest(request);
-//        return ResponseEntity.ok(roleUpgrade);
-//    }
-//
 
+}

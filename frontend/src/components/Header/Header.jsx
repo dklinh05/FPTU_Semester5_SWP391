@@ -64,6 +64,9 @@ function Header() {
             return;
         }
         navigate(`/products/search?keyword=${encodeURIComponent(searchTerm)}`);
+        setSearchTerm("");
+        setShowSuggestions(false);
+        setSuggestions([]);
     };
 
     useEffect(() => {

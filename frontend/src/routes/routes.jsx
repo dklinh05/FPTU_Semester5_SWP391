@@ -35,6 +35,9 @@ import CustomerList from "../pages/CustomerList";
 import SupplierList from "../pages/SupplierList";
 import ShipperList from "../pages/ShipperList";
 import ProductSearch from "../pages/ProductSearch";
+import SearchResultLayout from "../layouts/SearchResultLayout/index.js";
+
+
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
@@ -90,6 +93,7 @@ const publicRoutes = [
     layout: AdminLayout,
   },
   { path: config.routes.feedback, component: Feedback, layout: null },
+
   { path: config.routes.orders, component: Orders, layout: OrdersLayout },
   {
     path: config.routes.ordersPending,

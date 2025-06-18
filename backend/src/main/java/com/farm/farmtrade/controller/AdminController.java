@@ -2,6 +2,7 @@ package com.farm.farmtrade.controller;
 
 
 import com.farm.farmtrade.dto.request.authenticationRequest.AdminNoteRequest;
+import com.farm.farmtrade.dto.response.UserLockResponse;
 import com.farm.farmtrade.entity.RoleUpgrade;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.enums.Role;
@@ -65,6 +66,25 @@ public class AdminController {
     }
 
 
+    @PutMapping("/users/lock/{userId}")
+    public ResponseEntity<UserLockResponse> lockUser(@PathVariable Integer userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User user = optionalUser.get();
+        user.setIsLocked(true); // Khóa tài khoản
+        userRepository.save(user);
+
+        log.info("User {} has been locked by admin.", user.getUsername());
+
+        UserLockResponse response = new UserLockResponse(user.getUserID(), user.getIsLocked());
+        return ResponseEntity.ok(response);
+    }
+
+
+//
 //    //khóa tài khoản
 //    @PutMapping("/users/lock/{userId}")
 //    public ResponseEntity<?> lockUser(@PathVariable Integer userId) {
@@ -81,20 +101,21 @@ public class AdminController {
 //        return ResponseEntity.ok("User account locked successfully.");
 //    }
 
-    //mở khóa tài khoản
     @PutMapping("/users/unlock/{userId}")
-   public ResponseEntity<?> unlockUser(@PathVariable Integer userId) {
+    public ResponseEntity<UserLockResponse> unlockUser(@PathVariable Integer userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         User user = optionalUser.get();
-        user.setIsLocked(false); // Mở lại quyền truy cập
+        user.setIsLocked(false); // Mở khóa tài khoản
         userRepository.save(user);
 
         log.info("User {} has been unlocked by admin.", user.getUsername());
-        return ResponseEntity.ok("User account unlocked successfully.");
+
+        UserLockResponse response = new UserLockResponse(user.getUserID(), user.getIsLocked());
+        return ResponseEntity.ok(response);
     }
 
     // xóa tài khoản user khỏi hệ thống

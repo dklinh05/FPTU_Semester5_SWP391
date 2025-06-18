@@ -1,21 +1,21 @@
-import { request, formRequest } from "../utils/httpRequest";
+import {request, formRequest} from "../utils/httpRequest";
 
 export const addProduct = async (data) => {
-  try {
-    const response = await formRequest.post("/products", data);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
+    try {
+        const response = await formRequest.post("/products", data);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
 };
 
 export const renderProduct = async () => {
-  try {
-    const response = await request.get("/products");
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
+    try {
+        const response = await request.get("/products");
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
 };
 
 export const renderProductByCategory = async (category, sortBy, sortDir, page, size) => {
@@ -36,13 +36,14 @@ export const renderProductByCategory = async (category, sortBy, sortDir, page, s
 };
 
 export const renderProductById = async (id) => {
-  try {
-    const response = await request.get(`/products/${id}`);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
+    try {
+        const response = await request.get(`/products/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
 };
+
 
 export const renderProductBySupplierId = async (
   id,
@@ -67,21 +68,23 @@ export const renderProductBySupplierId = async (
 };
 
 export const deleteProduct = async (id) => {
-  try {
-    const response = await request.delete(`/products/${id}`);
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
+    try {
+        const response = await request.delete(`/products/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
 };
 
-export const searchProducts = async (keyword) => {
-  try {
-    const response = await request.get("/products/search", {
-      params: { keyword },
-    });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || error.message;
-  }
+
+export const searchProducts = async (keyword, category, rating) => {
+    try {
+        const response = await request.get("/products/search", {
+            params: {keyword, category, rating},
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
 };
+

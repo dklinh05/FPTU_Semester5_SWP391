@@ -1,16 +1,16 @@
-.body{
+.body {
   margin-top: 75px;
   background: #F0F8FF;
 }
+
 .product-search {
-  padding-top: 80px; /* Điều chỉnh tùy theo chiều cao header */
+  padding-top: 150px;
 }
 
 .card {
   border: 1px solid #ccc;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
-
   &:hover {
     transform: scale(1.02);
   }

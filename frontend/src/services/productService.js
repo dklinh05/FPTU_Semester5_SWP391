@@ -18,6 +18,23 @@ export const renderProduct = async () => {
     }
 };
 
+export const renderProductByCategory = async (category, sortBy, sortDir, page, size) => {
+  try {
+    const response = await request.get("/products/category", {
+      params: {
+        category,
+        sortBy,
+        sortDir,
+        page,
+        size,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 export const renderProductById = async (id) => {
     try {
         const response = await request.get(`/products/${id}`);
@@ -27,20 +44,27 @@ export const renderProductById = async (id) => {
     }
 };
 
-export const renderProductBySupplierId = async (id, sortBy, sortDir, page, size) => {
-    try {
-        const response = await request.get(`/products/supplier/${id}`, {
-            params: {
-                sortBy,
-                sortDir,
-                page,
-                size,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        throw error.response?.data || error.message;
-    }
+
+export const renderProductBySupplierId = async (
+  id,
+  sortBy,
+  sortDir,
+  page,
+  size
+) => {
+  try {
+    const response = await request.get(`/products/supplier/${id}`, {
+      params: {
+        sortBy,
+        sortDir,
+        page,
+        size,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
 };
 
 export const deleteProduct = async (id) => {
@@ -52,6 +76,7 @@ export const deleteProduct = async (id) => {
     }
 };
 
+
 export const searchProducts = async (keyword, category, rating) => {
     try {
         const response = await request.get("/products/search", {
@@ -62,3 +87,4 @@ export const searchProducts = async (keyword, category, rating) => {
         throw error.response?.data || error.message;
     }
 };
+

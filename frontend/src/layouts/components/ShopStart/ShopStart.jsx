@@ -1,15 +1,19 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CardItem from "../../../components/CardItem/CardItem";
-import { renderProduct } from "../../../services/productService";
+import {
+  renderProduct,
+  renderProductByCategory,
+} from "../../../services/productService";
 
 function ShopStart() {
   const [products, setProducts] = useState([]);
+  const [category, setCategory] = useState({});
 
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const response = await renderProduct();
+        const response = await renderProductByCategory(category);
         setProducts(response.content);
         console.log("Response:", response.content);
       } catch (error) {
@@ -17,7 +21,7 @@ function ShopStart() {
       }
     };
     getProducts();
-  }, []);
+  }, [category]);
 
   return (
     <div className="container-fluid fruite py-5">
@@ -30,59 +34,59 @@ function ShopStart() {
             <div className="col-lg-8 text-end">
               <ul className="nav nav-pills d-inline-flex text-center mb-5">
                 <li className="nav-item">
-                  <a
+                  <div
                     className="d-flex m-2 py-2 bg-light rounded-pill active"
                     data-bs-toggle="pill"
-                    href="#tab-1"
+                     onClick={() => setCategory("")}
                   >
                     <span className="text-dark" style={{ width: "130px" }}>
                       All Products
                     </span>
-                  </a>
+                  </div>
                 </li>
                 <li className="nav-item">
-                  <a
+                  <div
                     className="d-flex py-2 m-2 bg-light rounded-pill"
                     data-bs-toggle="pill"
-                    href="#tab-2"
+                    onClick={() => setCategory("Rau")}
                   >
                     <span className="text-dark" style={{ width: "130px" }}>
-                      Vegetables
+                      Rau
                     </span>
-                  </a>
+                  </div>
                 </li>
                 <li className="nav-item">
-                  <a
+                  <div
                     className="d-flex m-2 py-2 bg-light rounded-pill"
                     data-bs-toggle="pill"
-                    href="#tab-3"
+                    onClick={() => setCategory("Củ, quả")}
                   >
                     <span className="text-dark" style={{ width: "130px" }}>
-                      Fruits
+                      Củ, quả
                     </span>
-                  </a>
+                  </div>
                 </li>
                 <li className="nav-item">
-                  <a
+                  <div
                     className="d-flex m-2 py-2 bg-light rounded-pill"
                     data-bs-toggle="pill"
-                    href="#tab-4"
+                    onClick={() => setCategory("Trái cây")}
                   >
                     <span className="text-dark" style={{ width: "130px" }}>
-                      Bread
+                      Trái cây
                     </span>
-                  </a>
+                  </div>
                 </li>
                 <li className="nav-item">
-                  <a
+                  <div
                     className="d-flex m-2 py-2 bg-light rounded-pill"
                     data-bs-toggle="pill"
-                    href="#tab-5"
+                    onClick={() => setCategory("Thực phẩm")}
                   >
                     <span className="text-dark" style={{ width: "130px" }}>
-                      Meat
+                      Thực phẩm
                     </span>
-                  </a>
+                  </div>
                 </li>
               </ul>
             </div>

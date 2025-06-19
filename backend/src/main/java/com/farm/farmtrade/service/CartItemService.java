@@ -27,14 +27,16 @@ public class CartItemService {
 
     // Thêm hoặc cập nhật số lượng sản phẩm trong giỏ hàng
     @Transactional
-    public CartItem addToCart(Integer buyerId, Integer productId) {
+    public CartItem addToCart(Integer buyerId, Integer productId, int quantity) {
         Optional<CartItem> existingItemOpt = cartItemRepository.findByBuyerUserIDAndProductProductID(buyerId, productId);
+
         if (existingItemOpt.isPresent()) {
             CartItem existingItem = existingItemOpt.get();
+            existingItem.setQuantity(existingItem.getQuantity() + quantity); // cộng dồn số lượng
             return cartItemRepository.save(existingItem);
         }
 
-        // Nếu chưa tồn tại thì tạo mới
+        // Nếu chưa có thì thêm mới với số lượng yêu cầu
         User buyer = userRepository.findById(buyerId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người mua"));
 
@@ -44,11 +46,12 @@ public class CartItemService {
         CartItem newItem = new CartItem();
         newItem.setBuyer(buyer);
         newItem.setProduct(product);
-        newItem.setQuantity(1);
+        newItem.setQuantity(quantity);
         newItem.setCreatedAt(LocalDateTime.now());
 
         return cartItemRepository.save(newItem);
     }
+
     public void updateQuantity(Integer cartItemId, Integer quantity) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));

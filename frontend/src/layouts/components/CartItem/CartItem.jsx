@@ -1,7 +1,10 @@
 import { useEffect, useCallback, useState } from "react";
 import debounce from "lodash/debounce";
-import { useCart } from "../../../context/CartContext"; 
-import { deleteCartItem, updateQuantityCart} from "../../../services/cartItemService";
+import { useCart } from "../../../context/CartContext";
+import {
+  deleteCartItem,
+  updateQuantityCart,
+} from "../../../services/cartItemService";
 
 function CartItem({
   quantity,
@@ -19,22 +22,7 @@ function CartItem({
   const handleDeleteCartItem = async () => {
     try {
       const response = await deleteCartItem(id);
-      setReload(prev => !prev);
-      console.log("Response:", response);
-      onDeleted();
-    } catch (error) {
-      console.error("Lỗi khi lấy sản phẩm:", error);
-    }
-  };
-
-  const handleUpdateQuantity = async (newQuantity) => {
-    setLocalQuantity(newQuantity);
-    try {
-      const response = await updateQuantityCart({
-        cartItemId: id,
-        quantity: newQuantity,
-      });
-      setReload(prev => !prev);
+      setReload((prev) => !prev);
       console.log("Response:", response);
       onDeleted();
     } catch (error) {
@@ -60,12 +48,20 @@ function CartItem({
   // Gọi khi user nhập số lượng
   const handleChange = (e) => {
     const value = parseInt(e.target.value, 10);
+
     if (!isNaN(value) && value >= 0) {
       setLocalQuantity(value);
+      setReload((prev) => !prev);
       debouncedUpdateQuantity(id, value);
     }
   };
 
+  const handleChangeQuantity = (newQuantity) => {
+    if (newQuantity < 1) return; // Không cho nhỏ hơn 1
+    setLocalQuantity(newQuantity);
+    debouncedUpdateQuantity(id, newQuantity); // Gọi debounce sau khi chỉnh
+  };
+  
   // Gọi khi user blur ra ngoài, để đảm bảo dữ liệu được lưu lại
   const handleBlur = () => {
     debouncedUpdateQuantity.cancel(); // huỷ debounce nếu chưa gọi
@@ -85,7 +81,7 @@ function CartItem({
           type="checkbox"
           checked={checked}
           onChange={(e) => onCheck(e.target.checked)}
-            style={{ transform: "scale(1.3)" }}
+          style={{ transform: "scale(1.3)" }}
         />
       </td>
 
@@ -110,7 +106,7 @@ function CartItem({
           <div className="input-group-btn">
             <button
               className="btn btn-sm btn-minus rounded-circle bg-light border"
-              onClick={() => handleUpdateQuantity(quantity - 1)}
+              onClick={() => handleChangeQuantity(localQuantity - 1)}
             >
               <i className="fa fa-minus"></i>
             </button>
@@ -125,7 +121,7 @@ function CartItem({
           <div className="input-group-btn">
             <button
               className="btn btn-sm btn-plus rounded-circle bg-light border"
-              onClick={() => handleUpdateQuantity(quantity + 1)}
+              onClick={() => handleChangeQuantity(localQuantity + 1)}
             >
               <i className="fa fa-plus"></i>
             </button>

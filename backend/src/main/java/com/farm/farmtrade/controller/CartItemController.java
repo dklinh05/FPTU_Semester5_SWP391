@@ -22,9 +22,10 @@ public class CartItemController {
     // Thêm sản phẩm vào giỏ hàng
     @PostMapping("/add")
     public ResponseEntity<String> addToCart(@RequestBody CartAddRequest request) {
-        cartItemService.addToCart(request.getBuyerId(), request.getProductId());
+        cartItemService.addToCart(request.getBuyerId(), request.getProductId(), request.getQuantity());
         return ResponseEntity.ok("Thêm vào giỏ hàng thành công");
     }
+
 
     @PutMapping("/update")
     public ResponseEntity<?> updateCartItem(@RequestBody CartUpdateRequest request) {

@@ -13,6 +13,8 @@ function CardItem({ id, category, title, description, price, img, shopName }) {
 
     productData.append("buyerId", userId);
     productData.append("productId", id);
+    productData.append("quantity", 1);
+
     try {
       const response = await addProductToCart(productData);
       setReload(prev => !prev);

@@ -4,13 +4,18 @@ import com.farm.farmtrade.configuration.VNPAY.VNPAYService;
 import com.farm.farmtrade.dto.request.payment.VNPayRequest;
 import com.farm.farmtrade.service.payment.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -27,16 +32,28 @@ public class VNPayController {
     private static final String FAILURE_REACT_URL = "http://localhost:5173/payment/failure";
 
     @PostMapping("/submitOrder")
-    public ResponseEntity<String> submitOrder(@RequestBody VNPayRequest vnPayRequest,
-                                              HttpServletRequest request) {
+    public ResponseEntity<Map<String, String>> submitOrder(@RequestBody VNPayRequest vnPayRequest,
+                                                           HttpServletRequest request) {
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        String vnpayUrl = vnPayService.createOrder(
-                vnPayRequest.getAmount(),
-                vnPayRequest.getOrderInfo(),
-                baseUrl
-        );
-        return ResponseEntity.ok(vnpayUrl); // Trả lại frontend để redirect bằng JS
+
+        try {
+            String vnpayUrl = vnPayService.createOrder(
+                    vnPayRequest.getAmount(),
+                    vnPayRequest.getOrderInfo(),
+                    baseUrl
+            );
+
+            Map<String, String> response = new HashMap<>();
+            response.put("redirectUrl", vnpayUrl);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("Error creating VNPay payment", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Could not create VNPay payment"));
+        }
     }
+
 
     @GetMapping("/vnpay-payment")
     public RedirectView GetMapping(HttpServletRequest request, Model model) {

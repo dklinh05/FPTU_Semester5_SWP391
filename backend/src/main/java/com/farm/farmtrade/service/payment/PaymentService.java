@@ -22,11 +22,9 @@ public class PaymentService {
     PaymentRepository paymentRepository;
     OrderRepository orderRepository;
     OrderGroupRepository orderGroupRepository;
-    OrderItemRepository orderItemRepository;
-    CartItemRepository cartItemRepository;
 
     @Transactional
-    public void savePayPalPayment(Integer orderGroupId) {
+    public void savePayment(Integer orderGroupId) {
         OrderGroup orderGroup = orderGroupRepository.findById(orderGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("OrderGroup not found with ID: " + orderGroupId));
         if (orderGroup.getOrders() == null || orderGroup.getOrders().isEmpty()) {
@@ -46,14 +44,6 @@ public class PaymentService {
                     .build();
             paymentRepository.save(payment);
 
-            // Xoá cart item theo buyerId và productId
-            List<OrderItem> orderItems = orderItemRepository.findByOrderOrderID(order.getOrderID());
-            for (OrderItem item : orderItems) {
-                cartItemRepository.deleteByBuyerUserIDAndProductProductID(
-                        order.getBuyer().getUserID(),
-                        item.getProduct().getProductID()
-                );
-            }
         }
 
         // Cập nhật trạng thái nhóm đơn hàng

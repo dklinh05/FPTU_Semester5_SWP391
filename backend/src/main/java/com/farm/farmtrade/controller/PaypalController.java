@@ -19,10 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/payment")
+@RequestMapping("/paypal")
 @RequiredArgsConstructor
 @Slf4j
-public class PaymentController {
+public class PaypalController {
 
     private final PaypalService paypalService;
     private final PaymentService paymentService;
@@ -33,8 +33,8 @@ public class PaymentController {
     private static final String CANCEL_REACT_URL = "http://localhost:5173/orders/not-payment";
 
     // BE SPRING URLs (PayPal redirect về đây)
-    private static final String SUCCESS_API_URL = "http://localhost:8080/farmtrade/payment/success";
-    private static final String CANCEL_API_URL = "http://localhost:8080/farmtrade/payment/cancel";
+    private static final String SUCCESS_API_URL = "http://localhost:8080/farmtrade/paypal/success";
+    private static final String CANCEL_API_URL = "http://localhost:8080/farmtrade/paypal/cancel";
 
     // Quy đổi VND->USD: 1 USD = 24,000 VND
     private static final BigDecimal EXCHANGE_RATE = new BigDecimal("25000");
@@ -81,7 +81,7 @@ public class PaymentController {
         try {
             Payment payment = paypalService.executePayment(paymentId, payerId);
             if ("approved".equalsIgnoreCase(payment.getState())) {
-                paymentService.savePayPalPayment(orderGroupId);
+                paymentService.savePayment(orderGroupId);
                 return new RedirectView(SUCCESS_REACT_URL);
             }
         } catch (Exception e) {

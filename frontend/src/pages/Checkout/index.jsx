@@ -6,6 +6,7 @@ import ShopBanner from "../../layouts/components/ShopBanner";
 import CheckoutItem from "../../layouts/components/CheckoutItem/CheckoutItem";
 import Footer from "../../components/Footer";
 import { addOrder } from "../../services/orderService";
+import { createPayment } from "../../services/paymentService";
 
 function Checkout() {
   const { userId } = useUser();
@@ -46,15 +47,26 @@ function Checkout() {
       };
 
       const response = await addOrder(orderGroupData);
-      console.log(` Đã tạo đơn hàng cho:`, response.data);
+      const groupId = response.orderGroupID;
+      const amount = response.totalAmount;
 
-      alert("Tạo đơn hàng theo nhà cung cấp thành công!");
+      console.log("Đã tạo đơn hàng:", groupId, amount);
+
+      await handlePayment(amount, groupId);
     } catch (error) {
       console.error("Lỗi khi tạo đơn hàng:", error);
       alert("Tạo đơn hàng thất bại.");
     }
   };
-
+  const handlePayment = async (amount, groupId) => {
+    try {
+      const response = await createPayment(amount, groupId);
+      window.location.href = response.redirectUrl;
+      console.log("Response:", response);
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm:", error);
+    }
+  };
   return (
     <div>
       <Header />

@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Card, Spinner, Badge } from "react-bootstrap";
 import { useUser } from "../../context/UserContext";
+import { useCart } from "../../context/CartContext";
 import {
   renderOrderByBuyerId,
   renderOrderItemsByOrderId,
 } from "../../services/orderService";
+import { addProductToCart } from "../../services/cartItemService";
 
 function Orders() {
+  const navigate = useNavigate();
   const { userId } = useUser();
+  const { setReload } = useCart();
   const [orders, setOrders] = useState([]);
   const [orderItemsMap, setOrderItemsMap] = useState({});
 
@@ -28,8 +33,27 @@ function Orders() {
     }
   };
 
-  const handleProceedCheckout = () => {
-    navigate("/checkout", { state: {} });
+  const handleBuyAgain = async (items) => {
+    const chooseCartItems = [];
+    try {
+      for (const item of items) {
+        const productData = new FormData();
+        productData.append("buyerId", userId);
+        productData.append("productId", item.productId);
+        productData.append("quantity", item.quantity);
+
+        const response = await addProductToCart(productData);
+        chooseCartItems.push({
+          cartItemID: response.cartItemID, // tùy vào backend trả về
+        });
+        console.log("Đã thêm vào giỏ:", response.cartItemID);
+      }
+      setReload((prev) => !prev);
+      navigate("/cart", { state: { cartItems: chooseCartItems } });
+    } catch (error) {
+      console.error("Lỗi khi mua lại:", error);
+      alert("Có lỗi xảy ra khi mua lại. Vui lòng thử lại.");
+    }
   };
 
   useEffect(() => {
@@ -80,7 +104,10 @@ function Orders() {
             <Button variant="outline-primary" className="me-2">
               Chi tiết
             </Button>
-            <Button variant="danger" onClick={handleProceedCheckout}>
+            <Button
+              variant="danger"
+              onClick={() => handleBuyAgain(orderItemsMap[order.orderID])}
+            >
               Mua lại
             </Button>
           </Card.Footer>

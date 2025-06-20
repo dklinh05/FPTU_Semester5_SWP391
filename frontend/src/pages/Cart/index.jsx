@@ -16,12 +16,15 @@ function Cart() {
   const getCarts = () => {
     try {
       const initialChecked = {};
+
       carts.forEach((cart) => {
         initialChecked[cart.cartItemID] = false;
       });
-      chooseCartItems.forEach((cart)=>{
+
+      chooseCartItems.forEach((cart) => {
         initialChecked[cart.cartItemID] = true;
-      })
+      });
+      
       setCheckedItems(initialChecked);
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);

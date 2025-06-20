@@ -1,5 +1,6 @@
 package com.farm.farmtrade.dto.request.payment;
 
+import lombok.Data;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PaymentCreationRequest {
-    String amount;
-    String orderGroupId;
+public class VNPayRequest {
+    private int amount;
+    private String orderInfo;
 }

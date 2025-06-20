@@ -31,7 +31,7 @@ public class OrderGroupService {
     OrderItemRepository orderItemRepository;
     UserVoucherRepository userVoucherRepository;
     VoucherRepository voucherRepository;
-
+    CartItemRepository cartItemRepository;
     @Transactional
     public OrderGroupResponse createOrderGroup(OrderGroupRequest request) {
         User buyer = userRepository.findById(request.getBuyerId())
@@ -112,6 +112,14 @@ public class OrderGroupService {
             order.setTotalAmount(orderTotal);
             orderRepository.save(order);
             groupTotal = groupTotal.add(orderTotal);
+            // Xoá cart item theo buyerId và productId
+            List<OrderItem> orderItems = orderItemRepository.findByOrderOrderID(order.getOrderID());
+            for (OrderItem item : orderItems) {
+                cartItemRepository.deleteByBuyerUserIDAndProductProductID(
+                        order.getBuyer().getUserID(),
+                        item.getProduct().getProductID()
+                );
+            }
         }
 
         // Apply discount

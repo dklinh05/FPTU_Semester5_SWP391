@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import { useCart } from "../../context/CartContext";
 import { renderCart } from "../../services/cartItemService";
@@ -6,21 +7,24 @@ import CartItem from "../../layouts/components/CartItem";
 import CartTotal from "../../layouts/components/CartTotal";
 
 function Cart() {
+  const location = useLocation();
   const { userId } = useUser();
   const { carts } = useCart();
-  //   const [carts, setCarts] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
+  const chooseCartItems = location.state?.cartItems || [];
 
   const getCarts = () => {
     try {
-      //   const response = await renderCart(userId);
-      //   setCarts(response);
-
-      // Khởi tạo checkedItems mặc định là false
       const initialChecked = {};
+
       carts.forEach((cart) => {
         initialChecked[cart.cartItemID] = false;
       });
+
+      chooseCartItems.forEach((cart) => {
+        initialChecked[cart.cartItemID] = true;
+      });
+      
       setCheckedItems(initialChecked);
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);

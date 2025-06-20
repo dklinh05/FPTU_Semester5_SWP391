@@ -79,6 +79,7 @@ public class ProductService {
 
         product.setSupplier(user);
         product.setStatus("Pending");
+        product.setSales(0);
 
         productRepository.save(product);
 

@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import { useCart } from "../../context/CartContext";
-import { renderCart } from "../../services/cartItemService";
+import {
+  redeemVoucher,
+  renderVoucher,
+  renderVoucherByUserId,
+} from "../../services/voucherService";
 import CartItem from "../../layouts/components/CartItem";
 import CartTotal from "../../layouts/components/CartTotal";
 
@@ -12,6 +17,8 @@ function Cart() {
   const { carts } = useCart();
   const [checkedItems, setCheckedItems] = useState({});
   const chooseCartItems = location.state?.cartItems || [];
+  const [ownedVouchers, setOwnedVouchers] = useState([]);
+  const [selectedVoucher, setSelectedVoucher] = useState({});
 
   const getCarts = () => {
     try {
@@ -24,16 +31,26 @@ function Cart() {
       chooseCartItems.forEach((cart) => {
         initialChecked[cart.cartItemID] = true;
       });
-      
+
       setCheckedItems(initialChecked);
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);
     }
   };
 
+  const getVoucher = async () => {
+    try {
+      const vouchers = await renderVoucherByUserId(userId);
+      setOwnedVouchers(vouchers);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     if (userId) {
       getCarts();
+      getVoucher();
     }
   }, [userId]);
 
@@ -62,6 +79,10 @@ function Cart() {
 
   // Danh sách item được chọn (dựa trên checkedItems)
   const selectedItems = carts.filter((cart) => checkedItems[cart.cartItemID]);
+
+  const total = selectedItems.reduce((total, cart) => {
+    return total + cart.quantity * cart.product.price;
+  }, 0);
 
   return (
     <div className="container-fluid py-5">
@@ -108,22 +129,44 @@ function Cart() {
         </div>
 
         {/* Coupon Code */}
-        <div className="mt-5">
-          <input
-            type="text"
-            className="border-0 border-bottom rounded me-5 py-3 mb-4"
-            placeholder="Coupon Code"
-          />
-          <button
-            className="btn border-secondary rounded-pill px-4 py-3 text-primary"
-            type="button"
-          >
-            Apply Coupon
-          </button>
-        </div>
+        <select
+          className="form-select border-0 border-bottom rounded me-5 py-3 mb-4"
+          value={selectedVoucher?.userVoucherID || ""}
+          onChange={(e) => {
+            const selected = ownedVouchers.find(
+              (v) => v.userVoucherID === parseInt(e.target.value)
+            );
+            if (selected) {
+              setSelectedVoucher(selected);
+            }
+            if (total > selected.voucher.minOrderAmount) {
+              setSelectedVoucher(selected);
+              toast.success(
+                `Đã áp dụng mã: ${selected.voucher.code} - Giảm ${selected.voucher.discountValue}₫`
+              );
+            } else {
+              toast.error("Bạn chưa đủ điểm để sử dụng voucher này.");
+            }
+          }}
+        >
+          <option value="">Chọn voucher</option>
+          {ownedVouchers.map((voucher) => (
+            <option
+              key={voucher.userVoucherID}
+              value={voucher.userVoucherID}
+              disabled={total < voucher.voucher.minOrderAmount}
+            >
+              {voucher.voucher.code} - Giảm {voucher.voucher.discountValue}₫ cho
+              đơn từ {voucher.voucher.minOrderAmount}
+              {total < voucher.voucher.minOrderAmount
+                ? "(Không đủ mức tiền tối thiểu ✖)"
+                : ""}
+            </option>
+          ))}
+        </select>
 
         {/* Cart Total - truyền selectedItems */}
-        <CartTotal carts={selectedItems} />
+        <CartTotal carts={selectedItems} voucher={selectedVoucher} />
       </div>
     </div>
   );

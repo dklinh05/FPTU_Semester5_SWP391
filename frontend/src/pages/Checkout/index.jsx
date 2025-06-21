@@ -15,7 +15,7 @@ function Checkout() {
 
   const location = useLocation();
   const chooseCartItems = location.state?.cartItems || [];
-
+  const chooseVoucher = location.state?.voucher || {};
   // Group cart items by supplier name
   const groupedBySupplier = chooseCartItems.reduce((groups, cart) => {
     const supplierId = cart.product.supplier.userID;
@@ -45,7 +45,7 @@ function Checkout() {
 
       const orderGroupData = {
         buyerId: userId,
-        userVoucherId: null,
+        userVoucherId: chooseVoucher.userVoucherID,
         orders: orderList,
       };
 
@@ -63,7 +63,11 @@ function Checkout() {
   };
   const handlePayment = async (amount, groupId) => {
     try {
-      const response = await createPayment(selectedPaymentMethod, amount, groupId);
+      const response = await createPayment(
+        selectedPaymentMethod,
+        amount,
+        groupId
+      );
       window.location.href = response.redirectUrl;
       console.log("Response:", response);
     } catch (error) {

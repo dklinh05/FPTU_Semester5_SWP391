@@ -12,6 +12,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import vn.payos.PayOS;
 
 
 @Configuration
@@ -37,5 +38,14 @@ public class    ApplicationInitConfig {
                 log.warn("admin user has been created with default password: admin, please change it");
             }
         };
+    }
+
+    @Bean
+    public PayOS payOS() {
+        String clientId = "c5de2429-2233-4bce-a7ba-60ec82a01208";
+        String apiKey = "c7acdb28-1ed8-45eb-91c5-bf6deb76f890";
+        String checksumKey = "921d2d6e7ea6324c1b7fa479a8073c10d0aae704a3a7f6d3290048ad59ec345c";
+
+        return new PayOS(clientId, apiKey, checksumKey);
     }
 }

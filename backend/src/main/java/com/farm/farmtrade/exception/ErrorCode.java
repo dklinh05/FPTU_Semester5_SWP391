@@ -9,7 +9,7 @@ public enum ErrorCode {
     UNAUTHENTICATED(1006, "Unauthenticated"),
     USER_UNEXISTED(1007, "User does not exist!"),
 
-            ;
+    ;
 
     ErrorCode(int code, String message) {
         this.code = code;
@@ -26,4 +26,4 @@ public enum ErrorCode {
     public String getMessage() {
         return message;
     }
-    }
+}

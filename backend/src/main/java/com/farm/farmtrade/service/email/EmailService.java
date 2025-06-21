@@ -1,6 +1,7 @@
 package com.farm.farmtrade.service.email;
 
 
+import com.farm.farmtrade.enums.NotificationType;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AccessLevel;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @NoArgsConstructor
@@ -66,6 +69,20 @@ public class EmailService {
 
         mailSender.send(mimeMessage);
     }
+    public void sendOrderPaymentSuccessEmail(String toEmail, String userName, Integer orderGroupId, BigDecimal amountPaid) throws MessagingException {
+        String htmlContent = buildOrderPaymentSuccessEmail(userName, orderGroupId, amountPaid);
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+        helper.setTo(toEmail);
+        helper.setSubject(NotificationType.ORDER_CONFIRMED.getMessage());
+        helper.setFrom("farmtrade43@gmail.com");
+        helper.setText(htmlContent, true);
+
+        mailSender.send(mimeMessage);
+    }
+
 
     private String buildVerificationEmail(String userName, String verifyUrl) {
         String template = """
@@ -119,4 +136,19 @@ public class EmailService {
         """;
         return String.format(template, userName, otp);
     }
+
+    private String buildOrderPaymentSuccessEmail(String userName, Integer orderGroupId, BigDecimal amountPaid) {
+        String template = """
+    <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+        <h2 style="color: #28a745;">Xin chào %s,</h2>
+        <p>Bạn đã thanh toán thành công cho đơn hàng nhóm <strong>#%d</strong>.</p>
+        <p>Số tiền đã thanh toán: <strong>%,.0f VND</strong></p>
+        <p>Chúng tôi sẽ sớm xử lý và giao hàng cho bạn trong thời gian sớm nhất.</p>
+        <p>Cảm ơn bạn đã sử dụng dịch vụ FarmTrade!</p>
+        <p>Trân trọng,<br>Đội ngũ hỗ trợ</p>
+    </div>
+    """;
+        return String.format(template, userName, orderGroupId, amountPaid);
+    }
+
 }

@@ -1,10 +1,15 @@
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function CartTotal({ carts, voucher }) {
   const navigate = useNavigate();
 
   const handleProceedCheckout = () => {
-    navigate("/checkout", { state: { cartItems: carts, voucher: voucher } });
+    if (!carts?.length) {
+      toast.error("Hãy chọn sản phẩm để tiếp tục");
+    } else {
+      navigate("/checkout", { state: { cartItems: carts, voucher: voucher } });
+    }
   };
 
   const total = carts.reduce((total, cart) => {
@@ -35,7 +40,7 @@ function CartTotal({ carts, voucher }) {
           <div className="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
             <h5 className="mb-0 ps-4 me-4">Total</h5>
             <p className="mb-0 pe-4">
-              ${total + 3 - voucher?.voucher?.discountValue}
+              ${total + 3 - (voucher?.voucher?.discountValue ?? 0)}
             </p>
           </div>
           <button

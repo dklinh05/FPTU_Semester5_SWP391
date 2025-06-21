@@ -6,9 +6,9 @@ import { getUserById } from "../services/userService";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-
   const [token, setToken] = useState(getTokenFromCookie());
   const [userId, setUserId] = useState(null);
+  const [points, setPoints] = useState(null);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -23,7 +23,10 @@ export const UserProvider = ({ children }) => {
         if (decoded?.userId) {
           setUserId(decoded.userId);
           getUserById(decoded.userId)
-            .then((data) => setUser(data))
+            .then((data) => {
+              setUser(data);
+              setPoints(data.rewardPoints);
+            })
             .catch((err) => console.error("Lỗi lấy user:", err));
         }
       } catch (err) {
@@ -35,7 +38,7 @@ export const UserProvider = ({ children }) => {
   }, [token]);
 
   return (
-    <UserContext.Provider value={{ user, setUser, token, setToken, userId }}>
+    <UserContext.Provider value={{ user, setUser, token, setToken, userId, points }}>
       {children}
     </UserContext.Provider>
   );

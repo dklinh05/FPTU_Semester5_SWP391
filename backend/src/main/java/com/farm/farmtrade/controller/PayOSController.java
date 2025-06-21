@@ -28,7 +28,7 @@ public class PayOSController {
     }
 
     //  1. Tạo đơn thanh toán
-    @PostMapping("/create")
+    @PostMapping()
     public ObjectNode createPayment(@Valid @RequestBody CreatePaymentLinkRequestBody request) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
@@ -40,7 +40,7 @@ public class PayOSController {
             PaymentData paymentData = PaymentData.builder()
                     .orderCode(orderCode)
                     .description(request.getOrderGroupId())
-                    .amount(request.getPrice())
+                    .amount(request.getAmount())
                     .returnUrl(SUCCESS_REACT_URL)
                     .cancelUrl(CANCEL_REACT_URL)
                     .build();

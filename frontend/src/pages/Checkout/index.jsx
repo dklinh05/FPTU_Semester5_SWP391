@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useUser } from "../../context/UserContext";
 import Header from "../../components/Header";
 import ShopBanner from "../../layouts/components/ShopBanner";
@@ -8,14 +9,22 @@ import CheckoutItem from "../../layouts/components/CheckoutItem/CheckoutItem";
 import Footer from "../../components/Footer";
 import { addOrder } from "../../services/orderService";
 import { createPayment } from "../../services/paymentService";
+import ShippingMap from "../../components/ShippingMap/ShippingMap";
+import PopupModal from "../../components/PopupModal";
 
 function Checkout() {
-  const { userId } = useUser();
+  const { userId, user } = useUser();
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
 
   const location = useLocation();
   const chooseCartItems = location.state?.cartItems || [];
   const chooseVoucher = location.state?.voucher || {};
+  const [shippingAddress, setShippingAddress] = useState(user.address);
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  
+    const [showPopup, setShowPopup] = useState(false);
+  const [popupConfig, setPopupConfig] = useState({});
+
   // Group cart items by supplier name
   const groupedBySupplier = chooseCartItems.reduce((groups, cart) => {
     const supplierId = cart.product.supplier.userID;
@@ -28,7 +37,10 @@ function Checkout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!chooseVoucher?.userVoucherID) {
+      toast.error("Hãy chọn voucher để tiếp tục");
+      return;
+    }
     try {
       // Bước 2: Gửi đơn hàng cho từng nhóm
       const orderList = Object.entries(groupedBySupplier).map(
@@ -61,6 +73,7 @@ function Checkout() {
       alert("Tạo đơn hàng thất bại.");
     }
   };
+
   const handlePayment = async (amount, groupId) => {
     try {
       const response = await createPayment(
@@ -68,7 +81,7 @@ function Checkout() {
         amount,
         groupId
       );
-      window.location.href = response.redirectUrl;
+      window.location.href = response?.data?.checkoutUrl;
       console.log("Response:", response);
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);
@@ -124,6 +137,43 @@ function Checkout() {
                     </tbody>
                   </table>
                 </div>
+                <div className="mb-4">
+                  <label className="form-label fw-bold">
+                    Địa chỉ giao hàng
+                  </label>
+
+                  {/* Hiển thị địa chỉ mặc định */}
+                  {!showAddressForm && (
+                    <div className="border p-3 bg-light rounded">
+                      <p className="mb-1">{shippingAddress}</p>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-primary mt-2"
+                        onClick={() => setShowAddressForm(true)}
+                      >
+                        Thay đổi địa chỉ
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Hiển thị form thay đổi địa chỉ */}
+                  {showAddressForm && (
+                    <>
+                      <ShippingMap
+                        shippingAddress={shippingAddress}
+                        setShippingAddress={setShippingAddress}
+                      />
+
+                      <textarea
+                        className="form-control mt-3"
+                        rows="3"
+                        required
+                        value={shippingAddress}
+                        onChange={(e) => setShippingAddress(e.target.value)}
+                      ></textarea>
+                    </>
+                  )}
+                </div>
 
                 {/* Payment Options */}
                 <div className="my-4">
@@ -136,11 +186,11 @@ function Checkout() {
                       className="form-check-input bg-primary border-0"
                       id="Transfer"
                       name="paymentMethod"
-                      value="Transfer"
-                      checked={selectedPaymentMethod === "Transfer"}
-                      onChange={() => handlePaymentMethodChange("Transfer")}
+                      value="payos"
+                      checked={selectedPaymentMethod === "payos"}
+                      onChange={() => handlePaymentMethodChange("payos")}
                     />
-                    <label className="form-check-label" htmlFor="Transfer">
+                    <label className="form-check-label" htmlFor="payos">
                       Direct Bank Transfer
                     </label>
                     <p className="text-dark mt-1">
@@ -166,6 +216,52 @@ function Checkout() {
                     <p className="text-dark mt-1">
                       Secure payment via your PayPal account.
                     </p>
+                  </div>
+                </div>
+                {/* Voucher & Total Summary */}
+                <div className="border-top pt-4 mt-4">
+                  <h4 className="mb-3">Order Summary</h4>
+
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Subtotal</span>
+                    <span>
+                      $
+                      {chooseCartItems.reduce(
+                        (total, cart) =>
+                          total + cart.quantity * cart.product.price,
+                        0
+                      )}
+                    </span>
+                  </div>
+
+                  <div className="d-flex justify-content-between mb-2">
+                    <span>Shipping Fee</span>
+                    <span>$3.00</span>
+                  </div>
+
+                  {chooseVoucher?.voucher?.discountValue ? (
+                    <div className="d-flex justify-content-between mb-2 text-success">
+                      <span>Voucher Discount</span>
+                      <span>- ${chooseVoucher.voucher.discountValue}</span>
+                    </div>
+                  ) : (
+                    <div className="d-flex justify-content-between mb-2 text-muted">
+                      <span>No Voucher Applied</span>
+                    </div>
+                  )}
+
+                  <div className="d-flex justify-content-between border-top pt-3 mt-3">
+                    <strong>Total</strong>
+                    <strong>
+                      $
+                      {chooseCartItems.reduce(
+                        (total, cart) =>
+                          total + cart.quantity * cart.product.price,
+                        0
+                      ) +
+                        3 -
+                        (chooseVoucher?.voucher?.discountValue ?? 0)}
+                    </strong>
                   </div>
                 </div>
 

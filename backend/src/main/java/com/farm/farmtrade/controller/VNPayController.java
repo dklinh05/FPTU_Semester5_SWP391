@@ -31,7 +31,7 @@ public class VNPayController {
     private static final String SUCCESS_REACT_URL = "http://localhost:5173/orders";
     private static final String FAILURE_REACT_URL = "http://localhost:5173/payment/failure";
 
-    @PostMapping("/submitOrder")
+    @PostMapping()
     public ResponseEntity<Map<String, String>> submitOrder(@RequestBody VNPayRequest vnPayRequest,
                                                            HttpServletRequest request) {
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();

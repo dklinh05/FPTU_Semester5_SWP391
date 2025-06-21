@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import Header from "../../components/Header";
@@ -10,6 +11,8 @@ import { createPayment } from "../../services/paymentService";
 
 function Checkout() {
   const { userId } = useUser();
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+
   const location = useLocation();
   const chooseCartItems = location.state?.cartItems || [];
 
@@ -60,13 +63,18 @@ function Checkout() {
   };
   const handlePayment = async (amount, groupId) => {
     try {
-      const response = await createPayment(amount, groupId);
+      const response = await createPayment(selectedPaymentMethod, amount, groupId);
       window.location.href = response.redirectUrl;
       console.log("Response:", response);
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);
     }
   };
+
+  const handlePaymentMethodChange = (method) => {
+    setSelectedPaymentMethod(method);
+  };
+
   return (
     <div>
       <Header />
@@ -114,77 +122,46 @@ function Checkout() {
                 </div>
 
                 {/* Payment Options */}
-                <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                  <div className="col-12">
-                    <div className="form-check text-start my-3">
-                      <input
-                        type="checkbox"
-                        className="form-check-input bg-primary border-0"
-                        id="Transfer-1"
-                        name="Transfer"
-                        value="Transfer"
-                      />
-                      <label className="form-check-label" htmlFor="Transfer-1">
-                        Direct Bank Transfer
-                      </label>
-                    </div>
-                    <p className="text-start text-dark">
+                <div className="my-4">
+                  <h4 className="mb-3">Payment Methods</h4>
+
+                  {/* Direct Bank Transfer */}
+                  <div className="form-check border-bottom py-3">
+                    <input
+                      type="checkbox"
+                      className="form-check-input bg-primary border-0"
+                      id="Transfer"
+                      name="paymentMethod"
+                      value="Transfer"
+                      checked={selectedPaymentMethod === "Transfer"}
+                      onChange={() => handlePaymentMethodChange("Transfer")}
+                    />
+                    <label className="form-check-label" htmlFor="Transfer">
+                      Direct Bank Transfer
+                    </label>
+                    <p className="text-dark mt-1">
                       Make your payment directly into our bank account. Please
-                      use your Order ID as the payment reference. Your order
-                      will not be shipped until the funds have cleared in our
-                      account.
+                      use your Order ID as the payment reference.
                     </p>
                   </div>
-                </div>
 
-                <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                  <div className="col-12">
-                    <div className="form-check text-start my-3">
-                      <input
-                        type="checkbox"
-                        className="form-check-input bg-primary border-0"
-                        id="Payments-1"
-                        name="Payments"
-                        value="Payments"
-                      />
-                      <label className="form-check-label" htmlFor="Payments-1">
-                        Check Payments
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                  <div className="col-12">
-                    <div className="form-check text-start my-3">
-                      <input
-                        type="checkbox"
-                        className="form-check-input bg-primary border-0"
-                        id="Delivery-1"
-                        name="Delivery"
-                        value="Delivery"
-                      />
-                      <label className="form-check-label" htmlFor="Delivery-1">
-                        Cash On Delivery
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                  <div className="col-12">
-                    <div className="form-check text-start my-3">
-                      <input
-                        type="checkbox"
-                        className="form-check-input bg-primary border-0"
-                        id="Paypal-1"
-                        name="Paypal"
-                        value="Paypal"
-                      />
-                      <label className="form-check-label" htmlFor="Paypal-1">
-                        Paypal
-                      </label>
-                    </div>
+                  {/* Paypal */}
+                  <div className="form-check border-bottom py-3">
+                    <input
+                      type="checkbox"
+                      className="form-check-input bg-primary border-0"
+                      id="Paypal"
+                      name="paymentMethod"
+                      value="Paypal"
+                      checked={selectedPaymentMethod === "paypal"}
+                      onChange={() => handlePaymentMethodChange("paypal")}
+                    />
+                    <label className="form-check-label" htmlFor="Paypal">
+                      Paypal
+                    </label>
+                    <p className="text-dark mt-1">
+                      Secure payment via your PayPal account.
+                    </p>
                   </div>
                 </div>
 

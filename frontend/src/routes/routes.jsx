@@ -35,6 +35,7 @@ import CustomerList from "../pages/CustomerList";
 import SupplierList from "../pages/SupplierList";
 import ShipperList from "../pages/ShipperList";
 import ProductSearch from "../pages/ProductSearch";
+import RedeemVoucher from "../pages/RedeemVoucher";
 import SearchResultLayout from "../layouts/SearchResultLayout/index.js";
 
 
@@ -116,6 +117,7 @@ const publicRoutes = [
     layout: AdminLayout,
   },
   { path: config.routes.productSearch, component: ProductSearch, layout: SearchResultLayout },
+  { path: config.routes.redeemVoucher, component: RedeemVoucher, layout: null },
 ];
 
 const privateRoutes = [];

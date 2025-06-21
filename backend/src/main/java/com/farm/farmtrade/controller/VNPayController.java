@@ -3,6 +3,8 @@ package com.farm.farmtrade.controller;
 import com.farm.farmtrade.configuration.VNPAY.VNPAYService;
 import com.farm.farmtrade.dto.request.payment.VNPayRequest;
 import com.farm.farmtrade.service.payment.PaymentService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +34,11 @@ public class VNPayController {
     private static final String FAILURE_REACT_URL = "http://localhost:5173/payment/failure";
 
     @PostMapping("/submitOrder")
-    public ResponseEntity<Map<String, String>> submitOrder(@RequestBody VNPayRequest vnPayRequest,
-                                                           HttpServletRequest request) {
+    public ObjectNode submitVNPayOrder(@RequestBody VNPayRequest vnPayRequest,
+                                       HttpServletRequest request) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode response = objectMapper.createObjectNode();
+
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
 
         try {
@@ -43,16 +48,22 @@ public class VNPayController {
                     baseUrl
             );
 
-            Map<String, String> response = new HashMap<>();
-            response.put("redirectUrl", vnpayUrl);
-            return ResponseEntity.ok(response);
+            ObjectNode dataNode = objectMapper.createObjectNode();
+            dataNode.put("checkoutUrl", vnpayUrl);
+
+            response.put("error", 0);
+            response.put("message", "success");
+            response.set("data", dataNode);
+            return response;
 
         } catch (Exception e) {
-            log.error("Error creating VNPay payment", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Could not create VNPay payment"));
+            e.printStackTrace();
+            response.put("error", -1);
+            response.put("message", e.getMessage());
+            return response;
         }
     }
+
 
 
     @GetMapping("/vnpay-payment")

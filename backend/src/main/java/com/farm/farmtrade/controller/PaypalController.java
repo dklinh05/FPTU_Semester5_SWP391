@@ -3,6 +3,8 @@ package com.farm.farmtrade.controller;
 import com.farm.farmtrade.dto.request.payment.PaymentCreationRequest;
 import com.farm.farmtrade.service.payment.PaypalService;
 import com.farm.farmtrade.service.payment.PaymentService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
@@ -40,7 +42,10 @@ public class PaypalController {
     private static final BigDecimal EXCHANGE_RATE = new BigDecimal("25000");
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> createPayment(@RequestBody PaymentCreationRequest request) {
+    public ObjectNode createPayPalPayment(@RequestBody PaymentCreationRequest request) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode response = objectMapper.createObjectNode();
+
         try {
             String successUrlWithOrderGroup = SUCCESS_API_URL + "?orderGroupId=" + request.getOrderGroupId();
 
@@ -60,17 +65,28 @@ public class PaypalController {
 
             for (Links link : payment.getLinks()) {
                 if (link.getRel().equals("approval_url")) {
-                    Map<String, String> response = new HashMap<>();
-                    response.put("redirectUrl", link.getHref()); // ✅ Trả về URL dạng JSON
-                    return ResponseEntity.ok(response);
+                    ObjectNode dataNode = objectMapper.createObjectNode();
+                    dataNode.put("checkoutUrl", link.getHref());
+
+                    response.put("error", 0);
+                    response.put("message", "success");
+                    response.set("data", dataNode);
+                    return response;
                 }
             }
+
+            response.put("error", -1);
+            response.put("message", "No approval_url found");
+            return response;
+
         } catch (PayPalRESTException e) {
-            log.error("Error creating PayPal payment", e);
+            e.printStackTrace();
+            response.put("error", -1);
+            response.put("message", e.getMessage());
+            return response;
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", "Could not create PayPal payment"));
     }
+
 
     @GetMapping("/success")
     public RedirectView paymentSuccess(

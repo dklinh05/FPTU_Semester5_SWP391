@@ -5,6 +5,9 @@ import com.farm.farmtrade.entity.OrderGroup;
 import com.farm.farmtrade.entity.OrderItem;
 import com.farm.farmtrade.entity.Payment;
 import com.farm.farmtrade.repository.*;
+import com.farm.farmtrade.service.email.EmailService;
+import com.farm.farmtrade.service.notification.NotificationService;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +25,10 @@ public class PaymentService {
     PaymentRepository paymentRepository;
     OrderRepository orderRepository;
     OrderGroupRepository orderGroupRepository;
-
+    NotificationService notificationService;
+    EmailService emailService;
     @Transactional
-    public void savePayment(Integer orderGroupId) {
+    public void savePayment(Integer orderGroupId) throws MessagingException {
         OrderGroup orderGroup = orderGroupRepository.findById(orderGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("OrderGroup not found with ID: " + orderGroupId));
         if (orderGroup.getOrders() == null || orderGroup.getOrders().isEmpty()) {
@@ -49,6 +53,14 @@ public class PaymentService {
         // Cập nhật trạng thái nhóm đơn hàng
         orderGroup.setStatus("PAID");
         orderGroupRepository.save(orderGroup);
+
+        //gửi thông báo
+        emailService.sendOrderPaymentSuccessEmail(
+                orderGroup.getBuyer().getEmail(),
+                orderGroup.getBuyer().getFullName(),
+                orderGroup.getOrderGroupID(),
+                orderGroup.getFinalAmount()
+        );
 
     }
 

@@ -28,7 +28,6 @@ import UserList from "../pages/UserList";
 import RequestUpdateRole from '../pages/RequestUpdateRole/index.jsx';
 import Checkout from '../pages/Checkout';
 import RequestProduct from '../pages/RequestProduct';
-import Feedback from '../pages/Feedback';
 import Orders from '../pages/Orders';
 import OrdersNotPayment from '../pages/OrdersNotPayment';
 import CustomerList from "../pages/CustomerList";
@@ -93,7 +92,6 @@ const publicRoutes = [
     component: RequestProduct,
     layout: AdminLayout,
   },
-  { path: config.routes.feedback, component: Feedback, layout: null },
 
   { path: config.routes.orders, component: Orders, layout: OrdersLayout },
   {

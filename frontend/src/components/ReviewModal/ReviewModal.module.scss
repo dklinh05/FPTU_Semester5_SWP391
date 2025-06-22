@@ -1,0 +1,44 @@
+.reviewForm {
+  .section {
+    margin-bottom: 1rem;
+  }
+
+  .star {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #ccc;
+    margin-right: 4px;
+  }
+
+  .active {
+    color: gold;
+  }
+
+  .imageWrapper {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .previewImg {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  .uploadBox {
+    width: 80px;
+    height: 80px;
+    border: 1px dashed #ccc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    text-align: center;
+    color: #555;
+    border-radius: 6px;
+  }
+}

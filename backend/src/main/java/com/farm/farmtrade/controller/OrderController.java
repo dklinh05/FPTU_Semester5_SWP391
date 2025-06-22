@@ -1,10 +1,12 @@
 package com.farm.farmtrade.controller;
 
 import com.farm.farmtrade.dto.request.orderRequest.OrderGroupRequest;
+import com.farm.farmtrade.dto.request.orderRequest.UpdateOrderStatusRequest;
 import com.farm.farmtrade.dto.response.orderResponse.OrderGroupResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderItemResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderResponse;
 import com.farm.farmtrade.entity.Order;
+import com.farm.farmtrade.repository.OrderRepository;
 import com.farm.farmtrade.service.order.OrderGroupService;
 import com.farm.farmtrade.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,9 @@ public class OrderController {
     private final OrderService orderService;
     @Autowired
     private final OrderGroupService orderGroupService;
+
+    @Autowired
+    private final OrderRepository orderRepository;
     // Tạo đơn hàng mới
 //    @PostMapping
 //    public ResponseEntity<Order> createOrder(@RequestBody OrderCreationRequest request) {
@@ -49,6 +54,18 @@ public class OrderController {
         orderService.deleteOrder(id);
         return ResponseEntity.ok("Order with ID " + id + " has been deleted successfully.");
     }
+    //cập nhật order status
+    @PostMapping("/update-order-status")
+    public ResponseEntity<String> updateOrderStatus(@RequestBody UpdateOrderStatusRequest request) {
+        Order order = orderRepository.findById(request.getOrderId())
+                .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + request.getOrderId()));
+
+        order.setStatus(request.getStatus());
+        orderRepository.save(order);
+
+        return ResponseEntity.ok("Order status updated successfully.");
+    }
+
     //lấy đơn hàng theo ID người mua
     @GetMapping("/buyer/{buyerId}")
     public ResponseEntity<List<OrderResponse>> getOrdersByBuyer(@PathVariable Integer buyerId) {
@@ -63,6 +80,7 @@ public class OrderController {
         return ResponseEntity.ok(orderItems);
     }
 
+    //order group
     @PostMapping("/ordersGroup")
     public ResponseEntity<OrderGroupResponse> createOrderGroup(@RequestBody OrderGroupRequest request) {
         OrderGroupResponse created = orderGroupService.createOrderGroup(request);

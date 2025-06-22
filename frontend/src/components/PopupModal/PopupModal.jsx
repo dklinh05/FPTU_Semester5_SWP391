@@ -5,7 +5,7 @@ function PopupModal({
   onClose,
   onConfirm,
   title,
-  children,
+  body,
   confirmText = "OK",
   cancelText = "Cancel",
 }) {
@@ -16,7 +16,7 @@ function PopupModal({
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
       )}
-      <Modal.Body>{children}</Modal.Body>
+      <Modal.Body>{body}</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onClose}>
           {cancelText}

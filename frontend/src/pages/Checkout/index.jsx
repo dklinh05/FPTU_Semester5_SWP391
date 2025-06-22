@@ -9,8 +9,7 @@ import CheckoutItem from "../../layouts/components/CheckoutItem/CheckoutItem";
 import Footer from "../../components/Footer";
 import { addOrder } from "../../services/orderService";
 import { createPayment } from "../../services/paymentService";
-import ShippingMap from "../../components/ShippingMap/ShippingMap";
-import PopupModal from "../../components/PopupModal";
+import AddressPopup from "../../components/AddressPopup";
 
 function Checkout() {
   const { userId, user } = useUser();
@@ -21,9 +20,7 @@ function Checkout() {
   const chooseVoucher = location.state?.voucher || {};
   const [shippingAddress, setShippingAddress] = useState(user.address);
   const [showAddressForm, setShowAddressForm] = useState(false);
-  
-    const [showPopup, setShowPopup] = useState(false);
-  const [popupConfig, setPopupConfig] = useState({});
+
 
   // Group cart items by supplier name
   const groupedBySupplier = chooseCartItems.reduce((groups, cart) => {
@@ -37,8 +34,8 @@ function Checkout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!chooseVoucher?.userVoucherID) {
-      toast.error("Hãy chọn voucher để tiếp tục");
+    if (!selectedPaymentMethod) {
+      toast.error("Hãy chọn phương thức thanh toán để tiếp tục");
       return;
     }
     try {
@@ -48,6 +45,7 @@ function Checkout() {
           buyerId: userId,
           supplierId: parseInt(supplierId),
           status: "pending",
+          address: shippingAddress,
           items: items.map((item) => ({
             productId: item.product.productID,
             quantity: item.quantity,
@@ -57,7 +55,7 @@ function Checkout() {
 
       const orderGroupData = {
         buyerId: userId,
-        userVoucherId: chooseVoucher.userVoucherID,
+        userVoucherId: chooseVoucher?.userVoucherID || null,
         orders: orderList,
       };
 
@@ -137,43 +135,6 @@ function Checkout() {
                     </tbody>
                   </table>
                 </div>
-                <div className="mb-4">
-                  <label className="form-label fw-bold">
-                    Địa chỉ giao hàng
-                  </label>
-
-                  {/* Hiển thị địa chỉ mặc định */}
-                  {!showAddressForm && (
-                    <div className="border p-3 bg-light rounded">
-                      <p className="mb-1">{shippingAddress}</p>
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-outline-primary mt-2"
-                        onClick={() => setShowAddressForm(true)}
-                      >
-                        Thay đổi địa chỉ
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Hiển thị form thay đổi địa chỉ */}
-                  {showAddressForm && (
-                    <>
-                      <ShippingMap
-                        shippingAddress={shippingAddress}
-                        setShippingAddress={setShippingAddress}
-                      />
-
-                      <textarea
-                        className="form-control mt-3"
-                        rows="3"
-                        required
-                        value={shippingAddress}
-                        onChange={(e) => setShippingAddress(e.target.value)}
-                      ></textarea>
-                    </>
-                  )}
-                </div>
 
                 {/* Payment Options */}
                 <div className="my-4">
@@ -215,6 +176,24 @@ function Checkout() {
                     </label>
                     <p className="text-dark mt-1">
                       Secure payment via your PayPal account.
+                    </p>
+                  </div>
+
+                  <div className="form-check border-bottom py-3">
+                    <input
+                      type="checkbox"
+                      className="form-check-input bg-primary border-0"
+                      id="Paypal"
+                      name="paymentMethod"
+                      value="vnpay"
+                      checked={selectedPaymentMethod === "vnpay"}
+                      onChange={() => handlePaymentMethodChange("vnpay")}
+                    />
+                    <label className="form-check-label" htmlFor="vnpay">
+                      VNPay
+                    </label>
+                    <p className="text-dark mt-1">
+                      Secure payment via your VNPay account.
                     </p>
                   </div>
                 </div>
@@ -264,7 +243,33 @@ function Checkout() {
                     </strong>
                   </div>
                 </div>
+                <div className="mb-4">
+                  <label className="form-label fw-bold">
+                    Địa chỉ giao hàng
+                  </label>
 
+                  {/* Hiển thị địa chỉ mặc định */}
+                  {!showAddressForm && (
+                    <div className="border p-3 bg-light rounded">
+                      <p className="mb-1">{shippingAddress}</p>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-primary mt-2"
+                        onClick={() => setShowAddressForm(true)}
+                      >
+                        Thay đổi địa chỉ
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Hiển thị form thay đổi địa chỉ */}
+                </div>
+                <AddressPopup
+                  isOpen={showAddressForm}
+                  onClose={() => setShowAddressForm(false)}
+                  shippingAddress={shippingAddress}
+                  setShippingAddress={setShippingAddress}
+                />
                 {/* Place Order Button */}
                 <div className="row g-4 text-center align-items-center justify-content-center pt-4">
                   <button

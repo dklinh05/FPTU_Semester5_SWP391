@@ -12,5 +12,5 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VNPayRequest {
     private int amount;
-    private String orderInfo;
+    String orderGroupId;
 }

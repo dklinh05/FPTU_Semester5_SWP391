@@ -42,9 +42,6 @@ public class OrderGroupService {
         if (request.getUserVoucherId() != null) {
             userVoucher = userVoucherRepository.findById(request.getUserVoucherId())
                     .orElseThrow(() -> new IllegalArgumentException("UserVoucher not found with ID: " + request.getUserVoucherId()));
-            if (userVoucher.getIsUsed()) {
-                throw new IllegalArgumentException("Voucher has already been used");
-            }
             if (!userVoucher.getUser().getUserID().equals(request.getBuyerId())) {
                 throw new IllegalArgumentException("This voucher does not belong to the buyer");
             }
@@ -81,6 +78,7 @@ public class OrderGroupService {
                     .orderDate(LocalDateTime.now())
                     .totalAmount(BigDecimal.ZERO)
                     .orderGroup(orderGroup)
+                    .address(orderReq.getAddress())
                     .build();
             order = orderRepository.save(order);
 
@@ -199,9 +197,8 @@ public class OrderGroupService {
             discount = groupTotal;
         }
 
-        // Đánh dấu voucher đã được sử dụng
-        userVoucher.setIsUsed(true);
-        userVoucherRepository.save(userVoucher);
+        // Xoá bản ghi UserVoucher thay vì đánh dấu isUsed = true
+        userVoucherRepository.delete(userVoucher);
 
         // Giảm MaxUsage nếu > 0
         if (voucher.getMaxUsage() != null && voucher.getMaxUsage() > 0) {

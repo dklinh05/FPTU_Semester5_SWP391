@@ -32,5 +32,7 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "orderGroupID")
     private OrderGroup orderGroup;
+
+    String address;
 }
 

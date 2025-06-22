@@ -5,6 +5,7 @@ import { publicRoutes } from "./routes";
 import { UserProvider } from "./context/UserContext";
 import { CartProvider } from "./context/CartContext";
 import { DefaultLayout } from "./layouts";
+import Chatbot from "./components/Chatbot";
 
 function App() {
   return (
@@ -20,8 +21,10 @@ function App() {
           pauseOnHover
           theme="colored"
         />
+        
         <Router>
           <div>
+            <Chatbot/>
             <Routes>
               {publicRoutes.map((route, index) => {
                 const Page = route.component;

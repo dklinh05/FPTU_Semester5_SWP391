@@ -31,10 +31,10 @@ public class VNPayController {
     private PaymentService paymentService;
 
     private static final String SUCCESS_REACT_URL = "http://localhost:5173/orders";
-    private static final String FAILURE_REACT_URL = "http://localhost:5173/payment/failure";
+    private static final String FAILURE_REACT_URL = "http://localhost:5173/orders/pending";
 
 
-    @PostMapping("/submitOrder")
+    @PostMapping("")
     public ObjectNode submitVNPayOrder(@RequestBody VNPayRequest vnPayRequest,
                                        HttpServletRequest request) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -45,7 +45,7 @@ public class VNPayController {
         try {
             String vnpayUrl = vnPayService.createOrder(
                     vnPayRequest.getAmount(),
-                    vnPayRequest.getOrderInfo(),
+                    vnPayRequest.getOrderGroupId(),
                     baseUrl
             );
 

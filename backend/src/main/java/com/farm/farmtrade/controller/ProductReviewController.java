@@ -17,15 +17,14 @@ public class ProductReviewController {
     @Autowired
     private ProductReviewService reviewService;
 
-    @PostMapping("/{productId}/reviews")
+    @PostMapping("/{productId}")
     public ResponseEntity<?> createReview(@PathVariable Integer productId,
-                                          @RequestBody @Valid CreateProductReviewRequest request,
+                                          @ModelAttribute @Valid CreateProductReviewRequest request,
                                           Principal principal) {
         String username = principal.getName();
         ProductReview review = reviewService.createReview(productId, request, username);
         return ResponseEntity.ok(review);
     }
-
 
     @PutMapping("/{reviewId}")
     public ResponseEntity<ProductReview> updateReview(@PathVariable Integer reviewId,

@@ -28,7 +28,7 @@ public class PaymentService {
     NotificationService notificationService;
     EmailService emailService;
     @Transactional
-    public void savePayment(Integer orderGroupId) throws MessagingException {
+    public void savePaypalPayment(Integer orderGroupId) throws MessagingException {
         OrderGroup orderGroup = orderGroupRepository.findById(orderGroupId)
                 .orElseThrow(() -> new IllegalArgumentException("OrderGroup not found with ID: " + orderGroupId));
         if (orderGroup.getOrders() == null || orderGroup.getOrders().isEmpty()) {
@@ -63,6 +63,78 @@ public class PaymentService {
         );
 
     }
+    @Transactional
+    public void saveVNPpayPayment(Integer orderGroupId) throws MessagingException {
+        OrderGroup orderGroup = orderGroupRepository.findById(orderGroupId)
+                .orElseThrow(() -> new IllegalArgumentException("OrderGroup not found with ID: " + orderGroupId));
+        if (orderGroup.getOrders() == null || orderGroup.getOrders().isEmpty()) {
+            throw new IllegalStateException("Order group has no orders.");
+        }
 
+        // Cập nhật trạng thái cho toàn bộ order trong group
+        for (Order order : orderGroup.getOrders()) {
+            order.setStatus("PAID");
+            orderRepository.save(order);
+            Payment payment = Payment.builder()
+                    .order(order)
+                    .method("VNPAY")
+                    .amount(order.getTotalAmount())
+                    .status("COMPLETED")
+                    .paymentDate(LocalDateTime.now())
+                    .build();
+            paymentRepository.save(payment);
+
+        }
+
+        // Cập nhật trạng thái nhóm đơn hàng
+        orderGroup.setStatus("PAID");
+        orderGroupRepository.save(orderGroup);
+
+        //gửi thông báo
+        emailService.sendOrderPaymentSuccessEmail(
+                orderGroup.getBuyer().getEmail(),
+                orderGroup.getBuyer().getFullName(),
+                orderGroup.getOrderGroupID(),
+                orderGroup.getFinalAmount()
+        );
+
+    }
+
+    @Transactional
+    public void savePAYOSPayment(Integer orderGroupId) throws MessagingException {
+        OrderGroup orderGroup = orderGroupRepository.findById(orderGroupId)
+                .orElseThrow(() -> new IllegalArgumentException("OrderGroup not found with ID: " + orderGroupId));
+        if (orderGroup.getOrders() == null || orderGroup.getOrders().isEmpty()) {
+            throw new IllegalStateException("Order group has no orders.");
+        }
+
+        // Cập nhật trạng thái cho toàn bộ order trong group
+        for (Order order : orderGroup.getOrders()) {
+            order.setStatus("PAID");
+            orderRepository.save(order);
+            Payment payment = Payment.builder()
+                    .order(order)
+                    .method("VNPAY")
+                    .amount(order.getTotalAmount())
+                    .status("COMPLETED")
+                    .paymentDate(LocalDateTime.now())
+                    .build();
+            paymentRepository.save(payment);
+
+        }
+
+        // Cập nhật trạng thái nhóm đơn hàng
+        orderGroup.setStatus("PAID");
+        orderGroupRepository.save(orderGroup);
+
+        //gửi thông báo
+        emailService.sendOrderPaymentSuccessEmail(
+                orderGroup.getBuyer().getEmail(),
+                orderGroup.getBuyer().getFullName(),
+                orderGroup.getOrderGroupID(),
+                orderGroup.getFinalAmount()
+        );
+
+    }
 }
 

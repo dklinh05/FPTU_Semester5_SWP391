@@ -1,10 +1,14 @@
 package com.farm.farmtrade.controller;
 
+import com.farm.farmtrade.service.payment.PaymentService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.farm.farmtrade.dto.request.payment.CreatePaymentLinkRequestBody;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.payos.PayOS;
 import vn.payos.type.CheckoutResponseData;
@@ -13,35 +17,41 @@ import vn.payos.type.PaymentLinkData;
 import vn.payos.type.Webhook;
 import vn.payos.type.WebhookData;
 
+import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/payos")
 public class PayOSController {
+    @Autowired
+    PaymentService paymentService;
     private static final String SUCCESS_REACT_URL = "http://localhost:5173/orders";
     private static final String CANCEL_REACT_URL = "http://localhost:5173/orders/pending";
-    private final PayOS payOS;
+    private static final String RETURN_BACKEND_URL = "http://localhost:8080/farmtrade/payos/handle-payment";
+    private static final String FAILURE_REACT_URL = "http://localhost:5173/payment/failure";
 
+    //http://localhost:5173/orders?code=00&id=9772173bfccd49ed882fdc7e0e9bfe05&cancel=false&status=PAID&orderCode=172072
+    private final PayOS payOS;
     public PayOSController(PayOS payOS) {
         this.payOS = payOS;
     }
 
     //  1. Tạo đơn thanh toán
-    @PostMapping()
+    @PostMapping("")
     public ObjectNode createPayment(@Valid @RequestBody CreatePaymentLinkRequestBody request) {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode response = objectMapper.createObjectNode();
 
         try {
             // Tạo mã đơn hàng từ timestamp
-            long orderCode = Long.parseLong(String.valueOf(new Date().getTime()).substring(7));
+            long orderCode = Long.parseLong(request.getOrderGroupId());
 
             PaymentData paymentData = PaymentData.builder()
                     .orderCode(orderCode)
                     .description(request.getOrderGroupId())
                     .amount(request.getAmount())
-                    .returnUrl(SUCCESS_REACT_URL)
+                    .returnUrl(RETURN_BACKEND_URL)
                     .cancelUrl(CANCEL_REACT_URL)
                     .build();
 
@@ -58,6 +68,33 @@ public class PayOSController {
             return response;
         }
     }
+
+    @GetMapping("/handle-payment")
+    public ResponseEntity<Void> handlePaymentRedirect(@RequestParam Map<String, String> params) {
+        try {
+            long orderCode = Long.parseLong(params.get("orderCode")); // orderCode PayOS sẽ đẩy về
+
+            // Gọi PayOS để lấy trạng thái đơn
+            PaymentLinkData payment = payOS.getPaymentLinkInformation(orderCode);
+
+            if ("PAID".equals(payment.getStatus())) {
+                // Trích xuất orderGroupId từ description
+                int orderGroupId = Integer.parseInt(String.valueOf(orderCode));
+                // Gọi service để cập nhật DB
+                paymentService.savePAYOSPayment(orderGroupId);
+            }
+
+            // Redirect về frontend
+            URI redirectUri = URI.create(SUCCESS_REACT_URL);
+            return ResponseEntity.status(HttpStatus.FOUND).location(redirectUri).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            URI failRedirect = URI.create(FAILURE_REACT_URL);
+            return ResponseEntity.status(HttpStatus.FOUND).location(failRedirect).build();
+        }
+    }
+
+
 
     // 2. Lấy thông tin đơn theo orderId
     @GetMapping("/{orderId}")
@@ -131,6 +168,10 @@ public class PayOSController {
         try {
             Webhook webhookBody = objectMapper.treeToValue(body, Webhook.class);
             WebhookData data = payOS.verifyPaymentWebhookData(webhookBody);
+
+            // 🧠 Lấy orderGroupId từ description
+            paymentService.savePAYOSPayment(Integer.valueOf(data.getDescription()));
+
             System.out.println("📦 Nhận webhook thành công: " + data);
 
             response.put("error", 0);

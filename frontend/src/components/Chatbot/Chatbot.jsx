@@ -12,11 +12,22 @@ const Chatbot = () => {
   const chatBodyRef = useRef(null);
   const messageInputRef = useRef(null);
 
-  const [chatHistory, setChatHistory] = useState(chatbotInitData);
+  const [chatHistory, setChatHistory] = useState(chatbotInitData); // dùng cho Gemini API
+  const [visibleMessages, setVisibleMessages] = useState([]); // chỉ dùng để hiển thị
   const [message, setMessage] = useState("");
   const [file, setFile] = useState(null);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
+
+  // Chào mừng mặc định khi mở bot
+  const initialWelcomeMessage = {
+    role: "model",
+    parts: [
+      {
+        text: "Xin chào! Tôi là FarmBot - trợ lý nông sản của bạn 🌿. Bạn có thể hỏi về sản phẩm, giá cả, voucher, hoặc nhà cung cấp.",
+      },
+    ],
+  };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -34,6 +45,7 @@ const Chatbot = () => {
 
     const updatedHistory = [...chatHistory, userMsg];
     setChatHistory(updatedHistory);
+    setVisibleMessages((prev) => [...prev, userMsg]);
     setMessage("");
     setFile(null);
 
@@ -57,6 +69,7 @@ const Chatbot = () => {
       };
 
       setChatHistory((prev) => [...prev, botMsg]);
+      setVisibleMessages((prev) => [...prev, botMsg]);
 
       setTimeout(() => {
         chatBodyRef.current?.scrollTo(0, chatBodyRef.current.scrollHeight);
@@ -102,10 +115,17 @@ const Chatbot = () => {
       <button
         id="chatbot-toggler"
         className={styles["chatbot-toggler"]}
-        onClick={() => setShowChatbot(!showChatbot)}
+        onClick={() => {
+          setShowChatbot((prev) => {
+            const next = !prev;
+            if (next && visibleMessages.length === 0) {
+              setVisibleMessages([initialWelcomeMessage]);
+            }
+            return next;
+          });
+        }}
       >
-        <span class="material-symbols-rounded">mode_comment</span>
-        {/* <span class="material-symbols-rounded">close</span> */}
+        <span className="material-symbols-rounded">mode_comment</span>
       </button>
 
       <div
@@ -128,7 +148,7 @@ const Chatbot = () => {
         </div>
 
         <div className={styles["chat-body"]} ref={chatBodyRef}>
-          {chatHistory.map((msg, idx) => (
+          {visibleMessages.map((msg, idx) => (
             <div
               key={idx}
               className={`${styles.message} ${
@@ -170,8 +190,8 @@ const Chatbot = () => {
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault(); // chặn xuống dòng
-                  handleSendMessage(e); // gửi tin nhắn
+                  e.preventDefault();
+                  handleSendMessage(e);
                 }
               }}
             />

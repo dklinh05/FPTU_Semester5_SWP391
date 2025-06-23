@@ -37,7 +37,7 @@ import ShipperList from "../pages/ShipperList";
 import ProductSearch from "../pages/ProductSearch";
 import RedeemVoucher from "../pages/RedeemVoucher";
 import SearchResultLayout from "../layouts/SearchResultLayout/index.js";
-
+import AcceptUpdateRole from "../pages/AcceptUpdateRole/index.jsx";
 
 
 const publicRoutes = [
@@ -118,6 +118,7 @@ const publicRoutes = [
   },
   { path: config.routes.productSearch, component: ProductSearch, layout: SearchResultLayout },
   { path: config.routes.redeemVoucher, component: RedeemVoucher, layout: null },
+  { path: config.routes.acceptUpdateRole, component: AcceptUpdateRole, layout: null }
 ];
 
 const privateRoutes = [];

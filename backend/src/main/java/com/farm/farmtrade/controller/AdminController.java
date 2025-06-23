@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -118,29 +119,42 @@ public class AdminController {
     /**
      * XỬ LÝ REQUEST ROLE CỦA CUSTOMER
      **/
-    // Admin phê duyệt request
-    @PutMapping("users/request/approve")
-    public ResponseEntity<RoleUpgrade> approveRequest(@RequestBody AdminNoteRequest request) {
-        RoleUpgrade approved = roleUpgradeService.approveRequest(request.getRequestId(), request.getAdminNote());
+    // Lấy danh sách yêu cầu PENDING
+    @GetMapping("/requests/pending")
+    public ResponseEntity<List<RoleUpgrade>> getPendingRequests() {
+        return ResponseEntity.ok(roleUpgradeService.getPendingRequests());
+    }
+
+    // Duyệt yêu cầu
+    @PostMapping("/requests/approve/{requestId}")
+    public ResponseEntity<RoleUpgrade> approveRequest(
+            @PathVariable Integer requestId,
+            @RequestBody Map<String, String> payload) {
+
+        String adminNote = payload.get("adminNote");
+        RoleUpgrade approved = roleUpgradeService.approveRequest(requestId, adminNote);
         return ResponseEntity.ok(approved);
     }
 
-    // Admin từ chối request
-    @PutMapping("users/request/reject")
-    public ResponseEntity<RoleUpgrade> rejectRequest(@RequestBody AdminNoteRequest request) {
-        RoleUpgrade rejected = roleUpgradeService.rejectRequest(request.getRequestId(), request.getAdminNote());
+    // Từ chối yêu cầu
+    @PostMapping("/requests/reject/{requestId}")
+    public ResponseEntity<RoleUpgrade> rejectRequest(
+            @PathVariable Integer requestId,
+            @RequestBody Map<String, String> payload) {
+
+        String adminNote = payload.get("adminNote");
+        RoleUpgrade rejected = roleUpgradeService.denyRequest(requestId, adminNote);
         return ResponseEntity.ok(rejected);
     }
-
     // Lấy tất cả yêu cầu role
-    @GetMapping("users/request")
-    public ResponseEntity<List<RoleUpgrade>> getAllRequests() {
-        return ResponseEntity.ok(roleUpgradeService.getAllRequests());
-    }
-
-    // Lọc yêu cầu theo trạng thái (PENDING, APPROVED, REJECTED)
-    @GetMapping("users/request/filter/{status}")
-    public ResponseEntity<List<RoleUpgrade>> getRequestsByStatus(@PathVariable String status) {
-        return ResponseEntity.ok(roleUpgradeService.getRequestsByStatus(status));
-    }
+//    @GetMapping("users/request")
+//    public ResponseEntity<List<RoleUpgrade>> getAllRequests() {
+//        return ResponseEntity.ok(roleUpgradeService.getAllRequests());
+//    }
+//
+//    // Lọc yêu cầu theo trạng thái (PENDING, APPROVED, REJECTED)
+//    @GetMapping("users/request/filter/{status}")
+//    public ResponseEntity<List<RoleUpgrade>> getRequestsByStatus(@PathVariable String status) {
+//        return ResponseEntity.ok(roleUpgradeService.getRequestsByStatus(status));
+//    }
 }

@@ -13,4 +13,5 @@ import lombok.experimental.FieldDefaults;
 public class VNPayRequest {
     private int amount;
     String orderGroupId;
+
 }

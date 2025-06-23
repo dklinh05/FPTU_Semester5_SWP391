@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RoleUpgradeRequest {
-    private Integer userId;
     private String businessName;
     private MultipartFile certification;
 }

@@ -11,10 +11,17 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("http://localhost:3000/farmtrade/users/**")
+        registry.addMapping("/farmtrade/users/**")
                 .allowedOrigins("http://localhost:5173")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
+                .allowedMethods("POST")
+                .allowedHeaders("Content-Type", "Authorization")
+                .allowCredentials(true)
+                .maxAge(3600);
+        // Cấu hình riêng cho endpoint upload file
+        registry.addMapping("/farmtrade/users/request")
+                .allowedOrigins("http://localhost:5173")
+                .allowedMethods("POST")
+                .allowedHeaders("Content-Type", "Authorization")
                 .allowCredentials(true);
     }
-}
+    }

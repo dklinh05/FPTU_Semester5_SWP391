@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.repository.ProductRepository;
+import com.farm.farmtrade.repository.RoleUpgradeRepository;
 import com.farm.farmtrade.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class FileStorageService {
 
     @Autowired
     Cloudinary cloudinary;
+    private final RoleUpgradeRepository roleUpgradeRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -70,29 +72,49 @@ public class FileStorageService {
     }
 
 
-    public User uploadCertificationImage(String id, MultipartFile file) {
-        User user = userRepository.findById(Integer.valueOf(id))
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+    public String uploadCertificationImage(String id, MultipartFile certification) {
         try {
-            if (file.isEmpty()) {
-                throw new RuntimeException("File trống hoặc không hợp lệ");
-            }
-
-            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
-                    "folder", "users",
-                    "public_id", "user_" + id
-            ));
-
-            String imageUrl = (String) uploadResult.get("secure_url");
-            user.setCertification(imageUrl);
-            return userRepository.save(user);
-
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(
+                    certification.getBytes(),
+                    ObjectUtils.asMap(
+                            "folder", "certifications",
+                            "public_id", "cert_" + id,
+                            "overwrite", true
+                    )
+            );
+            return (String) uploadResult.get("secure_url");
         } catch (IOException e) {
             throw new RuntimeException("Lỗi khi đọc file", e);
         } catch (Exception e) {
-            throw new RuntimeException("Lỗi khi upload avatar lên Cloudinary", e);
+            throw new RuntimeException("Lỗi upload file", e);
         }
     }
-
 }
+
+
+
+//    public User uploadCertificationImage(String id, MultipartFile file) {
+//        User user = userRepository.findById(Integer.valueOf(id))
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        try {
+//            if (file.isEmpty()) {
+//                throw new RuntimeException("File trống hoặc không hợp lệ");
+//            }
+//
+//            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+//                    "folder", "users",
+//                    "public_id", "cert_" + id,
+//                    "overwrite", true
+//            ));
+//
+//            String imageUrl = (String) uploadResult.get("secure_url");
+//            user.setCertification(imageUrl);
+//            return userRepository.save(user);
+//
+//        } catch (IOException e) {
+//            throw new RuntimeException("Lỗi khi đọc file", e);
+//        } catch (Exception e) {
+//            throw new RuntimeException("Lỗi khi upload file lên Cloudinary", e);
+//        }
+//    }

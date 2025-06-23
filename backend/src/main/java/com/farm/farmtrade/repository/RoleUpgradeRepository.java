@@ -8,5 +8,4 @@ import java.util.List;
 
 public interface RoleUpgradeRepository extends JpaRepository<RoleUpgrade, Integer> {
     List<RoleUpgrade> findByStatus(String status);
-    List<RoleUpgrade> findByUser(User user);
 }

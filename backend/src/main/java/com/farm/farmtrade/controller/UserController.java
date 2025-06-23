@@ -7,6 +7,9 @@ import com.farm.farmtrade.dto.request.authenticationRequest.UserCreationRequest;
 import com.farm.farmtrade.dto.request.authenticationRequest.UserUpdateRequest;
 import com.farm.farmtrade.entity.RoleUpgrade;
 import com.farm.farmtrade.entity.User;
+
+import com.farm.farmtrade.exception.AppException;
+import com.farm.farmtrade.exception.ErrorCode;
 import com.farm.farmtrade.repository.UserRepository;
 import com.farm.farmtrade.service.RoleUpgradeService;
 import com.farm.farmtrade.service.UserService;
@@ -17,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,14 +35,23 @@ public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
-    private Cloudinary cloudinary;
-    @Autowired
-    private CloudinaryService cloudinaryService;
-    @Autowired
     private UserRepository userRepository;
     @Autowired
     private RoleUpgradeService roleUpgradeService;
+    @PostMapping("/request")
+    public ResponseEntity<RoleUpgrade> submitUpgradeRequest(
+            @RequestPart("businessName") String businessName,
+            @RequestPart("certification") MultipartFile certification,
+            Authentication authentication) {
 
+        // Lấy userId từ token
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_UNEXISTED));
+
+        RoleUpgrade roleUpgrade = roleUpgradeService.submitRequest(user.getUserID(), businessName, certification);
+        return ResponseEntity.ok(roleUpgrade);
+    }
     @PostMapping("/register")
     User createUser(@RequestBody @Valid UserCreationRequest request) throws MessagingException {
         return userService.createRequest(request);
@@ -68,6 +81,11 @@ public class UserController {
     public ResponseEntity<User> getUser(@PathVariable Integer userID) {
         User user = userService.getUserById(userID);
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/by-id/{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable Integer userId) {
+        return ResponseEntity.ok(userService.getUserById(userId));
     }
 
     @PutMapping("/{userID}")
@@ -107,14 +125,6 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Upload avatar thất bại: " + e.getMessage()));
         }
-    }
-
-
-//     Gửi yêu cầu nâng cấp vai trò (CUSTOMER ➝ SUPPLIER)
-    @PostMapping("/request")
-    public ResponseEntity<RoleUpgrade> submitUpgradeRequest(@RequestBody RoleUpgradeRequest request) {
-        RoleUpgrade roleUpgrade = roleUpgradeService.submitRequest(request);
-        return ResponseEntity.ok(roleUpgrade);
     }
 
 

@@ -37,7 +37,8 @@ public class User {
 
     // Supplier
     String businessName;
-    String certification;
+    @Column(name = "certification")
+    private String certification;
     Long totalRevenue;
 
     // Shipper

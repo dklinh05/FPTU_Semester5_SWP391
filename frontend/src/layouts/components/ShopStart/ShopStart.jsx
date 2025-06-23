@@ -8,7 +8,7 @@ import {
 
 function ShopStart() {
   const [products, setProducts] = useState([]);
-  const [category, setCategory] = useState({});
+  const [category, setCategory] = useState("");
 
   useEffect(() => {
     const getProducts = async () => {
@@ -34,59 +34,59 @@ function ShopStart() {
             <div className="col-lg-8 text-end">
               <ul className="nav nav-pills d-inline-flex text-center mb-5">
                 <li className="nav-item">
-                  <div
-                    className="d-flex m-2 py-2 bg-light rounded-pill active"
+                  <a
+                    className={`d-flex m-2 py-2 bg-light rounded-pill ${category === "" ? "active" : ""}`}
                     data-bs-toggle="pill"
                      onClick={() => setCategory("")}
                   >
                     <span className="text-dark" style={{ width: "130px" }}>
                       All Products
                     </span>
-                  </div>
+                  </a>
                 </li>
                 <li className="nav-item">
-                  <div
-                    className="d-flex py-2 m-2 bg-light rounded-pill"
+                  <a
+                    className={`d-flex m-2 py-2 bg-light rounded-pill ${category === "Rau" ? "active" : ""}`}
                     data-bs-toggle="pill"
                     onClick={() => setCategory("Rau")}
                   >
                     <span className="text-dark" style={{ width: "130px" }}>
                       Rau
                     </span>
-                  </div>
+                  </a>
                 </li>
                 <li className="nav-item">
-                  <div
-                    className="d-flex m-2 py-2 bg-light rounded-pill"
+                  <a
+                    className={`d-flex m-2 py-2 bg-light rounded-pill ${category === "Củ, quả" ? "active" : ""}`}
                     data-bs-toggle="pill"
                     onClick={() => setCategory("Củ, quả")}
                   >
                     <span className="text-dark" style={{ width: "130px" }}>
                       Củ, quả
                     </span>
-                  </div>
+                  </a>
                 </li>
                 <li className="nav-item">
-                  <div
-                    className="d-flex m-2 py-2 bg-light rounded-pill"
+                  <a
+                    className={`d-flex m-2 py-2 bg-light rounded-pill ${category === "Trái cây" ? "active" : ""}`}
                     data-bs-toggle="pill"
                     onClick={() => setCategory("Trái cây")}
                   >
                     <span className="text-dark" style={{ width: "130px" }}>
                       Trái cây
                     </span>
-                  </div>
+                  </a>
                 </li>
                 <li className="nav-item">
-                  <div
-                    className="d-flex m-2 py-2 bg-light rounded-pill"
+                  <a
+                    className={`d-flex m-2 py-2 bg-light rounded-pill ${category === "Thực phẩm" ? "active" : ""}`}
                     data-bs-toggle="pill"
                     onClick={() => setCategory("Thực phẩm")}
                   >
                     <span className="text-dark" style={{ width: "130px" }}>
                       Thực phẩm
                     </span>
-                  </div>
+                  </a>
                 </li>
               </ul>
             </div>

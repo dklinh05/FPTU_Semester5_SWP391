@@ -152,9 +152,9 @@ public class UserService {
         return true;
     }
 
-    public User getUserById(Integer userID) {
-        return userRepository.findById(userID)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public User getUserById(Integer userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_UNEXISTED));
     }
 
     public void saveVerificationToken(User user, String token) {

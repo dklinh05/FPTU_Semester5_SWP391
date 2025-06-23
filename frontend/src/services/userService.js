@@ -1,12 +1,32 @@
-import { request, formRequest } from "../utils/httpRequest";
+// userService.js
+import { request, formRequest } from "../utils/httpRequest"; // ← THÊM DÒNG NÀY
+import { getUserIdFromToken } from "./authService";
 
-const API_BASE = "/users"; // ←←← Gọi đến backend qua http://localhost:8080/farmtrade/api/users
+const API_BASE = "/users";
 
-export const getUserById = async (id) => {
-  const res = await request.get(`${API_BASE}/${id}`);
-  return res.data;
+const checkAuthAndCall = async (apiCall) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Vui lòng đăng nhập.");
+    return await apiCall();
 };
 
+// Gọi API GET /users/{id}
+export const getUserById = async (id) => {
+    const res = await request.get(`${API_BASE}/${id}`); // ✅ Bây giờ request đã được định nghĩa
+    return res.data;
+};
+
+// Gửi yêu cầu nâng cấp
+export const submitRoleUpgradeRequest = async (formData) => {
+const userId = parseInt(getUserIdFromToken(), 10); // ← Chắc chắn là số nguyên
+    if (!userId) throw new Error("Không thể xác định userId từ token");
+
+    formData.append("userId", userId);
+
+    return checkAuthAndCall(async () =>
+        formRequest.post(`${API_BASE}/request`, formData)
+    );
+};
 
 export const updateUser = async (userId, data) => {
   try {
@@ -37,7 +57,7 @@ export const uploadAvatar = async (userId, formData) => {
     if (error.response && error.response.data) {
       errorMessage = error.response.data.error || errorMessage;
     }
-    
+
     console.error("Phản hồi lỗi từ backend:", errorMessage);
     alert(errorMessage);
     throw new Error(errorMessage);

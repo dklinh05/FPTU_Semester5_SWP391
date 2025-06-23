@@ -13,4 +13,6 @@ public interface ProductReviewRepository extends JpaRepository<ProductReview, In
 //    List<ProductReview> findByProduct(Product product);
 //    List<ProductReview> findByBuyer(User buyer);
     boolean existsByProductAndBuyerAndOrder(Product product, User buyer, Order order);
+    Optional<ProductReview> findByBuyerUserIDAndProductProductIDAndOrderOrderID(Integer buyerId, Integer productId, Integer orderId);
+
 }

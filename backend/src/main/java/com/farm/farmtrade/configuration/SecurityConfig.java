@@ -36,11 +36,13 @@ public class SecurityConfig {
     @Value("${jwt.signerKey}")
     private String signerKey;
 
-    private final String[] ADMIN_ENDPOINTS = {"/admin/**", "/users", "/admin", "/voucher/**", "/voucher"};
-    private final String[] PUBLIC_POST_ENDPOINTS = {"/api/auth/**", "/oauth2/**", "/users/register", "/auth/**", "/orders", "/orders/**", "/voucher", "/voucher/**"};
+    private final String[] ADMIN_ENDPOINTS = {"/admin/**", "/users", "/admin", "/voucher/**", "/voucher","/users/requests/pending"};
+    private final String[] PUBLIC_POST_ENDPOINTS = {"/api/auth/**", "/oauth2/**", "/users/register", "/auth/**", "/orders", "/orders/**", "/voucher", "/voucher/**", "users/request"};
     private final String[] PUBLIC_GET_ENDPOINTS = {"/auth/**", "/products/**", "/orders", "/orders/**", "/voucher",  "/voucher/**"};
     private final String[] PUBLIC_ENDPOINTS = {"/paypal","/paypal/**","/vnpay","/vnpay/**","/payos","/payos/**"};
-
+    private final String[] CUSTOMER_POST_ENDPOINTS = {
+            "/users/request" // Yêu cầu nâng cấp vai trò cần xác thực ROLE_CUSTOMER
+    };
     @Autowired
     private OAuth2SuccessHandler oAuth2SuccessHandler;
 
@@ -56,6 +58,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/products/{id}/status").permitAll() // tạm thời để all role
                         .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll() // cho phép truy cập public chỉ với HttpMethod POST

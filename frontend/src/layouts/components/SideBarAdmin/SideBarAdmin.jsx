@@ -129,6 +129,11 @@ const SidebarAdmin = () => {
                   Shipper
                 </a>
               </li>
+              <li>
+                <a href="/acceptupdaterole" className="submenu-link">
+                  Customer Request
+                </a>
+              </li>
             </ul>
           </li>
 

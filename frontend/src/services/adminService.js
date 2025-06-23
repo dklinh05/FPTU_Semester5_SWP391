@@ -3,7 +3,7 @@
 import { request } from "../utils/httpRequest";
 import { getTokenFromCookie } from "./authService";
 const API_BASE = "/users"; // URL gốc cho RoleUpgrade APIs
-
+const admin_base = "/admin"; // URL gốc cho Admin APIs
 
 // Kiểm tra token trước khi thực hiện bất kỳ request nào (tuỳ chọn)
 const checkAuthAndCall = async (apiCall) => {
@@ -24,14 +24,10 @@ export const getAllRoleUpgradeRequests = async () => {
   );
 };
 
-/**
- * Lọc yêu cầu theo trạng thái
- * @param status PENDING | APPROVED | REJECTED
- */
 export const getRoleUpgradeRequestsByStatus = async (status) => {
-  return checkAuthAndCall(async () =>
-    request.get(`${API_BASE}/request/filter/${status}`)
-  );
+  const url = `${admin_base}/request/filter/${status}`;
+  console.log('Đường dẫn yêu cầu:', url);
+  return checkAuthAndCall(async () => request.get(url));
 };
 
 /**
@@ -41,9 +37,8 @@ export const getRoleUpgradeRequestsByStatus = async (status) => {
  */
 export const approveRoleUpgrade = async (requestId, adminNote) => {
   return checkAuthAndCall(async () =>
-    request.put(`${API_BASE}/request/approve`, {
-      requestId,
-      adminNote,
+    request.post(`${admin_base}/request/approve/${requestId}`, {
+      adminNote
     })
   );
 };
@@ -55,7 +50,7 @@ export const approveRoleUpgrade = async (requestId, adminNote) => {
  */
 export const rejectRoleUpgrade = async (requestId, adminNote) => {
   return checkAuthAndCall(async () =>
-    request.put(`${API_BASE}/request/reject`, {
+    request.post(`${admin_base}/request/reject/${requestId}`, {
       requestId,
       adminNote,
     })

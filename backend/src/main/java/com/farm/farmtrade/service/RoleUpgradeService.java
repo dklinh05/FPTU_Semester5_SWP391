@@ -33,6 +33,8 @@ public class RoleUpgradeService {
     UserRepository userRepository;
     @Autowired
     FileStorageService fileStorageService;
+
+
     // Lấy tất cả yêu cầu đang PENDING
     public List<RoleUpgrade> getPendingRequests() {
         return roleUpgradeRepository.findByStatus("PENDING");

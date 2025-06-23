@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { useUser } from "../../context/UserContext";
 import { useCart } from "../../context/CartContext";
 import { addProductToCart } from "../../services/cartItemService";
@@ -18,7 +19,7 @@ function CardItem({ id, category, title, description, price, img, shopName }) {
     try {
       const response = await addProductToCart(productData);
       setReload(prev => !prev);
-      alert("Done");
+       toast.success("Thêm vào giỏ thành công!");
       console.log("Response:", response);
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);

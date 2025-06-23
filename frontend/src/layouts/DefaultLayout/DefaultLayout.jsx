@@ -7,8 +7,7 @@ import Hero from "../components/Hero";
 import FeatureSection from "../components/FeatureSection";
 import ShopStart from "../components/ShopStart";
 import Footer from "../../components/Footer";
-import { useEffect, useState } from "react";
-import { getUserById } from "../../services/userService";
+import Chatbot from "../../components/Chatbot/Chatbot";
 
 const cx = classNames.bind(styles);
 
@@ -25,6 +24,7 @@ function DefaultLayout({ children }) {
         <div className={cx("content")}>{children}</div>
       </div>
       <Footer />
+      {/* <Chatbot/> */}
     </div>
   );
 }

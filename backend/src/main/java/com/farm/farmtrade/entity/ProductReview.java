@@ -23,6 +23,10 @@ public class ProductReview {
     @JoinColumn(name = "BuyerID")
     private User buyer;
 
+    @ManyToOne
+    @JoinColumn(name = "OrderID")
+    private Order order;
+
     private Integer productQuality;
     private String comment;
     private Integer sellerService;

@@ -1,21 +1,21 @@
-import {formRequest } from "../utils/httpRequest";
+import {formRequest, request} from "../utils/httpRequest";
 
 const BASE_URL = "/reviews";
 
 export const submitReview = async (productId, formData) => {
     try {
-        const response = await formRequest.post(`${BASE_URL}/${productId}`, formData);
+        const response = await formRequest.post(`/reviews/${productId}`, formData);
         return response.data;
     } catch (error) {
         throw error.response?.data || error;
     }
 };
 
-export const fetchReviewsByProduct = async (productId) => {
+export const getReviewsByProductId = async (productId) => {
     try {
-        const response = await formRequest.get(`${BASE_URL}/product/${productId}`);
+        const response = await request.get(`/reviews/product/${productId}`);
         return response.data;
     } catch (error) {
-        throw error.response?.data || error;
+        throw error.response?.data || error.message;
     }
 };

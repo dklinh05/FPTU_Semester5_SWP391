@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 import {
   redeemVoucher,
   renderVoucher,
@@ -12,8 +13,6 @@ function RedeemVoucher() {
   const { userId, points } = useUser();
   const [vouchers, setVouchers] = useState([]);
   const [ownedVouchers, setOwnedVouchers] = useState([]);
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (userId) fetchData();
@@ -35,19 +34,17 @@ function RedeemVoucher() {
 
   const handleRedeem = async (voucherId) => {
     console.log(userId, voucherId)
-    setMessage(null);
-    setError(null);
     try {
       const response = await redeemVoucher(userId, voucherId);
 
       if (response) {
-        setMessage("Đổi voucher thành công!");
+       toast.success("Đổi voucher thành công!");
         fetchData(); // Cập nhật lại danh sách nếu cần
       } else {
         setError(response || "Đổi voucher thất bại.");
       }
     } catch (err) {
-      setError(err || "Đã có lỗi xảy ra.");
+      toast.error(err || "Đã có lỗi xảy ra.");
     }
   };
 
@@ -60,9 +57,6 @@ function RedeemVoucher() {
           Điểm của bạn: <span className="text-success">{points}</span>
         </h2>
         <h2 className="mb-4 text-center">Danh sách Voucher có thể đổi</h2>
-
-        {message && <div className="alert alert-success">{message}</div>}
-        {error && <div className="alert alert-danger">{error}</div>}
 
         <div className="row">
           {vouchers.length === 0 ? (

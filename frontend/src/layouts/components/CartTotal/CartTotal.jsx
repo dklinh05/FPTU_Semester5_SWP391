@@ -1,16 +1,20 @@
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-function CartTotal({carts}) {
+function CartTotal({ carts, voucher }) {
   const navigate = useNavigate();
 
-  const handleProceedCheckout = ()=>{
-     navigate("/checkout", { state: { cartItems: carts } });
-  }
+  const handleProceedCheckout = () => {
+    if (!carts?.length) {
+      toast.error("Hãy chọn sản phẩm để tiếp tục");
+    } else {
+      navigate("/checkout", { state: { cartItems: carts, voucher: voucher } });
+    }
+  };
 
-   const total = carts.reduce((total, cart) => {
+  const total = carts.reduce((total, cart) => {
     return total + cart.quantity * cart.product.price;
   }, 0);
-
 
   return (
     <div className="row g-4 justify-content-end">
@@ -35,7 +39,9 @@ function CartTotal({carts}) {
           </div>
           <div className="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
             <h5 className="mb-0 ps-4 me-4">Total</h5>
-            <p className="mb-0 pe-4">${total+3}</p>
+            <p className="mb-0 pe-4">
+              ${total + 3 - (voucher?.voucher?.discountValue ?? 0)}
+            </p>
           </div>
           <button
             className="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"

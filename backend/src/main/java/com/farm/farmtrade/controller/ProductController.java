@@ -59,6 +59,18 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/best-sellers")
+    public ResponseEntity<Page<Product>> listBestSellerProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size
+    ) {
+        // Mặc định sắp xếp theo sales giảm dần
+        Pageable pageable = PageRequest.of(page, size, Sort.by("sales").descending());
+        Page<Product> products = productService.getBestSellerProducts(pageable);
+        return ResponseEntity.ok(products);
+    }
+
+
 
     @GetMapping("/category")
     public ResponseEntity<Page<Product>> getProductsByCategory(

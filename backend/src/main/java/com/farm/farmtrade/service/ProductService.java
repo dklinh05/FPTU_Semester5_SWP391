@@ -109,6 +109,11 @@ public class ProductService {
         return productRepository.findBySupplierUserIDAndStatus(supplierId, "active", pageable);
     }
 
+    public Page<Product> getBestSellerProducts(Pageable pageable) {
+        return productRepository.findPageByStatus("active", pageable);
+    }
+
+
 
     public Page<Product> getActiveProductsWithPagination(Pageable pageable) {
 

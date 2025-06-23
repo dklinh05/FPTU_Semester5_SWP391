@@ -1,31 +1,6 @@
-import { toast } from "react-toastify";
-import { useUser } from "../../context/UserContext";
-import { useCart } from "../../context/CartContext";
-import { addProductToCart } from "../../services/cartItemService";
+import AddToCartButton from "../AddToCartButton";
 
 function CardItem({ id, category, title, description, price, img, shopName }) {
-  const { userId } = useUser();
-  const { setReload } = useCart();
-
-  const handleAddToCart = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const productData = new FormData();
-
-    productData.append("buyerId", userId);
-    productData.append("productId", id);
-    productData.append("quantity", 1);
-
-    try {
-      const response = await addProductToCart(productData);
-      setReload(prev => !prev);
-       toast.success("Thêm vào giỏ thành công!");
-      console.log("Response:", response);
-    } catch (error) {
-      console.error("Lỗi khi lấy sản phẩm:", error);
-    }
-  };
-
   return (
     <div className="rounded position-relative fruite-item border border-warning">
       <div className="fruite-img" style={{ height: "250px" }}>
@@ -49,16 +24,20 @@ function CardItem({ id, category, title, description, price, img, shopName }) {
       </div>
       <div className="p-4">
         <h4>{title}</h4>
-        <p>{description}</p>
+        <p
+          style={{
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {description}
+        </p>
         <div className="d-flex justify-content-between flex-lg-wrap">
           <p className="text-dark fs-5 fw-bold mb-0">${price} / kg</p>
-          <div
-            className="btn border border-secondary rounded-pill px-3 text-primary"
-            onClick={handleAddToCart}
-          >
-            <i className="fa fa-shopping-bag me-2 text-primary"></i>
-            Add to cart
-          </div>
+          <AddToCartButton id={id} />
         </div>
       </div>
     </div>

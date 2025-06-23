@@ -6,8 +6,8 @@ import ModalSearch from "../components/ModalSearch";
 import Hero from "../components/Hero";
 import FeatureSection from "../components/FeatureSection";
 import ShopStart from "../components/ShopStart";
+import BestSeller from "../components/BestSeller/BestSeller";
 import Footer from "../../components/Footer";
-import Chatbot from "../../components/Chatbot/Chatbot";
 
 const cx = classNames.bind(styles);
 
@@ -20,6 +20,7 @@ function DefaultLayout({ children }) {
       <Hero />
       <FeatureSection />
       <ShopStart />
+      <BestSeller />
       <div className={cx("container")}>
         <div className={cx("content")}>{children}</div>
       </div>

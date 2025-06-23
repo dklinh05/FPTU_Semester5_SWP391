@@ -18,6 +18,15 @@ export const renderProduct = async () => {
     }
 };
 
+export const renderBestSellerProduct = async () => {
+    try {
+        const response = await request.get("/products/best-sellers");
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
 export const renderProductByCategory = async (category, sortBy, sortDir, page, size) => {
   try {
     const response = await request.get("/products/category", {

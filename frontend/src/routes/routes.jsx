@@ -118,7 +118,7 @@ const publicRoutes = [
   },
   { path: config.routes.productSearch, component: ProductSearch, layout: SearchResultLayout },
   { path: config.routes.redeemVoucher, component: RedeemVoucher, layout: null },
-  { path: config.routes.acceptUpdateRole, component: AcceptUpdateRole, layout: null }
+  { path: config.routes.acceptUpdateRole, component: AcceptUpdateRole, layout: AdminLayout },
 ];
 
 const privateRoutes = [];

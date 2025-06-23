@@ -126,7 +126,7 @@ public class AdminController {
     }
 
     // Duyệt yêu cầu
-    @PostMapping("/requests/approve/{requestId}")
+    @PostMapping("/request/approve/{requestId}")
     public ResponseEntity<RoleUpgrade> approveRequest(
             @PathVariable Integer requestId,
             @RequestBody Map<String, String> payload) {
@@ -137,7 +137,7 @@ public class AdminController {
     }
 
     // Từ chối yêu cầu
-    @PostMapping("/requests/reject/{requestId}")
+    @PostMapping("/request/reject/{requestId}")
     public ResponseEntity<RoleUpgrade> rejectRequest(
             @PathVariable Integer requestId,
             @RequestBody Map<String, String> payload) {
@@ -152,9 +152,9 @@ public class AdminController {
 //        return ResponseEntity.ok(roleUpgradeService.getAllRequests());
 //    }
 //
-//    // Lọc yêu cầu theo trạng thái (PENDING, APPROVED, REJECTED)
-//    @GetMapping("users/request/filter/{status}")
-//    public ResponseEntity<List<RoleUpgrade>> getRequestsByStatus(@PathVariable String status) {
-//        return ResponseEntity.ok(roleUpgradeService.getRequestsByStatus(status));
-//    }
+    // Lọc yêu cầu theo trạng thái (PENDING, APPROVED, REJECTED)
+    @GetMapping("/request/filter/{status}")
+    public ResponseEntity<List<RoleUpgrade>> getRequestsByStatus(@PathVariable String status) {
+        return ResponseEntity.ok(roleUpgradeService.getRequestsByStatus(status));
+    }
 }

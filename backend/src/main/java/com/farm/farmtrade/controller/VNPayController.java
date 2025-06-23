@@ -83,11 +83,11 @@ public class VNPayController {
         try {
             int paymentStatus = vnPayService.orderReturn(request);
             if (paymentStatus == 1) {
-                paymentService.savePayment(Integer.valueOf(orderGroupId));
+                paymentService.saveVNPpayPayment(Integer.valueOf(orderGroupId));
                 return new RedirectView(SUCCESS_REACT_URL);
             }
         } catch (Exception e) {
-            log.error("Error executing PayPal payment", e);
+            log.error("Error executing VNPAY payment", e);
         }
         return new RedirectView(FAILURE_REACT_URL);
 

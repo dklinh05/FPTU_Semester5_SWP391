@@ -365,4 +365,38 @@ body.show-emoji-picker em-emoji-picker {
   pointer-events: auto !important;
   transform: scale(1) !important;
 }
+.suggestions {
+  padding: 12px;
+  background: #f8faff;
+  border-radius: 12px;
+  margin: 10px 0;
+  border: 1px solid #dfeeff;
+}
+
+.suggestions-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.suggestion-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.suggestion-button {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #fff;
+  cursor: pointer;
+  transition: 0.2s ease;
+  text-align: left;
+}
+
+.suggestion-button:hover {
+  background-color: #e6f4ff;
+  border-color: #91caff;
+}
 

@@ -31,12 +31,12 @@ public class PaypalController {
 
     // FE REACT URLS
     private static final String SUCCESS_REACT_URL = "http://localhost:5173/orders";
-    private static final String FAILURE_REACT_URL = "http://localhost:5173/payment/failure";
     private static final String CANCEL_REACT_URL = "http://localhost:5173/orders/pending";
 
     // BE SPRING URLs (PayPal redirect về đây)
     private static final String SUCCESS_API_URL = "http://localhost:8080/farmtrade/paypal/success";
     private static final String CANCEL_API_URL = "http://localhost:8080/farmtrade/paypal/cancel";
+    private static final String FAILURE_REACT_URL = "http://localhost:5173/payment/failure";
 
     // Quy đổi VND->USD: 1 USD = 24,000 VND
     private static final BigDecimal EXCHANGE_RATE = new BigDecimal("25000");
@@ -97,7 +97,7 @@ public class PaypalController {
         try {
             Payment payment = paypalService.executePayment(paymentId, payerId);
             if ("approved".equalsIgnoreCase(payment.getState())) {
-                paymentService.savePayment(orderGroupId);
+                paymentService.savePaypalPayment(orderGroupId);
                 return new RedirectView(SUCCESS_REACT_URL);
             }
         } catch (Exception e) {

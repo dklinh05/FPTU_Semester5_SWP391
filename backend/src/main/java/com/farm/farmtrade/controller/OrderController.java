@@ -11,6 +11,7 @@ import com.farm.farmtrade.service.order.OrderGroupService;
 import com.farm.farmtrade.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -109,5 +110,16 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
+    @GetMapping("/supplier/{supplierId}/orders")
+    public ResponseEntity<Page<OrderResponse>> getOrdersBySupplier(
+            @PathVariable Integer supplierId,
+            @RequestParam(required = false) String status,  // ví dụ filter theo trạng thái đơn hàng
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "orderDate,desc") String sortBy
+    ) {
+        Page<OrderResponse> orders = orderService.getOrdersBySupplierId(supplierId, status, page, size, sortBy);
+        return ResponseEntity.ok(orders);
+    }
 
 }

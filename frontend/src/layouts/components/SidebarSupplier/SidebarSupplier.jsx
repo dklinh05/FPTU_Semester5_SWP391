@@ -1,17 +1,20 @@
 import React, { useState } from "react";
-import "./SidebarAdmin.scss"; // Tạo file CSS riêng
+import "./SidebarSupplier.module.scss"; // Tạo file CSS riêng
 
-const SidebarAdmin = () => {
+
+function SidebarSupplier() {
   const [activeSubmenu, setActiveSubmenu] = useState(null);
   const [collapsed, setCollapsed] = useState(false);
 
   const toggleSubmenu = (index) => {
     setActiveSubmenu(activeSubmenu === index ? null : index);
   };
-
   return (
     <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
-      <div className="collapse-sidebar d-none d-lg-block" onClick={() => setCollapsed(!collapsed)}>
+      <div
+        className="collapse-sidebar d-none d-lg-block"
+        onClick={() => setCollapsed(!collapsed)}
+      >
         <span>
           <i className="fa-solid fa-chevron-left"></i>
         </span>
@@ -52,10 +55,13 @@ const SidebarAdmin = () => {
             >
               <i className="fa-brands fa-microsoft"></i>
               <p>
-                Product Management <i className="fa-solid fa-angle-down right-icon"></i>
+                Product Management{" "}
+                <i className="fa-solid fa-angle-down right-icon"></i>
               </p>
             </a>
-            <ul className={`sidebar-submenu ${activeSubmenu === 2 ? "open" : ""}`}>
+            <ul
+              className={`sidebar-submenu ${activeSubmenu === 2 ? "open" : ""}`}
+            >
               <li>
                 <a href="/addproduct" className="submenu-link">
                   Add
@@ -89,7 +95,9 @@ const SidebarAdmin = () => {
                 Order <i className="fa-solid fa-angle-down right-icon"></i>
               </p>
             </a>
-            <ul className={`sidebar-submenu ${activeSubmenu === 3 ? "open" : ""}`}>
+            <ul
+              className={`sidebar-submenu ${activeSubmenu === 3 ? "open" : ""}`}
+            >
               <li>
                 <a href="/orderlist" className="submenu-link">
                   List
@@ -97,80 +105,7 @@ const SidebarAdmin = () => {
               </li>
             </ul>
           </li>
-
-          {/* User Management */}
-          <li>
-            <a
-              href="#"
-              className="text-black sidebar-link submenu-parent"
-              onClick={(e) => {
-                e.preventDefault();
-                toggleSubmenu(5); // Dùng index 5 cho submenu này
-              }}
-            >
-              <i className="fa-regular fa-user"></i>
-              <p>
-                User Management <i className="fa-solid fa-angle-down right-icon"></i>
-              </p>
-            </a>
-            <ul className={`sidebar-submenu ${activeSubmenu === 5 ? "open" : ""}`}>
-              <li>
-                <a href="/customerlist" className="submenu-link">
-                  Customer
-                </a>
-              </li>
-              <li>
-                <a href="/supplierlist" className="submenu-link">
-                  Supplier
-                </a>
-              </li>
-              <li>
-                <a href="/shipperlist" className="submenu-link">
-                  Shipper
-                </a>
-              </li>
-              <li>
-                <a href="/acceptupdaterole" className="submenu-link">
-                  Customer Request
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          {/* Page */}
-          <li>
-            <a
-              href="#"
-              className="text-black sidebar-link submenu-parent"
-              onClick={(e) => {
-                e.preventDefault();
-                toggleSubmenu(4);
-              }}
-            >
-              <i className="fa-solid fa-pager"></i>
-              <p>
-                Page <i className="fa-solid fa-angle-down right-icon"></i>
-              </p>
-            </a>
-            <ul className={`sidebar-submenu ${activeSubmenu === 4 ? "open" : ""}`}>
-              <li>
-                <a href="/login" className="submenu-link">
-                  Login
-                </a>
-              </li>
-              <li>
-                <a href="signup.html" className="submenu-link">
-                  Signup
-                </a>
-              </li>
-              <li>
-                <a href="404.html" className="submenu-link">
-                  404
-                </a>
-              </li>
-            </ul>
-          </li>
-
+          
           <li className="sidebar-label">Other</li>
 
           <li>
@@ -189,6 +124,6 @@ const SidebarAdmin = () => {
       </div>
     </div>
   );
-};
+}
 
-export default SidebarAdmin;
+export default SidebarSupplier;

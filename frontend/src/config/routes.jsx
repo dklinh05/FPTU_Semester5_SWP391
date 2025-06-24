@@ -33,6 +33,7 @@ const routes = {
   ordersPending: '/orders/pending',
   redeemVoucher: '/redeem-voucher',
   acceptUpdateRole: '/acceptupdaterole',
+  orderDetail: '/order-detail/:id'
 };
 
 export default routes;

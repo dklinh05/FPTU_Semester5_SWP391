@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -12,9 +13,13 @@ function CartTotal({ carts, voucher }) {
     }
   };
 
-  const total = carts.reduce((total, cart) => {
-    return total + cart.quantity * cart.product.price;
-  }, 0);
+  const subtotal = useMemo(() => {
+    return carts.reduce((sum, cart) => sum + cart.quantity * cart.product.price, 0);
+  }, [carts]);
+
+  const shippingFee = 3;
+  const discount = voucher?.voucher?.discountValue ?? 0;
+  const total = subtotal + shippingFee - discount;
 
   return (
     <div className="row g-4 justify-content-end">
@@ -27,21 +32,24 @@ function CartTotal({ carts, voucher }) {
             </h1>
             <div className="d-flex justify-content-between mb-4">
               <h5 className="mb-0 me-4">Subtotal:</h5>
-              <p className="mb-0">${total}</p>
+              <p className="mb-0">{subtotal} VND</p>
             </div>
             <div className="d-flex justify-content-between">
               <h5 className="mb-0 me-4">Shipping</h5>
               <div>
-                <p className="mb-0">Flat rate: $3.00</p>
+                <p className="mb-0"> {shippingFee} VND</p>
               </div>
             </div>
-            <p className="mb-0 text-end">Shipping to Ukraine.</p>
+            <div className="d-flex justify-content-between">
+              <h5 className="mb-0 me-4">Voucher</h5>
+              <div>
+                <p className="mb-0"> - {voucher?.voucher?.discountValue} VND</p>
+              </div>
+            </div>
           </div>
           <div className="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
             <h5 className="mb-0 ps-4 me-4">Total</h5>
-            <p className="mb-0 pe-4">
-              ${total + 3 - (voucher?.voucher?.discountValue ?? 0)}
-            </p>
+            <p className="mb-0 pe-4">{total} VND</p>
           </div>
           <button
             className="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4"

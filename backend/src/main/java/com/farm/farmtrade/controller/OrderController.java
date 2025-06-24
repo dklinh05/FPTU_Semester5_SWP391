@@ -71,10 +71,14 @@ public class OrderController {
 
     //lấy đơn hàng theo ID người mua
     @GetMapping("/buyer/{buyerId}")
-    public ResponseEntity<List<OrderResponse>> getOrdersByBuyer(@PathVariable Integer buyerId) {
-        List<OrderResponse> orders = orderService.getOrdersByBuyerId(buyerId);
+    public ResponseEntity<List<OrderResponse>> getOrdersByBuyer(
+            @PathVariable Integer buyerId,
+            @RequestParam(required = false) String status
+    ) {
+        List<OrderResponse> orders = orderService.getOrdersByBuyerId(buyerId, status);
         return ResponseEntity.ok(orders);
     }
+
 
 
     @GetMapping("/{orderId}/items")

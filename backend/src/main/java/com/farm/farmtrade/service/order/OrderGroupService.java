@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -213,8 +214,11 @@ public class OrderGroupService {
         List<OrderGroup> orderGroups = orderGroupRepository.findByBuyerUserID(buyerId);
         return orderGroups.stream()
                 .filter(group -> "PENDING".equalsIgnoreCase(group.getStatus()))
+                .sorted(Comparator.comparing(OrderGroup::getOrderGroupID).reversed()) // 👈 Giảm dần theo ID
                 .map(this::toOrderGroupResponse)
                 .collect(Collectors.toList());
     }
+
+
 
 }

@@ -4,8 +4,7 @@ import { useLocation } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import { useCart } from "../../context/CartContext";
 import {
-  redeemVoucher,
-  renderVoucher,
+  
   renderVoucherByUserId,
 } from "../../services/voucherService";
 import CartItem from "../../layouts/components/CartItem";

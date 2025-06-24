@@ -175,11 +175,21 @@ public class OrderService {
     }
 
     // tìm order theo buyerID
-    public List<OrderResponse> getOrdersByBuyerId(Integer buyerId) {
+    public List<OrderResponse> getOrdersByBuyerId(Integer buyerId, String status) {
         User buyer = userRepository.findById(buyerId)
                 .orElseThrow(() -> new IllegalArgumentException("Buyer not found with ID: " + buyerId));
 
         List<Order> orders = orderRepository.findByBuyer(buyer);
+
+        // Lọc theo status nếu có truyền
+        if (status != null && !status.isBlank()) {
+            String statusFilter = status.trim().toLowerCase();
+            orders = orders.stream()
+                    .filter(order -> order.getStatus() != null &&
+                            order.getStatus().trim().toLowerCase().equals(statusFilter))
+                    .collect(Collectors.toList());
+        }
+
 
         return orders.stream()
                 .map(order -> new OrderResponse(
@@ -193,8 +203,8 @@ public class OrderService {
                         order.getOrderGroup().getOrderGroupID()
                 ))
                 .collect(Collectors.toList());
-
     }
+
 
 //    // tìm order theo shipperID
 //    public List<Order> getOrdersByShipperId(Integer shipperId) {

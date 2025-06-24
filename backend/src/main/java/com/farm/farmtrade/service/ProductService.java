@@ -106,7 +106,7 @@ public class ProductService {
     }
 
     public Page<Product> getProductsBySupplierId(Integer supplierId, Pageable pageable) {
-        return productRepository.findBySupplierUserIDAndStatus(supplierId, "active", pageable);
+        return productRepository.findBySupplierUserID(supplierId, pageable);
     }
 
     public Page<Product> getBestSellerProducts(Pageable pageable) {

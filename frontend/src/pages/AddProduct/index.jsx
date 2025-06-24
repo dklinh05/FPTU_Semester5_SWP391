@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import { addProduct } from "../../services/productService";
 
 
 function AddProduct() {
   const { userId } = useUser();
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -48,8 +52,8 @@ function AddProduct() {
     console.log(userId)
     try {
       const response = await addProduct(productData);
-      alert("Thêm sản phẩm thành công! Yêu cầu duyệt sẽ được gửi đến admin.");
-      console.log("Response:", response.data);
+      toast.success("Thêm sản phẩm thành công! Yêu cầu duyệt sẽ được gửi đến admin.");
+      navigate("/listproduct")
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm:", error);
       alert("Thêm sản phẩm thất bại.");

@@ -2,6 +2,7 @@ package com.farm.farmtrade.service.order;
 
 import com.farm.farmtrade.dto.request.orderRequest.OrderCreationRequest;
 import com.farm.farmtrade.dto.request.orderRequest.OrderItemRequest;
+import com.farm.farmtrade.dto.request.orderRequest.OrderStatusUpdateRequest;
 import com.farm.farmtrade.dto.response.orderResponse.OrderItemResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderResponse;
 import com.farm.farmtrade.entity.*;
@@ -262,5 +263,16 @@ public class OrderService {
 
         return  orderResponses;
     }
+    @Transactional
+    public void updateOrderStatus(OrderStatusUpdateRequest request) {
+        Order order = orderRepository.findById(request.getOrderId())
+                .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + request.getOrderId()));
 
+        if (!order.getSupplier().getUserID().equals(request.getSupplierId())) {
+            throw new SecurityException("You are not authorized to update this order.");
+        }
+
+        order.setStatus(request.getNewStatus());
+        orderRepository.save(order);
+    }
 }

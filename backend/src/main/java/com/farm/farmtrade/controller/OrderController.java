@@ -1,6 +1,7 @@
 package com.farm.farmtrade.controller;
 
 import com.farm.farmtrade.dto.request.orderRequest.OrderGroupRequest;
+import com.farm.farmtrade.dto.request.orderRequest.OrderStatusUpdateRequest;
 import com.farm.farmtrade.dto.request.orderRequest.UpdateOrderStatusRequest;
 import com.farm.farmtrade.dto.response.orderResponse.OrderGroupResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderItemResponse;
@@ -9,6 +10,7 @@ import com.farm.farmtrade.entity.Order;
 import com.farm.farmtrade.repository.OrderRepository;
 import com.farm.farmtrade.service.order.OrderGroupService;
 import com.farm.farmtrade.service.order.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -122,4 +124,14 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
+
+    @PutMapping("/update-status")
+    public ResponseEntity<?> updateOrderStatus(@Valid @RequestBody OrderStatusUpdateRequest request) {
+        try {
+            orderService.updateOrderStatus(request);
+            return ResponseEntity.ok("Order status updated successfully.");
+        } catch (IllegalArgumentException | SecurityException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

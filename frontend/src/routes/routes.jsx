@@ -23,6 +23,7 @@ import ProductLayout from "../layouts/ProductLayout";
 import CartLayout from "../layouts/CartLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import OrdersLayout from "../layouts/OrdersLayout"
+import SupplierLayout from "../layouts/SupplierLayout";
 import OrderList from "../pages/OrderList";
 import UserList from "../pages/UserList";
 import RequestUpdateRole from '../pages/RequestUpdateRole/index.jsx';
@@ -37,6 +38,7 @@ import ProductSearch from "../pages/ProductSearch";
 import RedeemVoucher from "../pages/RedeemVoucher";
 import SearchResultLayout from "../layouts/SearchResultLayout/index.js";
 import AcceptUpdateRole from "../pages/AcceptUpdateRole/index.jsx";
+import OrderDetail from "../pages/OrderDetail/index.jsx";
 
 
 const publicRoutes = [
@@ -76,16 +78,16 @@ const publicRoutes = [
   {
     path: config.routes.addProduct,
     component: AddProduct,
-    layout: AdminLayout,
+    layout: SupplierLayout,
   },
   {
     path: config.routes.listProduct,
     component: ListProduct,
-    layout: AdminLayout,
+    layout: SupplierLayout,
   },
-  { path: config.routes.orderList, component: OrderList, layout: AdminLayout },
+  { path: config.routes.orderList, component: OrderList, layout: SupplierLayout },
   { path: config.routes.userList, component: UserList, layout: AdminLayout },
-  { path: config.routes.requestupdaterole, component: RequestUpdateRole, layout: AdminLayout },
+  { path: config.routes.requestupdaterole, component: RequestUpdateRole, layout: SupplierLayout },
   { path: config.routes.checkout, component: Checkout, layout: null },
   {
     path: config.routes.requestProduct,
@@ -94,6 +96,7 @@ const publicRoutes = [
   },
 
   { path: config.routes.orders, component: Orders, layout: OrdersLayout },
+    { path: config.routes.orderDetail, component: OrderDetail, layout: SupplierLayout },
   {
     path: config.routes.ordersPending,
     component: OrdersNotPayment,

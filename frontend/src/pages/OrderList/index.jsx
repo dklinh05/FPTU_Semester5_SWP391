@@ -1,46 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
+import { renderOrdersBySupplierId } from "../../services/orderService";
 
 const OrderList = () => {
-  const [orders, setOrders] = useState([
-    {
-      invoiceNo: "#12598",
-      customerName: "John Doe",
-      method: "Cash",
-      amount: "$4,099",
-      orderTime: "24 Nov, 2024 3:59 PM",
-      status: "Delivered",
-    },
-    {
-      invoiceNo: "#12599",
-      customerName: "Jane Smith",
-      method: "Credit Card",
-      amount: "$2,499",
-      orderTime: "24 Nov, 2024 3:45 PM",
-      status: "Cancel",
-    },
-    {
-      invoiceNo: "#12600",
-      customerName: "Alice Johnson",
-      method: "PayPal",
-      amount: "$3,299",
-      orderTime: "24 Nov, 2024 2:30 PM",
-      status: "Processing",
-    },
-    {
-      invoiceNo: "#12601",
-      customerName: "Bob Brown",
-      method: "Cash",
-      amount: "$1,999",
-      orderTime: "24 Nov, 2024 1:15 PM",
-      status: "Pending",
-    },
-  ]);
+  const { userId } = useUser();
+  const [orders, setOrders] = useState([]);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const status = queryParams.get("status");
+
+  const [currentPage, setCurrentPage] = useState(1); // trang đang xem (1-based)
+  const pageSize = 10; // số dòng mỗi trang
+  const [totalItems, setTotalItems] = useState(0); // tổng số đơn hàng
+  const [totalPages, setTotalPages] = useState(0);
+
+  const getOrders = async () => {
+    try {
+      const response = await renderOrdersBySupplierId(
+        userId,
+        status,
+        currentPage - 1,
+        pageSize
+      );
+      setOrders(response.content);
+      setTotalPages(response.totalPages);
+      setTotalItems(response.totalElements);
+      console.log("Response:", response);
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm:", error);
+    }
+  };
 
   const handleStatusChange = (index, newStatus) => {
     const updatedOrders = [...orders];
     updatedOrders[index].status = newStatus;
     setOrders(updatedOrders);
   };
+
+  useEffect(() => {
+    if (userId) getOrders();
+  }, [userId, location.search, currentPage, pageSize]);
 
   return (
     <div className="product-section px-0 px-md-0 px-lg-3 mt-5">
@@ -67,24 +67,41 @@ const OrderList = () => {
                 </a>
                 <ul className="dropdown-menu" aria-labelledby="FilterMenuLink">
                   <li>
-                    <a className="dropdown-item py-2" href="#">
+                    <Link className="dropdown-item py-2" to={"/orderlist"}>
+                      All
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="dropdown-item py-2"
+                      to={"/orderlist?status=Pending"}
+                    >
                       Pending
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a className="dropdown-item py-2" href="#">
+                    <Link
+                      className="dropdown-item py-2"
+                      to={"/orderlist?status=Delivered"}
+                    >
                       Delivered
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a className="dropdown-item py-2" href="#">
+                    <Link
+                      className="dropdown-item py-2"
+                      to={"/orderlist?status=Processing"}
+                    >
                       Processing
-                    </a>
+                    </Link>
                   </li>
                   <li>
-                    <a className="dropdown-item py-2" href="#">
+                    <Link
+                      className="dropdown-item py-2"
+                      to={"/orderlist?status=Cancel"}
+                    >
                       Cancel
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -122,11 +139,11 @@ const OrderList = () => {
               <tbody>
                 {orders.map((order, index) => (
                   <tr key={index}>
-                    <td>{order.invoiceNo}</td>
-                    <td>{order.customerName}</td>
+                    <td>{order.orderID}</td>
+                    <td>{order.buyerId}</td>
                     <td>{order.method}</td>
-                    <td>{order.amount}</td>
-                    <td>{order.orderTime}</td>
+                    <td>{order.totalAmount}</td>
+                    <td>{order.orderDate}</td>
                     <td>
                       <span
                         className={`status-badge ${
@@ -144,18 +161,12 @@ const OrderList = () => {
                     </td>
                     <td className="d-flex justify-content-between">
                       <div className="mb-2 w-75">
-                        <select
-                          className="form-select form-select-sm border bg-light text-secondary rounded"
-                          value={order.status}
-                          onChange={(e) =>
-                            handleStatusChange(index, e.target.value)
-                          }
+                        <button
+                          className="btn btn-outline-success btn-sm"
+                          onClick={() => handleStatusChange(index, "Delivered")}
                         >
-                          <option value="Pending">Pending</option>
-                          <option value="Delivered">Delivered</option>
-                          <option value="Processing">Processing</option>
-                          <option value="Cancel">Cancel</option>
-                        </select>
+                          Mark as Delivered
+                        </button>
                       </div>
                       <div className="dropdown w-25">
                         <a
@@ -169,7 +180,10 @@ const OrderList = () => {
                         </a>
                         <ul className="dropdown-menu">
                           <li>
-                            <a className="dropdown-item py-2" href="#">
+                            <a
+                              className="dropdown-item py-2"
+                              href={`/order-detail/${order.orderID}`}
+                            >
                               View
                             </a>
                           </li>
@@ -193,38 +207,47 @@ const OrderList = () => {
           {/* Pagination */}
           <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4">
             <div>
-              <p className="text-center text-md-start">Showing 1 - 20 of 121</p>
+              Showing {currentPage}- {totalPages} of {totalItems}
             </div>
             <ul className="pagination">
-              <li>
-                <a href="#" className="pagination-link disabled" tabIndex="-1">
-                  {/* < */}
-                </a>
+              {/* Previous button */}
+              <li className={currentPage === 1 ? "disabled" : ""}>
+                <button
+                  className="pagination-link"
+                  onClick={() =>
+                    currentPage > 1 && setCurrentPage(currentPage - 1)
+                  }
+                >
+                  &lt;
+                </button>
               </li>
-              <li>
-                <a href="#" className="pagination-link active">
-                  1
-                </a>
-              </li>
-              <li>
-                <a href="#" className="pagination-link">
-                  2
-                </a>
-              </li>
-              <li>
-                <a href="#" className="pagination-link">
-                  3
-                </a>
-              </li>
-              <li>
-                <a href="#" className="pagination-link">
-                  4
-                </a>
-              </li>
-              <li>
-                <a href="#" className="pagination-link">
-                  {/* > */}
-                </a>
+
+              {/* Page numbers */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (pageNum) => (
+                  <li key={pageNum}>
+                    <button
+                      className={`pagination-link ${
+                        pageNum === currentPage ? "active" : ""
+                      }`}
+                      onClick={() => setCurrentPage(pageNum)}
+                    >
+                      {pageNum}
+                    </button>
+                  </li>
+                )
+              )}
+
+              {/* Next button */}
+              <li className={currentPage === totalPages ? "disabled" : ""}>
+                <button
+                  className="pagination-link"
+                  onClick={() =>
+                    currentPage < totalPages && setCurrentPage(currentPage + 1)
+                  }
+                >
+                  &gt;
+                </button>
               </li>
             </ul>
           </div>

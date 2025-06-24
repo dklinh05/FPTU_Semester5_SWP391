@@ -11,6 +11,10 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -229,6 +233,34 @@ public class OrderService {
                 .orderGroupId(order.getOrderGroup() != null ? order.getOrderGroup().getOrderGroupID() : null)
                 .build()
         ).collect(Collectors.toList());
+    }
+
+    public Page<OrderResponse> getOrdersBySupplierId(Integer supplierId, String status, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("orderDate")));
+        if (sortBy != null && !sortBy.isEmpty()) {
+            String[] sortParts = sortBy.split(",");
+            Sort.Direction direction = sortParts.length > 1 && sortParts[1].equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+            pageable = PageRequest.of(page, size, Sort.by(new Sort.Order(direction, sortParts[0])));
+        }
+
+        Page<Order> ordersPage;
+        if (status != null && !status.isEmpty()) {
+            ordersPage = orderRepository.findBySupplierUserIDAndStatus(supplierId, status, pageable);
+        } else {
+            ordersPage = orderRepository.findBySupplierUserID(supplierId, pageable);
+        }
+
+        Page<OrderResponse> orderResponses = ordersPage.map(order -> OrderResponse.builder()
+                .orderID(order.getOrderID())
+                .buyerId(order.getBuyer() != null ? order.getBuyer().getUserID() : null)
+                .supplierId(order.getSupplier() != null ? order.getSupplier().getUserID() : null)
+                .orderDate(order.getOrderDate())
+                .status(order.getStatus())
+                .totalAmount(order.getTotalAmount())
+                .orderGroupId(order.getOrderGroup() != null ? order.getOrderGroup().getOrderGroupID() : null)
+                .build());
+
+        return  orderResponses;
     }
 
 }

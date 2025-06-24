@@ -85,4 +85,8 @@ public class UserVoucherService {
         userVoucher.setIsUsed(true);
         userVoucherRepository.save(userVoucher);
     }
+
+    public List<UserVoucher> getUserVouchersByUserAndUsage(Integer userId, boolean isUsed) {
+        return userVoucherRepository.findByUserUserIDAndIsUsed(userId, isUsed);
+    }
 }

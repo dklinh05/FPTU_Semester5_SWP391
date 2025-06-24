@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +88,22 @@ public class ProductReviewService {
         return String.join(";", imageUrls);
     }
 
+    public List<ProductReview> getReviewsByProduct(Integer productId) {
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        List<ProductReview> reviews = productReviewRepository.findByProduct(product);
+
+        for (ProductReview review : reviews) {
+            if (review.getImage() != null && !review.getImage().isEmpty()) {
+                review.setImageList(Arrays.asList(review.getImage().split(";")));
+            } else {
+                review.setImageList(new ArrayList<>());
+            }
+        }
+
+        return reviews;
+    }
     public ProductReview updateReview(Integer reviewId, com.farm.farmtrade.dto.request.ProductReviewRequest.UpdateProductReviewRequest request, String username) {
         ProductReview existingReview = productReviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found"));

@@ -218,4 +218,21 @@ public class OrderGroupService {
                 .collect(Collectors.toList());
     }
 
+    // hủy đơn hàng
+    @Transactional
+    public void cancelOrderGroup(Integer orderGroupId) {
+        OrderGroup orderGroup = orderGroupRepository.findById(orderGroupId)
+                .orElseThrow(() -> new IllegalArgumentException("OrderGroup not found with ID: " + orderGroupId));
+
+        if ("CANCELLED".equalsIgnoreCase(orderGroup.getStatus())) {
+            throw new IllegalStateException("OrderGroup is already canceled");
+        }
+        orderGroup.setStatus("CANCELLED");
+        for (Order order : orderGroup.getOrders()) {
+            order.setStatus("CANCELLED");
+            orderRepository.save(order);
+        }
+        orderGroupRepository.save(orderGroup);
+    }
+
 }

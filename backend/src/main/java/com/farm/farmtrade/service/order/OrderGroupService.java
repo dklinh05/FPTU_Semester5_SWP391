@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -214,8 +215,27 @@ public class OrderGroupService {
         List<OrderGroup> orderGroups = orderGroupRepository.findByBuyerUserID(buyerId);
         return orderGroups.stream()
                 .filter(group -> "PENDING".equalsIgnoreCase(group.getStatus()))
+                .sorted(Comparator.comparing(OrderGroup::getOrderGroupID).reversed()) // 👈 Giảm dần theo ID
                 .map(this::toOrderGroupResponse)
                 .collect(Collectors.toList());
     }
+
+    // hủy đơn hàng
+    @Transactional
+    public void cancelOrderGroup(Integer orderGroupId) {
+        OrderGroup orderGroup = orderGroupRepository.findById(orderGroupId)
+                .orElseThrow(() -> new IllegalArgumentException("OrderGroup not found with ID: " + orderGroupId));
+
+        if ("CANCELLED".equalsIgnoreCase(orderGroup.getStatus())) {
+            throw new IllegalStateException("OrderGroup is already canceled");
+        }
+        orderGroup.setStatus("CANCELLED");
+        for (Order order : orderGroup.getOrders()) {
+            order.setStatus("CANCELLED");
+            orderRepository.save(order);
+        }
+        orderGroupRepository.save(orderGroup);
+    }
+
 
 }

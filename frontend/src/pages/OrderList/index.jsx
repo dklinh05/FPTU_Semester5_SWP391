@@ -26,7 +26,7 @@ const OrderList = () => {
       setOrders(response.content);
       setTotalPages(response.totalPages);
       setTotalItems(response.totalElements);
-      console.log("Response:", response);
+   
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);
     }

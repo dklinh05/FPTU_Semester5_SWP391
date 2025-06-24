@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import styles from "./RequestProduct.module.scss"; // Import CSS Module
+
 
 const RequestProduct = () => {
   const [products, setProducts] = useState([]);
@@ -23,6 +25,7 @@ const RequestProduct = () => {
     fetchPendingProducts();
   }, []);
 
+  // Hàm cập nhật trạng thái sản phẩm
   const handleUpdateStatus = async (id, status) => {
     try {
       const res = await axios.put(
@@ -34,11 +37,11 @@ const RequestProduct = () => {
       );
       console.log("Cập nhật thành công:", res.data);
       setProducts(products.filter((p) => p.productID !== id));
-      alert("Cập nhật trạng thái thành công");
+      toast.success("Cập nhật trạng thái thành công");
     } catch (err) {
       if (err.response?.status === 401) {
         alert("Bạn cần đăng nhập để duyệt/xóa sản phẩm");
-        window.location.href = "/login";
+        window.location.href = "/login"; // chuyển hướng đến trang đăng nhập
       } else {
         alert(`Lỗi: ${err.message}`);
       }
@@ -46,7 +49,7 @@ const RequestProduct = () => {
   };
 
   return (
-    <div className={styles.container}>
+<div className={styles.container}>Add commentMore actions
       <h3 className={styles.titleBlock}>Danh sách sản phẩm chờ duyệt</h3>
 
       <div className={styles.tableContainer}>

@@ -7,6 +7,7 @@ import com.farm.farmtrade.dto.response.orderResponse.OrderGroupResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderItemResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderResponse;
 import com.farm.farmtrade.entity.Order;
+import com.farm.farmtrade.entity.OrderGroup;
 import com.farm.farmtrade.repository.OrderRepository;
 import com.farm.farmtrade.service.order.OrderGroupService;
 import com.farm.farmtrade.service.order.OrderService;
@@ -71,10 +72,14 @@ public class OrderController {
 
     //lấy đơn hàng theo ID người mua
     @GetMapping("/buyer/{buyerId}")
-    public ResponseEntity<List<OrderResponse>> getOrdersByBuyer(@PathVariable Integer buyerId) {
-        List<OrderResponse> orders = orderService.getOrdersByBuyerId(buyerId);
+    public ResponseEntity<List<OrderResponse>> getOrdersByBuyer(
+            @PathVariable Integer buyerId,
+            @RequestParam(required = false) String status
+    ) {
+        List<OrderResponse> orders = orderService.getOrdersByBuyerId(buyerId, status);
         return ResponseEntity.ok(orders);
     }
+
 
 
     @GetMapping("/{orderId}/items")
@@ -124,12 +129,21 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
-
     @PutMapping("/update-status")
     public ResponseEntity<?> updateOrderStatus(@Valid @RequestBody OrderStatusUpdateRequest request) {
         try {
             orderService.updateOrderStatus(request);
             return ResponseEntity.ok("Order status updated successfully.");
+        } catch (IllegalArgumentException | SecurityException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/cancel/{orderGroupId}")
+    public ResponseEntity<?> cancelOrderGroup(@PathVariable Integer orderGroupId) {
+        try {
+            orderGroupService.cancelOrderGroup(orderGroupId);
+            return ResponseEntity.ok("Order Cancelled successfully.");
         } catch (IllegalArgumentException | SecurityException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

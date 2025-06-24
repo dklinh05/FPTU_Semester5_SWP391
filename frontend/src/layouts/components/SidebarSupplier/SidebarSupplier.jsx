@@ -72,11 +72,7 @@ function SidebarSupplier() {
                   List
                 </a>
               </li>
-              <li>
-                <a href="/requestproduct" className="submenu-link">
-                  Request Product
-                </a>
-              </li>
+             
             </ul>
           </li>
 

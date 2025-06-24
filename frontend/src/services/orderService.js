@@ -27,9 +27,13 @@ export const renderOrderById = async (id) => {
   }
 };
 
-export const renderOrderByBuyerId = async (id) => {
+export const renderOrderByBuyerId = async (id, status) => {
   try {
-    const response = await request.get(`/orders/buyer/${id}`);
+    const response = await request.get(`/orders/buyer/${id}`, {
+      params: {
+        status: status,
+      },
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useUser } from "../../context/UserContext";
 import { addProduct } from "../../services/productService";
-
+import './AddProduct.scss';
 
 function AddProduct() {
   const { userId } = useUser();
@@ -12,7 +12,7 @@ function AddProduct() {
     stockQuantity: "",
     origin: "",
     category: "",
-    unit: "", // Thêm unit vào formData
+    unit: "",
     image: null,
   });
 
@@ -45,7 +45,7 @@ function AddProduct() {
     if (formData.image) {
       productData.append("image", formData.image);
     }
-    console.log(userId)
+    console.log(userId);
     try {
       const response = await addProduct(productData);
       alert("Thêm sản phẩm thành công! Yêu cầu duyệt sẽ được gửi đến admin.");
@@ -57,126 +57,118 @@ function AddProduct() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="container mt-4" encType="multipart/form-data">
-      <h3>Thêm Sản Phẩm Mới</h3>
+    <div className="add-product-container">
+      <h2 className="title-block">Thêm Sản Phẩm Mới</h2>
+      <form onSubmit={handleSubmit} className="add-product-form" encType="multipart/form-data">
+        <div className="form-group">
+          <label className="form-label">Tên sản phẩm</label>
+          <input
+            type="text"
+            name="name"
+            className="form-input"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-      {/* Tên sản phẩm */}
-      <div className="mb-3">
-        <label className="form-label">Tên sản phẩm</label>
-        <input
-          type="text"
-          name="name"
-          className="form-control"
-          value={formData.name}
-          onChange={handleChange}
-          required
-        />
-      </div>
+        <div className="form-group">
+          <label className="form-label">Mô tả</label>
+          <textarea
+            name="description"
+            className="form-textarea"
+            rows="4"
+            value={formData.description}
+            onChange={handleChange}
+          ></textarea>
+        </div>
 
-      {/* Mô tả */}
-      <div className="mb-3">
-        <label className="form-label">Mô tả</label>
-        <textarea
-          name="description"
-          className="form-control"
-          rows="3"
-          value={formData.description}
-          onChange={handleChange}
-        ></textarea>
-      </div>
+        <div className="form-group">
+          <label className="form-label">Giá</label>
+          <input
+            type="number"
+            name="price"
+            className="form-input"
+            value={formData.price}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-      {/* Giá */}
-      <div className="mb-3">
-        <label className="form-label">Giá</label>
-        <input
-          type="number"
-          name="price"
-          className="form-control"
-          value={formData.price}
-          onChange={handleChange}
-          required
-        />
-      </div>
+        <div className="form-group">
+          <label className="form-label">Đơn vị</label>
+          <select
+            name="unit"
+            className="form-select"
+            value={formData.unit}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Chọn đơn vị</option>
+            <option value="kg">kg</option>
+            <option value="g">g</option>
+            <option value="cái">cái</option>
+            <option value="chục">chục</option>
+          </select>
+        </div>
 
-      {/* Đơn vị */}
-      <div className="mb-3">
-        <label className="form-label">Đơn vị</label>
-        <select
-          name="unit"
-          className="form-select"
-          value={formData.unit}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Chọn đơn vị</option>
-          <option value="kg">kg</option>
-          <option value="g">g</option>
-          <option value="cái">cái</option>
-          <option value="chục">chục</option>
-        </select>
-      </div>
+        <div className="form-group">
+          <label className="form-label">Số lượng tồn kho</label>
+          <input
+            type="number"
+            name="stockQuantity"
+            className="form-input"
+            value={formData.stockQuantity}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-      {/* Số lượng tồn kho */}
-      <div className="mb-3">
-        <label className="form-label">Số lượng tồn kho</label>
-        <input
-          type="number"
-          name="stockQuantity"
-          className="form-control"
-          value={formData.stockQuantity}
-          onChange={handleChange}
-          required
-        />
-      </div>
+        <div className="form-group">
+          <label className="form-label">Xuất xứ</label>
+          <input
+            type="text"
+            name="origin"
+            className="form-input"
+            value={formData.origin}
+            onChange={handleChange}
+            required
+          />
+        </div>
 
-      {/* Xuất xứ */}
-      <div className="mb-3">
-        <label className="form-label">Xuất xứ</label>
-        <input
-          type="text"
-          name="origin"
-          className="form-control"
-          value={formData.origin}
-          onChange={handleChange}
-          required
-        />
-      </div>
+        <div className="form-group">
+          <label className="form-label">Danh mục</label>
+          <select
+            name="category"
+            className="form-select"
+            value={formData.category}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Chọn danh mục</option>
+            <option value="rau">Rau</option>
+            <option value="củ, quả">Củ, quả</option>
+            <option value="trái cây">Trái cây</option>
+            <option value="thực phẩm">Thực phẩm</option>
+          </select>
+        </div>
 
-      {/* Danh mục */}
-      <div className="mb-3">
-        <label className="form-label">Danh mục</label>
-        <select
-          name="category"
-          className="form-select"
-          value={formData.category}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Chọn danh mục</option>
-          <option value="rau">Rau</option>
-          <option value="củ, quả">Củ, quả</option>
-          <option value="trái cây">Trái cây</option>
-          <option value="thực phẩm">Thực phẩm</option>
-        </select>
-      </div>
+        <div className="form-group">
+          <label className="form-label">Hình ảnh</label>
+          <input
+            type="file"
+            name="image"
+            className="form-input"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+        </div>
 
-      {/* Hình ảnh */}
-      <div className="mb-3">
-        <label className="form-label">Hình ảnh</label>
-        <input
-          type="file"
-          name="image"
-          className="form-control"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
-      </div>
-
-      {/* Nút submit */}
-      <button type="submit" className="btn btn-primary">
-        Thêm sản phẩm
-      </button>
-    </form>
+        <button type="submit" className="action-button submit-button">
+          Thêm sản phẩm
+        </button>
+      </form>
+    </div>
   );
 }
 

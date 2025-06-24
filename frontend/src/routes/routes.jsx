@@ -26,7 +26,7 @@ import OrdersLayout from "../layouts/OrdersLayout"
 import SupplierLayout from "../layouts/SupplierLayout";
 import OrderList from "../pages/OrderList";
 import UserList from "../pages/UserList";
-import RequestUpdateRole from '../pages/RequestUpdateRole/index.jsx';
+import RequestUpgradeRole from '../pages/RequestUpgradeRole/index.jsx';
 import Checkout from '../pages/Checkout';
 import RequestProduct from '../pages/RequestProduct';
 import Orders from '../pages/Orders';
@@ -87,7 +87,7 @@ const publicRoutes = [
   },
   { path: config.routes.orderList, component: OrderList, layout: SupplierLayout },
   { path: config.routes.userList, component: UserList, layout: AdminLayout },
-  { path: config.routes.requestupdaterole, component: RequestUpdateRole, layout: SupplierLayout },
+  { path: config.routes.requestUpgradeRole, component: RequestUpgradeRole, layout: null },
   { path: config.routes.checkout, component: Checkout, layout: null },
   {
     path: config.routes.requestProduct,
@@ -96,7 +96,7 @@ const publicRoutes = [
   },
 
   { path: config.routes.orders, component: Orders, layout: OrdersLayout },
-    { path: config.routes.orderDetail, component: OrderDetail, layout: SupplierLayout },
+  { path: config.routes.orderDetail, component: OrderDetail, layout: SupplierLayout },
   {
     path: config.routes.ordersPending,
     component: OrdersNotPayment,

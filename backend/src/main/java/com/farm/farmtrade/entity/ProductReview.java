@@ -32,6 +32,7 @@ public class ProductReview {
     private String comment;
     private Integer sellerService;
     private Integer deliverySpeed;
+    @Column(columnDefinition = "TEXT")
     private String image;
     private LocalDateTime reviewDate;
 

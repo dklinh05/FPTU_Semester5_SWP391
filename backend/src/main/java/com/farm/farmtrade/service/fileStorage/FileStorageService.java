@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -88,6 +90,31 @@ public class FileStorageService {
         } catch (Exception e) {
             throw new RuntimeException("Lỗi upload file", e);
         }
+    }
+
+    public List<String> uploadReviewImages(List<MultipartFile> files, Integer reviewId) {
+        List<String> urls = new ArrayList<>();
+
+        for (int i = 0; i < files.size(); i++) {
+            MultipartFile file = files.get(i);
+            try {
+                Map<String, Object> uploadResult = cloudinary.uploader().upload(
+                        file.getBytes(),
+                        ObjectUtils.asMap(
+                                "folder", "reviews",
+                                "public_id", "review_" + reviewId + "_" + i,
+                                "overwrite", true
+                        )
+                );
+                urls.add((String) uploadResult.get("secure_url"));
+            } catch (IOException e) {
+                throw new RuntimeException("Lỗi khi đọc file", e);
+            } catch (Exception e) {
+                throw new RuntimeException("Lỗi khi upload file review lên Cloudinary", e);
+            }
+        }
+
+        return urls;
     }
 }
 

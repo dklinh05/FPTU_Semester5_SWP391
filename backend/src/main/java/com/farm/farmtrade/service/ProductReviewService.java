@@ -1,8 +1,7 @@
 package com.farm.farmtrade.service;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.farm.farmtrade.dto.request.ProductReviewRequest.CreateProductReviewRequest;
+import com.farm.farmtrade.dto.request.ProductReviewRequest.UpdateProductReviewRequest;
 import com.farm.farmtrade.entity.Order;
 import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.entity.ProductReview;
@@ -11,15 +10,14 @@ import com.farm.farmtrade.repository.OrderRepository;
 import com.farm.farmtrade.repository.ProductRepository;
 import com.farm.farmtrade.repository.ProductReviewRepository;
 import com.farm.farmtrade.repository.UserRepository;
+import com.farm.farmtrade.service.fileStorage.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
+
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 
 @Service
 public class ProductReviewService {
@@ -32,11 +30,12 @@ public class ProductReviewService {
 
     @Autowired
     private ProductRepository productRepo;
+
     @Autowired
     private OrderRepository orderRepo;
 
     @Autowired
-    private Cloudinary cloudinary;
+    private FileStorageService fileStorageService;
 
     public ProductReview createReview(Integer productId, CreateProductReviewRequest request, String username) {
         Product product = productRepo.findById(productId)
@@ -63,29 +62,20 @@ public class ProductReviewService {
         review.setComment(request.getComment());
         review.setReviewDate(LocalDateTime.now());
 
+        ProductReview savedReview = productReviewRepository.save(review);
+
         if (request.getImage() != null && !request.getImage().isEmpty()) {
-            String imageUrls = saveImagesAndReturnUrlString(request.getImage());
-            review.setImage(imageUrls);
-        }
-
-        return productReviewRepository.save(review);
-    }
-
-    private String saveImagesAndReturnUrlString(List<MultipartFile> files) {
-        List<String> imageUrls = new ArrayList<>();
-
-        for (MultipartFile file : files) {
-            try {
-                Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
-                        ObjectUtils.asMap("resource_type", "auto"));
-                String url = (String) uploadResult.get("secure_url");
-                imageUrls.add(url);
-            } catch (IOException e) {
-                throw new RuntimeException("Lỗi khi upload ảnh lên Cloudinary", e);
+            List<MultipartFile> images = request.getImage();
+            if (images.size() > 5) {
+                images = images.subList(0, 5);
             }
+
+            List<String> imageUrls = fileStorageService.uploadReviewImages(images, savedReview.getReviewID());
+            savedReview.setImage(String.join(";", imageUrls));
+            return productReviewRepository.save(savedReview);
         }
 
-        return String.join(";", imageUrls);
+        return savedReview;
     }
 
     public List<ProductReview> getReviewsByProduct(Integer productId) {
@@ -104,7 +94,8 @@ public class ProductReviewService {
 
         return reviews;
     }
-    public ProductReview updateReview(Integer reviewId, com.farm.farmtrade.dto.request.ProductReviewRequest.UpdateProductReviewRequest request, String username) {
+
+    public ProductReview updateReview(Integer reviewId, UpdateProductReviewRequest request, String username) {
         ProductReview existingReview = productReviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found"));
 
@@ -116,12 +107,19 @@ public class ProductReviewService {
         existingReview.setSellerService(request.getSellerService());
         existingReview.setDeliverySpeed(request.getDeliverySpeed());
         existingReview.setComment(request.getComment());
-        existingReview.setImage(request.getImage());
+
+        if (request.getImage() != null && !request.getImage().isEmpty()) {
+            List<MultipartFile> images = request.getImage();
+            if (images.size() > 5) {
+                images = images.subList(0, 5);
+            }
+            List<String> imageUrls = fileStorageService.uploadReviewImages(images, reviewId);
+            existingReview.setImage(String.join(";", imageUrls));
+        }
 
         return productReviewRepository.save(existingReview);
     }
 
-    // Xóa đánh giá
     public void deleteReview(Integer reviewId, String username) {
         ProductReview existingReview = productReviewRepository.findById(reviewId)
                 .orElseThrow(() -> new RuntimeException("Review not found"));

@@ -1,7 +1,11 @@
 package com.farm.farmtrade.service.email;
 
 
+import com.farm.farmtrade.entity.Order;
+import com.farm.farmtrade.entity.OrderItem;
+import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.enums.NotificationType;
+import com.farm.farmtrade.repository.OrderItemRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AccessLevel;
@@ -14,6 +18,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @NoArgsConstructor
@@ -23,6 +28,8 @@ public class EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
 
 
     public void sendVerificationEmail(String toEmail, String userName, String token) throws MessagingException {
@@ -69,8 +76,9 @@ public class EmailService {
 
         mailSender.send(mimeMessage);
     }
-    public void sendOrderPaymentSuccessEmail(String toEmail, String userName, Integer orderGroupId, BigDecimal amountPaid) throws MessagingException {
-        String htmlContent = buildOrderPaymentSuccessEmail(userName, orderGroupId, amountPaid);
+
+    public void sendOrderPaymentSuccessEmail(String toEmail, String userName, Integer orderGroupId, BigDecimal amountPaid, List<Order> orders) throws MessagingException {
+        String htmlContent = buildOrderPaymentSuccessEmail(userName, orderGroupId, amountPaid, orders);
 
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -137,18 +145,38 @@ public class EmailService {
         return String.format(template, userName, otp);
     }
 
-    private String buildOrderPaymentSuccessEmail(String userName, Integer orderGroupId, BigDecimal amountPaid) {
+    private String buildOrderPaymentSuccessEmail(String userName, Integer orderGroupId, BigDecimal amountPaid, List<Order> orders) {
+        StringBuilder productDetails = new StringBuilder();
+
+        for (Order order : orders) {
+            productDetails.append("<p><strong>Nhà cung cấp:</strong> ").append(order.getSupplier().getFullName()).append("</p>");
+            productDetails.append("<ul>");
+            List<OrderItem> orderItemList= orderItemRepository.findByOrderOrderID(order.getOrderID());
+            for (OrderItem item : orderItemList) {
+                Product product = item.getProduct();
+                productDetails.append("<li>")
+                        .append(product.getName())
+                        .append(" - SL: ").append(item.getQuantity())
+                        .append(" - Đơn giá: ").append(String.format("%,.0f", product.getPrice()))
+                        .append(" VND</li>");
+            }
+            productDetails.append("</ul>");
+        }
+
         String template = """
     <div style="font-family: Arial, sans-serif; line-height: 1.5;">
         <h2 style="color: #28a745;">Xin chào %s,</h2>
         <p>Bạn đã thanh toán thành công cho đơn hàng nhóm <strong>#%d</strong>.</p>
         <p>Số tiền đã thanh toán: <strong>%,.0f VND</strong></p>
+        <p>Chi tiết sản phẩm:</p>
+        %s
         <p>Chúng tôi sẽ sớm xử lý và giao hàng cho bạn trong thời gian sớm nhất.</p>
         <p>Cảm ơn bạn đã sử dụng dịch vụ FarmTrade!</p>
         <p>Trân trọng,<br>Đội ngũ hỗ trợ</p>
     </div>
     """;
-        return String.format(template, userName, orderGroupId, amountPaid);
+
+        return String.format(template, userName, orderGroupId, amountPaid, productDetails.toString());
     }
 
 }

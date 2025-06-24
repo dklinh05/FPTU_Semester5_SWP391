@@ -13,7 +13,6 @@ function RedeemVoucher() {
   const { userId, points } = useUser();
   const [vouchers, setVouchers] = useState([]);
   const [ownedVouchers, setOwnedVouchers] = useState([]);
-
   useEffect(() => {
     if (userId) fetchData();
   }, [userId]);
@@ -54,13 +53,13 @@ function RedeemVoucher() {
       <ShopBanner />
       <div className="container py-5">
         <h2 className="text-center mb-3">
-          Điểm của bạn: <span className="text-success">{points}</span>
+          Your point: <span className="text-success">{points}</span>
         </h2>
-        <h2 className="mb-4 text-center">Danh sách Voucher có thể đổi</h2>
+        <h2 className="mb-4 text-center">List of available vouchers to redeem:</h2>
 
         <div className="row">
           {vouchers.length === 0 ? (
-            <p className="text-center">Hiện không có voucher nào khả dụng.</p>
+            <p className="text-center">No available voucher!.</p>
           ) : (
             vouchers.map((voucher) => (
               <div className="col-md-4 mb-4" key={voucher.voucherID}>
@@ -68,19 +67,21 @@ function RedeemVoucher() {
                   <div className="card-body">
                     <h5 className="card-title">{voucher.name}</h5>
                     <p className="card-text">
-                      Mã: <strong>{voucher.code}</strong>
+                      Code: <strong>{voucher.code}</strong>
                       <br />
-                      Giảm: <strong>{voucher.discountValue}₫</strong>
+                      Description: <strong>{voucher.description}</strong>
                       <br />
-                      Hạn: {voucher.expirationDate}
+                      Discount: <strong>{voucher.discountValue}₫</strong>
                       <br />
-                      Giảm: <strong>{voucher.requiredPoints}₫</strong>
+                      Expiry: {voucher.expirationDate}
+                      <br />
+                      Exchange points: <strong>{voucher.requiredPoints}</strong>
                     </p>
                     <button
                       className="btn btn-primary w-100"
                       onClick={() => handleRedeem(voucher.voucherID)}
                     >
-                      Đổi ngay
+                      Redeem now
                     </button>
                   </div>
                 </div>
@@ -90,10 +91,10 @@ function RedeemVoucher() {
         </div>
         <hr className="my-5" />
 
-        <h3 className="mb-4">Voucher bạn đã sở hữu</h3>
+        <h3 className="mb-4">Vouchers you already own:</h3>
         <div className="row">
           {ownedVouchers.length === 0 ? (
-            <p className="text-center">Bạn chưa sở hữu voucher nào.</p>
+            <p className="text-center">You dont have any voucher!</p>
           ) : (
             ownedVouchers.map((voucher) => (
               <div className="col-md-4 mb-4" key={voucher.userVoucherID}>
@@ -101,13 +102,13 @@ function RedeemVoucher() {
                   <div className="card-body">
                     <h5 className="card-title">{voucher.voucher.name}</h5>
                     <p className="card-text">
-                      Mã: <strong>{voucher.voucher.code}</strong>
+                      Code: <strong>{voucher.voucher.code}</strong>
                       <br />
-                      Giảm: <strong>{voucher.voucher.discountValue}₫</strong>
+                      Discount: <strong>{voucher.voucher.discountValue}₫</strong>
                       <br />
-                      Hạn: {voucher.voucher.expirationDate}
+                      Expiry: {voucher.voucher.expirationDate}
                     </p>
-                    <span className="badge bg-success">Đã sở hữu</span>
+                    <span className="badge bg-success">Owned</span>
                   </div>
                 </div>
               </div>

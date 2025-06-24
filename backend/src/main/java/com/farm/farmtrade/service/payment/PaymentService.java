@@ -59,8 +59,10 @@ public class PaymentService {
                 orderGroup.getBuyer().getEmail(),
                 orderGroup.getBuyer().getFullName(),
                 orderGroup.getOrderGroupID(),
-                orderGroup.getFinalAmount()
+                orderGroup.getFinalAmount(),
+                orderGroup.getOrders()
         );
+
 
     }
     @Transactional
@@ -95,8 +97,10 @@ public class PaymentService {
                 orderGroup.getBuyer().getEmail(),
                 orderGroup.getBuyer().getFullName(),
                 orderGroup.getOrderGroupID(),
-                orderGroup.getFinalAmount()
+                orderGroup.getFinalAmount(),
+                orderGroup.getOrders()
         );
+
 
     }
 
@@ -132,8 +136,10 @@ public class PaymentService {
                 orderGroup.getBuyer().getEmail(),
                 orderGroup.getBuyer().getFullName(),
                 orderGroup.getOrderGroupID(),
-                orderGroup.getFinalAmount()
+                orderGroup.getFinalAmount(),
+                orderGroup.getOrders()
         );
+
 
     }
 }

@@ -14,6 +14,7 @@ function Orders() {
   const [orderItemsMap, setOrderItemsMap] = useState({});
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewedItems, setReviewedItems] = useState({});
   const navigate = useNavigate();
 
   const fetchOrders = async () => {
@@ -42,6 +43,16 @@ function Orders() {
       orderId: orderId,
     });
     setShowReviewModal(true);
+  };
+
+  const handleReviewSuccess = () => {
+    setShowReviewModal(false);
+    if (selectedProduct) {
+      setReviewedItems((prev) => ({
+        ...prev,
+        [`${selectedProduct.orderId}_${selectedProduct.productId}`]: true,
+      }));
+    }
   };
 
   useEffect(() => {
@@ -83,29 +94,38 @@ function Orders() {
                         </div>
 
                         {order.status === "Completed" && (
-                            <Button
-                                size="sm"
-                                variant="outline-success"
-                                className="mt-2"
-                                onClick={() =>
-                                    handleFeedback(order.orderID, {
-                                      productId: item.productId,
-                                      productName: item.productName,
-                                      productImage: item.productImage,
-                                    })
-                                }
-                            >
-                              Đánh giá
-                            </Button>
+                            reviewedItems[`${order.orderID}_${item.productId}`] ? (
+                                <Button
+                                    size="sm"
+                                    variant="outline-secondary"
+                                    className="mt-2"
+                                    disabled
+                                >
+                                  Đã đánh giá
+                                </Button>
+                            ) : (
+                                <Button
+                                    size="sm"
+                                    variant="outline-success"
+                                    className="mt-2"
+                                    onClick={() =>
+                                        handleFeedback(order.orderID, {
+                                          productId: item.productId,
+                                          productName: item.productName,
+                                          productImage: item.productImage,
+                                        })
+                                    }
+                                >
+                                  Đánh giá
+                                </Button>
+                            )
                         )}
                       </div>
                     </div>
                 ))}
 
                 <div className="text-end">
-                  <strong>
-                    Tổng tiền: ₫{order.totalAmount.toLocaleString()}
-                  </strong>
+                  <strong>Tổng tiền: ₫{order.totalAmount.toLocaleString()}</strong>
                 </div>
               </Card.Body>
 
@@ -123,6 +143,7 @@ function Orders() {
                 show={showReviewModal}
                 onHide={() => setShowReviewModal(false)}
                 product={selectedProduct}
+                onSuccess={handleReviewSuccess}
             />
         )}
       </div>

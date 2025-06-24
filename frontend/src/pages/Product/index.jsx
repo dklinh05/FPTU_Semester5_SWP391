@@ -40,12 +40,12 @@ function Product({ product }) {
     const fetchReviews = async () => {
       try {
         const data = await getReviewsByProductId(product.productID);
+        console.log("Reviews fetched:", data);
         setReviews(data);
       } catch (err) {
         console.error("Không thể load đánh giá:", err);
       }
     };
-
     if (product?.productID) fetchReviews();
   }, [product]);
 
@@ -68,8 +68,8 @@ function Product({ product }) {
   };
 
   const average = getAverageRating();
-  const averageRounded = Math.round(average * 10) / 10;
-  const averageDisplay = Math.round(average);
+  // const averageRounded = Math.round(average * 10) / 10;
+  // const averageDisplay = Math.round(average);
 
   return (
       <>
@@ -197,9 +197,9 @@ function Product({ product }) {
                       {rev.comment && <p className="mb-2">{rev.comment}</p>}
 
                       {/* Images */}
-                      {rev.images?.length > 0 && (
+                      {rev.imageList?.length > 0 && (
                           <div className="d-flex gap-2 mt-2">
-                            {rev.images.map((img, i) => (
+                            {rev.imageList.map((img, i) => (
                                 <img
                                     key={i}
                                     src={img}

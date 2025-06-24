@@ -3,6 +3,7 @@ import { Modal, Button, Form } from "react-bootstrap";
 import { Camera } from "lucide-react";
 import { submitReview } from "../../services/feedbackService";
 import styles from "./ReviewModal.module.scss";
+import selectedImages from "lodash";
 
 const renderStars = (value, setValue) =>
     Array.from({ length: 5 }, (_, i) => (
@@ -15,7 +16,7 @@ const renderStars = (value, setValue) =>
     </span>
     ));
 
-function ReviewModal({ show, onHide, product }) {
+function ReviewModal({ show, onHide, product, onSuccess }) {
     const [productQuality, setProductQuality] = useState(0);
     const [sellerService, setSellerService] = useState(0);
     const [deliverySpeed, setDeliverySpeed] = useState(0);
@@ -36,13 +37,16 @@ function ReviewModal({ show, onHide, product }) {
         formData.append("sellerService", sellerService);
         formData.append("deliverySpeed", deliverySpeed);
         formData.append("comment", comment);
-        formData.append("orderId", product.orderId); // 👈 THÊM orderId
-        images.forEach((img) => formData.append("images", img));
+        formData.append("orderId", product.orderId);
+        selectedImages.slice(0, 5).forEach(file => {
+            formData.append("image[]", file);
+        });
 
         try {
             await submitReview(product.productId, formData);
             alert("Đánh giá thành công!");
             onHide();
+            if (onSuccess) onSuccess();
         } catch (error) {
             console.error(error);
             alert("Lỗi khi gửi đánh giá.");

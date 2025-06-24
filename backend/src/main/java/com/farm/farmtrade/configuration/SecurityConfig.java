@@ -38,7 +38,7 @@ public class SecurityConfig {
 
     private final String[] ADMIN_ENDPOINTS = {"/admin/**", "/users", "/admin", "/voucher/**", "/voucher","/users/requests/pending"};
     private final String[] PUBLIC_POST_ENDPOINTS = {"/api/auth/**", "/oauth2/**", "/users/register", "/auth/**", "/orders", "/orders/**", "/voucher", "/voucher/**", "users/request"};
-    private final String[] PUBLIC_GET_ENDPOINTS = {"/auth/**", "/products/**", "/orders", "/orders/**", "/voucher",  "/voucher/**"};
+    private final String[] PUBLIC_GET_ENDPOINTS = {"/auth/**", "/products/**", "/orders", "/orders/**", "/voucher",  "/voucher/**",  "/reviews/**"};
     private final String[] PUBLIC_ENDPOINTS = {"/paypal","/paypal/**","/vnpay","/vnpay/**","/payos","/payos/**"};
     private final String[] CUSTOMER_POST_ENDPOINTS = {
             "/users/request" // Yêu cầu nâng cấp vai trò cần xác thực ROLE_CUSTOMER

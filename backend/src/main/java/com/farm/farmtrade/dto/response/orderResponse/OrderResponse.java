@@ -26,4 +26,5 @@ public class OrderResponse {
     String status;
     BigDecimal totalAmount;
     Integer orderGroupId;
+    String customerName;
 }

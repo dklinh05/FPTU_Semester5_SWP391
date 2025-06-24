@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,5 +34,8 @@ public class ProductReview {
     private Integer deliverySpeed;
     private String image;
     private LocalDateTime reviewDate;
+
+    @Transient
+    private List<String> imageList;
 
 }

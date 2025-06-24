@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/reviews")
@@ -43,4 +44,11 @@ public class ProductReviewController {
         reviewService.deleteReview(reviewId, username);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/product/{productId}")
+    public ResponseEntity<List<ProductReview>> getReviewsByProduct(@PathVariable Integer productId) {
+        List<ProductReview> reviews = reviewService.getReviewsByProduct(productId);
+        return ResponseEntity.ok(reviews);
+    }
+
 }

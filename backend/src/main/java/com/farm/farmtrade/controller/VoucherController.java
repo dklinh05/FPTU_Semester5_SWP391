@@ -67,11 +67,12 @@ public class VoucherController {
     }
 
     /**
-     * Lấy tất cả voucher đã đổi của người dùng
+     * Lấy tất cả voucher đã dùng/chưa dùng của người dùng(đã đổi)
      */
     @GetMapping("/users/{userId}")
     public ResponseEntity<List<UserVoucher>> getAllByUser(@PathVariable String userId) {
-        List<UserVoucher> vouchers = userVoucherService.getVouchersByUser(userId);
+        List<UserVoucher> vouchers = userVoucherService.getUserVouchersByUserAndUsage(Integer.valueOf(userId),false);
         return ResponseEntity.ok(vouchers);
     }
+
 }

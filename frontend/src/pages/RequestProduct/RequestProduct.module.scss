@@ -1,0 +1,114 @@
+// RequestProduct.module.scss
+
+.container {
+  padding: 30px;
+  background-color: #f7f9fc; // Nền chung giống AddProduct
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.titleBlock {
+  font-size: 28px;
+  font-weight: bold;
+  color: #28a745; // Xanh lá như ở AddProduct
+  margin-bottom: 30px;
+  border-bottom: 2px solid #28a745;
+  padding-bottom: 10px;
+  width: fit-content;
+}
+
+.tableContainer {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  overflow-x: auto;
+
+  &:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.table {
+  width: 100%;
+  min-width: 800px;
+  background-color: #fff;
+  border-collapse: collapse;
+
+  thead {
+    background-color: #28a745;
+    color: white;
+
+    th {
+      padding: 1rem;
+      text-align: center;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  tbody {
+    tr {
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #f1f1f1;
+      }
+
+      td {
+        padding: 0.75rem 1rem;
+        text-align: center;
+        vertical-align: middle;
+
+        img {
+          max-width: 100px;
+          border-radius: 6px;
+          transition: transform 0.3s ease;
+
+          &:hover {
+            transform: scale(1.1);
+          }
+        }
+
+        .badge {
+          font-size: 1rem;
+          padding: 0.4em 0.6em;
+        }
+      }
+    }
+  }
+}
+
+.actionButton {
+  padding: 8px 16px;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  margin: 2px;
+
+  &.btnApprove {
+    background-color: #28a745;
+
+    &:hover {
+      background-color: #218838;
+    }
+  }
+
+  &.btnDeny {
+    background-color: #dc3545;
+
+    &:hover {
+      background-color: #c82333;
+    }
+  }
+}
+
+.textCenter {
+  text-align: center;
+}

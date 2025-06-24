@@ -199,7 +199,8 @@ public class OrderGroupService {
         }
 
         // Xoá bản ghi UserVoucher thay vì đánh dấu isUsed = true
-        userVoucherRepository.delete(userVoucher);
+        userVoucher.setIsUsed(true);
+        userVoucherRepository.save(userVoucher);
 
         // Giảm MaxUsage nếu > 0
         if (voucher.getMaxUsage() != null && voucher.getMaxUsage() > 0) {
@@ -219,6 +220,22 @@ public class OrderGroupService {
                 .collect(Collectors.toList());
     }
 
+    // hủy đơn hàng
+    @Transactional
+    public void cancelOrderGroup(Integer orderGroupId) {
+        OrderGroup orderGroup = orderGroupRepository.findById(orderGroupId)
+                .orElseThrow(() -> new IllegalArgumentException("OrderGroup not found with ID: " + orderGroupId));
+
+        if ("CANCELLED".equalsIgnoreCase(orderGroup.getStatus())) {
+            throw new IllegalStateException("OrderGroup is already canceled");
+        }
+        orderGroup.setStatus("CANCELLED");
+        for (Order order : orderGroup.getOrders()) {
+            order.setStatus("CANCELLED");
+            orderRepository.save(order);
+        }
+        orderGroupRepository.save(orderGroup);
+    }
 
 
 }

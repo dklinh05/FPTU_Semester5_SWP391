@@ -34,6 +34,7 @@ function Checkout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log( chooseVoucher?.userVoucherID);
     if (!selectedPaymentMethod) {
       toast.error("Hãy chọn phương thức thanh toán để tiếp tục");
       return;
@@ -68,7 +69,7 @@ function Checkout() {
       await handlePayment(amount, groupId);
     } catch (error) {
       console.error("Lỗi khi tạo đơn hàng:", error);
-      alert("Tạo đơn hàng thất bại.");
+      toast.error(error.message)
     }
   };
 

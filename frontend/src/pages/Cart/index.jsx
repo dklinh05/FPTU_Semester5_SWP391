@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
@@ -19,20 +19,34 @@ function Cart() {
   const chooseCartItems = location.state?.cartItems || [];
   const [ownedVouchers, setOwnedVouchers] = useState([]);
   const [selectedVoucher, setSelectedVoucher] = useState({});
+  const [isUpdate, setIsUpdate] = useState(false);
+
+  const onUpdateQuantity = () => {
+    setIsUpdate((prev) => {
+      console.log(!prev); // sẽ thấy giá trị thay đổi đúng
+      return !prev;
+    });
+  };
 
   const getCarts = () => {
     try {
-      const initialChecked = {};
+      setCheckedItems((prevChecked) => {
+        const updatedChecked = { ...prevChecked };
 
-      carts.forEach((cart) => {
-        initialChecked[cart.cartItemID] = false;
+        // Đảm bảo tất cả cartItemID đều có key
+        carts.forEach((cart) => {
+          if (!(cart.cartItemID in updatedChecked)) {
+            updatedChecked[cart.cartItemID] = false;
+          }
+        });
+
+        // Các cart được chọn từ trước (chooseCartItems) sẽ luôn được chọn
+        chooseCartItems.forEach((cart) => {
+          updatedChecked[cart.cartItemID] = true;
+        });
+
+        return updatedChecked;
       });
-
-      chooseCartItems.forEach((cart) => {
-        initialChecked[cart.cartItemID] = true;
-      });
-
-      setCheckedItems(initialChecked);
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);
     }
@@ -77,12 +91,16 @@ function Cart() {
     setCheckedItems(newChecked);
   };
 
-  // Danh sách item được chọn (dựa trên checkedItems)
-  const selectedItems = carts.filter((cart) => checkedItems[cart.cartItemID]);
+  const selectedItems = useMemo(() => {
+    return carts.filter((cart) => checkedItems[cart.cartItemID]);
+  }, [carts, checkedItems]);
 
-  const total = selectedItems.reduce((total, cart) => {
-    return total + cart.quantity * cart.product.price;
-  }, 0);
+  const calculateTotal = (items) => {
+    return items.reduce(
+      (total, cart) => total + cart.quantity * cart.product.price,
+      0
+    );
+  };
 
   return (
     <div className="container-fluid py-5">
@@ -122,6 +140,7 @@ function Cart() {
                   onCheck={(checked) =>
                     handleCheckItem(cart.cartItemID, checked)
                   }
+                  onUpdate={onUpdateQuantity}
                 />
               ))}
             </tbody>
@@ -139,7 +158,9 @@ function Cart() {
             if (selected) {
               setSelectedVoucher(selected);
             }
-            if (total > selected.voucher.minOrderAmount) {
+            if (
+              calculateTotal(selectedItems) > selected.voucher.minOrderAmount
+            ) {
               setSelectedVoucher(selected);
               toast.success(
                 `Đã áp dụng mã: ${selected.voucher.code} - Giảm ${selected.voucher.discountValue}₫`
@@ -154,11 +175,13 @@ function Cart() {
             <option
               key={voucher.userVoucherID}
               value={voucher.userVoucherID}
-              disabled={total < voucher.voucher.minOrderAmount}
+              disabled={
+                calculateTotal(selectedItems) < voucher.voucher.minOrderAmount
+              }
             >
               {voucher.voucher.code} - Giảm {voucher.voucher.discountValue}₫ cho
               đơn từ {voucher.voucher.minOrderAmount}
-              {total < voucher.voucher.minOrderAmount
+              {calculateTotal(selectedItems) < voucher.voucher.minOrderAmount
                 ? "(Không đủ mức tiền tối thiểu ✖)"
                 : ""}
             </option>
@@ -166,7 +189,11 @@ function Cart() {
         </select>
 
         {/* Cart Total - truyền selectedItems */}
-        <CartTotal carts={selectedItems} voucher={selectedVoucher} />
+        <CartTotal
+          carts={selectedItems}
+          voucher={selectedVoucher}
+        
+        />
       </div>
     </div>
   );

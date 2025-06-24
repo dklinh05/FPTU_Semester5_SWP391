@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState } from "react";
+import React ,{ useEffect, useCallback, useState } from "react";
 import debounce from "lodash/debounce";
 import { useCart } from "../../../context/CartContext";
 import {
@@ -38,9 +38,11 @@ function CartItem({
     debounce((id, newQuantity) => {
       updateQuantityCart({ cartItemId: id, quantity: newQuantity })
         .then((res) => {
+           setReload((prev) => !prev);
           console.log("Debounced Update:", res);
           onDeleted();
         })
+
         .catch((err) => {
           console.error("Debounced error:", err);
         });
@@ -66,21 +68,20 @@ function CartItem({
         body: "Bạn có chắc muốn xóa sản phẩm này?",
         confirmText: "Ok",
         cancelText: "Cancel",
-        onClose: () =>{
+        onClose: () => {
           setLocalQuantity(1);
           setShowPopup(false);
         },
         onConfirm: () => {
           setShowPopup(false);
-          handleDeleteCartItem(); 
+          handleDeleteCartItem();
         },
       });
       setShowPopup(true);
-    } else{
+    } else {
       setLocalQuantity(newQuantity);
-    debouncedUpdateQuantity(id, newQuantity); 
+      debouncedUpdateQuantity(id, newQuantity);
     }
-    
   };
 
   // Gọi khi user blur ra ngoài, để đảm bảo dữ liệu được lưu lại
@@ -106,7 +107,7 @@ function CartItem({
             style={{ transform: "scale(1.3)" }}
           />
         </td>
-  
+
         <th scope="row">
           <div className="d-flex align-items-center">
             <img
@@ -121,7 +122,7 @@ function CartItem({
           <p className="mb-0 mt-4">{name}</p>
         </td>
         <td>
-          <p className="mb-0 mt-4">{price} $</p>
+          <p className="mb-0 mt-4">{price} VND</p>
         </td>
         <td>
           <div className="input-group quantity mt-4" style={{ width: "100px" }}>
@@ -175,4 +176,5 @@ function CartItem({
   );
 }
 
-export default CartItem;
+export default React.memo(CartItem);
+

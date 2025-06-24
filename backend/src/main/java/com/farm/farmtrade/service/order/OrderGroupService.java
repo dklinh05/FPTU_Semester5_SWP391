@@ -198,7 +198,8 @@ public class OrderGroupService {
         }
 
         // Xoá bản ghi UserVoucher thay vì đánh dấu isUsed = true
-        userVoucherRepository.delete(userVoucher);
+        userVoucher.setIsUsed(true);
+        userVoucherRepository.save(userVoucher);
 
         // Giảm MaxUsage nếu > 0
         if (voucher.getMaxUsage() != null && voucher.getMaxUsage() > 0) {

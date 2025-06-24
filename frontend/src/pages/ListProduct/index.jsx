@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import {
   renderProductBySupplierId,
@@ -10,12 +11,22 @@ const ListProduct = () => {
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [sortValue, setSortValue] = useState("createdAt");
   const [products, setProducts] = useState([]);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const status = queryParams.get("status");
 
-  const getProducts = async (sortBy) => {
+
+  const [currentPage, setCurrentPage] = useState(1); // trang đang xem (1-based)
+  const pageSize = 10; // số dòng mỗi trang
+  const [totalItems, setTotalItems] = useState(0); // tổng số đơn hàng
+  const [totalPages, setTotalPages] = useState(0);
+
+  const getProducts = async () => {
     try {
-      const response = await renderProductBySupplierId(userId, sortBy);
+      const response = await renderProductBySupplierId(userId,  status, null, currentPage-1, pageSize);
       setProducts(response.content);
-      console.log("Response:", response);
+      setTotalPages(response.totalPages);
+      setTotalItems(response.totalElements);
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);
     }
@@ -23,12 +34,12 @@ const ListProduct = () => {
 
   useEffect(() => {
     getProducts(sortValue);
-  }, [sortValue, userId]);
+  }, [sortValue, userId, currentPage, pageSize, location.search]);
 
   const handleSelectAll = (e) => {
     const newSelected = new Set();
     if (e.target.checked) {
-      products.forEach((product) => newSelected.add(product.id));
+      products.forEach((product) => newSelected.add(product.productID));
     }
     setSelectedItems(newSelected);
   };
@@ -116,21 +127,30 @@ const ListProduct = () => {
                     >
                       Filter By <i className="fas fa-filter"></i>
                     </a>
-                    <ul
-                      className="dropdown-menu"
-                      aria-labelledby="FilterMenuLink"
+                    <ul className="dropdown-menu" aria-labelledby="FilterMenuLink">
+                  <li>
+                    <Link className="dropdown-item py-2" to={"/listproduct"}>
+                      All
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="dropdown-item py-2"
+                      to={"/listproduct?status=active"}
                     >
-                      <li>
-                        <a className="dropdown-item py-2" href="#">
-                          In Stock
-                        </a>
-                      </li>
-                      <li>
-                        <a className="dropdown-item py-2" href="#">
-                          Out of Stock
-                        </a>
-                      </li>
-                    </ul>
+                      Active
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="dropdown-item py-2"
+                      to={"/listproduct?status=Inactive"}
+                    >
+                      Inactive
+                    </Link>
+                  </li>
+                 
+                </ul>
                   </div>
                 </div>
               </div>
@@ -192,7 +212,7 @@ const ListProduct = () => {
                         <td>{product.productID}</td>
                         <td>
                           <img
-                            src={product.image}
+                            src={product.imageURL}
                             alt="Product"
                             className="p-img-thumbnail"
                             width="50"
@@ -234,42 +254,48 @@ const ListProduct = () => {
               {/* Pagination */}
               <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4">
                 <div>
-                  <p className="text-center text-md-start">
-                    Showing 1 - 20 of 121
-                  </p>
+                  Showing {currentPage}- {totalPages} of {totalItems}
                 </div>
                 <ul className="pagination">
-                  <li>
-                    <a
-                      href="#"
-                      className="pagination-link disabled"
-                      tabIndex="-1"
+                  {/* Previous button */}
+                  <li className={currentPage === 1 ? "disabled" : ""}>
+                    <button
+                      className="pagination-link"
+                      onClick={() =>
+                        currentPage > 1 && setCurrentPage(currentPage - 1)
+                      }
                     >
-                      <i className="fa-solid fa-angle-left"></i>
-                    </a>
+                      &lt;
+                    </button>
                   </li>
-                  <li>
-                    <a href="#" className="pagination-link active">
-                      1
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="pagination-link">
-                      2
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="pagination-link">
-                      3
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="pagination-link">
-                      4
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#" className="pagination-link"></a>
+
+                  {/* Page numbers */}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (pageNum) => (
+                      <li key={pageNum}>
+                        <button
+                          className={`pagination-link ${
+                            pageNum === currentPage ? "active" : ""
+                          }`}
+                          onClick={() => setCurrentPage(pageNum)}
+                        >
+                          {pageNum}
+                        </button>
+                      </li>
+                    )
+                  )}
+
+                  {/* Next button */}
+                  <li className={currentPage === totalPages ? "disabled" : ""}>
+                    <button
+                      className="pagination-link"
+                      onClick={() =>
+                        currentPage < totalPages &&
+                        setCurrentPage(currentPage + 1)
+                      }
+                    >
+                      &gt;
+                    </button>
                   </li>
                 </ul>
               </div>

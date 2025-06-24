@@ -162,6 +162,7 @@ public class OrderService {
                 .status(order.getStatus())
                 .totalAmount(order.getTotalAmount())
                 .orderGroupId(order.getOrderGroup() != null ? order.getOrderGroup().getOrderGroupID() : null)
+                .customerName(order.getBuyer() != null ? order.getBuyer().getFullName() : null)
                 .build();
     }
 
@@ -196,11 +197,12 @@ public class OrderService {
                         order.getOrderID(),
                         order.getBuyer() != null ? order.getBuyer().getUserID() : null,
                         order.getSupplier() != null ? order.getSupplier().getUserID() : null,
-                        order.getSupplier() != null ? order.getSupplier().getFullName(): null,
+                        order.getSupplier() != null ? order.getSupplier().getFullName() : null,
                         order.getOrderDate(),
                         order.getStatus(),
                         order.getTotalAmount(),
-                        order.getOrderGroup().getOrderGroupID()
+                        order.getOrderGroup().getOrderGroupID(),
+                        order.getBuyer().getFullName()
                 ))
                 .collect(Collectors.toList());
     }
@@ -235,15 +237,16 @@ public class OrderService {
 
         return orders.stream()
                 .map(order -> OrderResponse.builder()
-                .orderID(order.getOrderID())
-                .buyerId(order.getBuyer() != null ? order.getBuyer().getUserID() : null)
-                .supplierId(order.getSupplier() != null ? order.getSupplier().getUserID() : null)
-                .orderDate(order.getOrderDate())
-                .status(order.getStatus())
-                .totalAmount(order.getTotalAmount())
-                .orderGroupId(order.getOrderGroup() != null ? order.getOrderGroup().getOrderGroupID() : null)
-                .build()
-        ).collect(Collectors.toList());
+                        .orderID(order.getOrderID())
+                        .buyerId(order.getBuyer() != null ? order.getBuyer().getUserID() : null)
+                        .supplierId(order.getSupplier() != null ? order.getSupplier().getUserID() : null)
+                        .orderDate(order.getOrderDate())
+                        .status(order.getStatus())
+                        .totalAmount(order.getTotalAmount())
+                        .orderGroupId(order.getOrderGroup() != null ? order.getOrderGroup().getOrderGroupID() : null)
+                        .customerName(order.getBuyer() != null ? order.getBuyer().getFullName() : null)
+                        .build()
+                ).collect(Collectors.toList());
     }
 
     public Page<OrderResponse> getOrdersBySupplierId(Integer supplierId, String status, int page, int size, String sortBy) {
@@ -269,10 +272,12 @@ public class OrderService {
                 .status(order.getStatus())
                 .totalAmount(order.getTotalAmount())
                 .orderGroupId(order.getOrderGroup() != null ? order.getOrderGroup().getOrderGroupID() : null)
+                .customerName(order.getBuyer() != null ? order.getBuyer().getFullName() : null)
                 .build());
 
-        return  orderResponses;
+        return orderResponses;
     }
+
     @Transactional
     public void updateOrderStatus(OrderStatusUpdateRequest request) {
         Order order = orderRepository.findById(request.getOrderId())

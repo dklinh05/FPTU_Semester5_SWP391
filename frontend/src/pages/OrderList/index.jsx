@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useUser } from "../../context/UserContext";
-import { renderOrdersBySupplierId } from "../../services/orderService";
+import {
+  renderOrdersBySupplierId,
+  updateStatusOrder,
+} from "../../services/orderService";
+import {formatDate} from "../../utils/formatDate"
+
 
 const OrderList = () => {
   const { userId } = useUser();
@@ -26,16 +32,19 @@ const OrderList = () => {
       setOrders(response.content);
       setTotalPages(response.totalPages);
       setTotalItems(response.totalElements);
-   
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);
     }
   };
 
-  const handleStatusChange = (index, newStatus) => {
-    const updatedOrders = [...orders];
-    updatedOrders[index].status = newStatus;
-    setOrders(updatedOrders);
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const response = await updateStatusOrder(orderId, newStatus, userId);
+      toast.success(response);
+      await getOrders();
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm:", error);
+    }
   };
 
   useEffect(() => {
@@ -119,9 +128,7 @@ const OrderList = () => {
                   <th scope="col" className="py-3">
                     Customer Name
                   </th>
-                  <th scope="col" className="py-3">
-                    Method
-                  </th>
+               
                   <th scope="col" className="py-3">
                     Amount
                   </th>
@@ -141,9 +148,8 @@ const OrderList = () => {
                   <tr key={index}>
                     <td>{order.orderID}</td>
                     <td>{order.buyerId}</td>
-                    <td>{order.method}</td>
                     <td>{order.totalAmount}</td>
-                    <td>{order.orderDate}</td>
+                   <td>{formatDate(order.orderDate)}</td>
                     <td>
                       <span
                         className={`status-badge ${
@@ -161,12 +167,27 @@ const OrderList = () => {
                     </td>
                     <td className="d-flex justify-content-between">
                       <div className="mb-2 w-75">
-                        <button
-                          className="btn btn-outline-success btn-sm"
-                          onClick={() => handleStatusChange(index, "Delivered")}
-                        >
-                          Mark as Delivered
-                        </button>
+                        {order.status === "PAID" && (
+                          <button
+                            className="btn btn-outline-primary btn-sm"
+                            onClick={() =>
+                              handleStatusChange(order.orderID, "PREPARING")
+                            }
+                          >
+                            Mark as Preparing
+                          </button>
+                        )}
+
+                        {order.status === "PREPARING" && (
+                          <button
+                            className="btn btn-outline-success btn-sm"
+                            onClick={() =>
+                              handleStatusChange(order.orderID, "DELIVERED")
+                            }
+                          >
+                            Mark as Delivered
+                          </button>
+                        )}
                       </div>
                       <div className="dropdown w-25">
                         <a

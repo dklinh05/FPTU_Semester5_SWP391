@@ -161,7 +161,7 @@ const Profile = () => {
               <div className="row">
                 <div className="col-md-8">
                   <div className="mb-3">
-                    <label htmlFor="inputUsername" className="form-label">
+                    <label htmlFor="inputUsername" className="form-label text-dark">
                       Username
                     </label>
                     <input
@@ -246,7 +246,7 @@ const Profile = () => {
           <div className="card-body">
             <form onSubmit={handleSave}>
               <div className="mb-3">
-                <label htmlFor="inputFullName" className="form-label">
+                <label htmlFor="inputFullName" className="form-label text-dark">
                   Full Name
                 </label>
                 <input
@@ -259,7 +259,7 @@ const Profile = () => {
               </div>
 
               <div className="mb-3">
-                <label htmlFor="inputEmail" className="form-label">
+                <label htmlFor="inputEmail" className="form-label text-dark">
                   Email
                 </label>
                 <input
@@ -271,7 +271,7 @@ const Profile = () => {
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="inputPhone" className="form-label">
+                <label htmlFor="inputPhone" className="form-label text-dark">
                   Phone
                 </label>
                 <input
@@ -284,7 +284,7 @@ const Profile = () => {
               </div>
 
               <div className="mb-3">
-                <label htmlFor="inputRole" className="form-label">
+                <label htmlFor="inputRole" className="form-label text-dark">
                   Role
                 </label>
                 <input
@@ -297,7 +297,7 @@ const Profile = () => {
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="inputAddress" className="form-label">
+                <label htmlFor="inputAddress" className="form-label text-dark">
                   Address
                 </label>
                 <input
@@ -310,7 +310,7 @@ const Profile = () => {
               </div>
 
               <div className="mb-3">
-                <label htmlFor="inputRewardPoints" className="form-label">
+                <label htmlFor="inputRewardPoints" className="form-label text-dark">
                   Reward Points
                 </label>
                 <input
@@ -323,7 +323,7 @@ const Profile = () => {
               </div>
 
               <div className="mb-3">
-                <label htmlFor="inputTotalSpend" className="form-label">
+                <label htmlFor="inputTotalSpend" className="form-label text-dark">
                   Total Spend (VND)
                 </label>
                 <input
@@ -342,52 +342,7 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Tab Password */}
-      <div className="tab-pane fade" id="password" role="tabpanel">
-        <div className="card">
-          <div className="card-body">
-            <h5 className="card-title">Password</h5>
-            <form>
-              <div className="mb-3">
-                <label htmlFor="inputPasswordCurrent" className="form-label">
-                  Current password
-                </label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="inputPasswordCurrent"
-                />
-                <small>
-                  <a href="#">Forgot your password?</a>
-                </small>
-              </div>
-              <div className="mb-3">
-                <label htmlFor="inputPasswordNew" className="form-label">
-                  New password
-                </label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="inputPasswordNew"
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="inputPasswordNew2" className="form-label">
-                  Verify password
-                </label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="inputPasswordNew2"
-                />
-              </div>
-              <button type="submit" className="btn btn-primary">
-                Save changes
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+
     </div>
   );
 };

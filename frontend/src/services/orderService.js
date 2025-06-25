@@ -57,6 +57,7 @@ export const renderOrderGroupByBuyerId = async (id) => {
     throw error.response?.data || error.message;
   }
 };
+
 export const renderOrdersBySupplierId = async (id, status, page, pageSize) => {
   try {
     const response = await request.get(`/orders/supplier/${id}/orders`, {
@@ -66,6 +67,28 @@ export const renderOrdersBySupplierId = async (id, status, page, pageSize) => {
         size: pageSize || 5, // số phần tử mỗi trang
         sortBy: "orderDate,desc", // sắp xếp
       },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const cancelOrder = async (id) => {
+  try {
+    const response = await request.put(`/orders/cancel/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const updateStatusOrder = async (orderId, newStatus, supplierId) => {
+  try {
+    const response = await request.put(`/orders/update-status`, {
+      orderId,
+      newStatus,
+      supplierId,
     });
     return response.data;
   } catch (error) {

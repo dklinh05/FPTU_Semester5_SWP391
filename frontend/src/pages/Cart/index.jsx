@@ -134,6 +134,7 @@ function Cart() {
                   img={cart.product.imageURL}
                   name={cart.product.name}
                   price={cart.product.price}
+                  unit={cart.product.unit}
                   onDeleted={handleItemDeleted}
                   checked={checkedItems[cart.cartItemID] || false}
                   onCheck={(checked) =>

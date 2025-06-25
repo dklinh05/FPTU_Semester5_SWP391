@@ -4,7 +4,7 @@ import { useUser } from "../../context/UserContext";
 import { renderOrderById, renderOrderItemsByOrderId } from "../../services/orderService";
 import { formatDate } from "../../utils/formatDate"; 
 
-function OrderDetail() {
+function OrderDetailCustomer() {
   const { userId } = useUser();
  const { id } = useParams();
   const [order, setOrder] = useState({});
@@ -116,4 +116,4 @@ useEffect(() => {
   );
 }
 
-export default OrderDetail;
+export default OrderDetailCustomer;

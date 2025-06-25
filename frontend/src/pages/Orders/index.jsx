@@ -23,7 +23,7 @@ function Orders() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewedItems, setReviewedItems] = useState({});
- 
+
   const fetchOrders = async () => {
     try {
       console.log(status);
@@ -39,6 +39,10 @@ function Orders() {
     } catch (error) {
       console.error("Error loading orders:", error);
     }
+  };
+
+  const handleDetailOrder = (id) => {
+    navigate(`/order-information/${id}`);
   };
 
   const handleBuyAgain = async (items) => {
@@ -101,64 +105,68 @@ function Orders() {
             </Badge>
           </Card.Header>
 
-<Card.Body>
-                {orderItemsMap[order.orderID]?.map((item) => (
-                    <div className="d-flex mb-3" key={item.orderItemID}>
-                      <img
-                          src={item.productImage || "https://via.placeholder.com/60"}
-                          alt="item"
-                          width={60}
-                          height={60}
-                          className="me-3"
-                      />
-                      <div>
-                        <div>
-                          <strong>{item.productName}</strong>
-                        </div>
-                        <div className="text-muted">Số lượng: {item.quantity}</div>
-                        <div className="text-muted">
-                          Giá: ₫{item.price.toLocaleString()}
-                        </div>
+          <Card.Body>
+            {orderItemsMap[order.orderID]?.map((item) => (
+              <div className="d-flex mb-3" key={item.orderItemID}>
+                <img
+                  src={item.productImage || "https://via.placeholder.com/60"}
+                  alt="item"
+                  width={60}
+                  height={60}
+                  className="me-3"
+                />
+                <div>
+                  <div>
+                    <strong>{item.productName}</strong>
+                  </div>
+                  <div className="text-muted">Số lượng: {item.quantity}</div>
+                  <div className="text-muted">
+                    Giá: ₫{item.price.toLocaleString()}
+                  </div>
 
-                        {order.status === "Completed" && (
-                            reviewedItems[`${order.orderID}_${item.productId}`] ? (
-                                <Button
-                                    size="sm"
-                                    variant="outline-secondary"
-                                    className="mt-2"
-                                    disabled
-                                >
-                                  Đã đánh giá
-                                </Button>
-                            ) : (
-                                <Button
-                                    size="sm"
-                                    variant="outline-success"
-                                    className="mt-2"
-                                    onClick={() =>
-                                        handleFeedback(order.orderID, {
-                                          productId: item.productId,
-                                          productName: item.productName,
-                                          productImage: item.productImage,
-                                        })
-                                    }
-                                >
-                                  Đánh giá
-                                </Button>
-                            )
-                        )}
-                      </div>
-                    </div>
-                ))}
-
-                <div className="text-end">
-                  <strong>Tổng tiền: ₫{order.totalAmount.toLocaleString()}</strong>
+                  {order.status === "COMPLETED" &&
+                    (reviewedItems[`${order.orderID}_${item.productId}`] ? (
+                      <Button
+                        size="sm"
+                        variant="outline-secondary"
+                        className="mt-2"
+                        disabled
+                      >
+                        Đã đánh giá
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline-success"
+                        className="mt-2"
+                        onClick={() =>
+                          handleFeedback(order.orderID, {
+                            productId: item.productId,
+                            productName: item.productName,
+                            productImage: item.productImage,
+                          })
+                        }
+                      >
+                        Đánh giá
+                      </Button>
+                    ))}
                 </div>
-              </Card.Body>
+              </div>
+            ))}
+
+            <div className="text-end">
+              <strong>Tổng tiền: ₫{order.totalAmount.toLocaleString()}</strong>
+            </div>
+          </Card.Body>
 
           <Card.Footer className="text-end d-flex justify-content-end gap-2">
-            <Button variant="outline-primary">Chi tiết</Button>
-            {(order.status === "Completed" || order.status === "CANCELED") && (
+            <Button
+              variant="outline-primary"
+              onClick={() => handleDetailOrder(order.orderID)}
+            >
+              Chi tiết
+            </Button>
+            {(order.status === "COMPLETED" || order.status === "CANCELLED") && (
               <Button
                 variant="danger"
                 onClick={() => handleBuyAgain(orderItemsMap[order.orderID])}
@@ -166,7 +174,7 @@ function Orders() {
                 Mua lại
               </Button>
             )}
-            {(order.status === "PENDING") && (
+            {order.status === "PENDING" && (
               <Button
                 variant="danger"
                 onClick={() => handleBuyAgain(orderItemsMap[order.orderID])}
@@ -177,16 +185,15 @@ function Orders() {
           </Card.Footer>
         </Card>
       ))}
-        {selectedProduct && (
-            <ReviewModal
-                show={showReviewModal}
-                onHide={() => setShowReviewModal(false)}
-                product={selectedProduct}
-                onSuccess={handleReviewSuccess}
-            />
-        )}
-      </div>
-
+      {selectedProduct && (
+        <ReviewModal
+          show={showReviewModal}
+          onHide={() => setShowReviewModal(false)}
+          product={selectedProduct}
+          onSuccess={handleReviewSuccess}
+        />
+      )}
+    </div>
   );
 }
 

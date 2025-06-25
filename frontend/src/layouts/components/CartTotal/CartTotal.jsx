@@ -17,7 +17,7 @@ function CartTotal({ carts, voucher }) {
     return carts.reduce((sum, cart) => sum + cart.quantity * cart.product.price, 0);
   }, [carts]);
 
-  const shippingFee = 3;
+  const shippingFee = 30000;
   const discount = voucher?.voucher?.discountValue ?? 0;
   const total = subtotal + shippingFee - discount;
 

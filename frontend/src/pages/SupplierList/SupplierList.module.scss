@@ -1,0 +1,89 @@
+.main-content {
+  padding: 2rem 1.5rem;
+}
+
+.card-service-section {
+  background-color: forestgreen;
+  border-radius: 12px;
+}
+
+.bg-teal {
+  background-color: forestgreen;
+  color: white;
+}
+
+.search-box {
+  max-width: 400px;
+}
+
+.search-box input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.search-box input {
+  background-color: transparent;
+  color: white;
+  font-size: 1rem;
+}
+
+.product-section .card {
+  border-radius: 12px;
+}
+
+.product-section h5 {
+  color: forestgreen;
+}
+
+.table th {
+  background-color: #e6ffe6; /* forestgreen nhạt */
+  color: #333;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.table .btn-sm {
+  background-color: transparent;
+  color: forestgreen;
+  border: none;
+}
+
+.table .btn-sm:hover {
+  color: #1a6f1a; /* forestgreen tối hơn một chút */
+}
+
+.table .dropdown-item {
+  color: forestgreen;
+}
+
+.table .dropdown-item:hover {
+  background-color: #e6ffe6;
+  color: #1a6f1a;
+}
+
+.badge.bg-success {
+  background-color: #ccffcc;
+  color: green;
+}
+
+.badge.bg-danger {
+  background-color: #ffe6e6;
+  color: red;
+}
+
+.badge.bg-secondary {
+  background-color: #f2f2f2;
+  color: #666;
+}
+
+
+.background-wrapper {
+  width: 80vw;
+  min-height: 100vh;
+  background: url('/img/hero-img.jpg') no-repeat center center fixed;
+  background-size: cover;
+
+}

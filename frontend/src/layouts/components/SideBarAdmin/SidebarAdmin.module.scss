@@ -1,0 +1,151 @@
+$primary-color: forestgreen;
+$background-color: #fff;
+$text-color: #333;
+$hover-bg: forestgreen;
+$hover-text: #fff;
+
+.sidebar {
+  background-color: $background-color;
+  color: $text-color;
+  width: 287.5px; // Tăng 15% từ 250px => 250 * 1.15 = 287.5
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  transition: all 0.3s ease-in-out;
+  z-index: 1000;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+
+  &.collapsed {
+    width: 92px; // tương ứng tăng 15% từ 80px
+  }
+}
+
+.collapse-sidebar {
+  position: absolute;
+  right: -20px;
+  top: 60px;
+  background: $primary-color;
+  border-radius: 50%;
+  padding: 5px 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: none;
+
+  &:hover {
+    background: $primary-color; // Bỏ darken, giữ nguyên màu
+  }
+
+  i {
+    color: white;
+  }
+}
+
+.sidebar-header {
+  padding: 1.5rem 1rem 1rem 1rem;
+  text-align: center;
+
+  .lg-logo a span {
+    font-size: 1.5rem; // Làm chữ to hơn
+    font-weight: 700;   // Nổi bật hơn
+    color: $primary-color; // Màu chủ đạo forestgreen
+    text-decoration: none;
+    display: inline-block;
+    transition: color 0.3s ease;
+  }
+
+  .lg-logo a:hover span {
+    color: $primary-color;
+  }
+}
+
+.sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 0;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  .sidebar-label {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    color: #777;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    color: $text-color;
+    transition: background 0.3s, color 0.3s;
+
+    i {
+      margin-right: 10px;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    &:hover {
+      background-color: $hover-bg;
+      color: $hover-text;
+    }
+  }
+
+  .submenu-parent {
+    position: relative;
+  }
+
+  .right-icon {
+    position: absolute;
+    right: 1.5rem;
+    transition: transform 0.3s ease;
+    color: inherit;
+  }
+
+  .open .right-icon {
+    transform: rotate(180deg);
+  }
+
+  .sidebar-submenu {
+    list-style: none;
+    padding-left: 30px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+
+    &.open {
+      max-height: 200px;
+    }
+
+    li a {
+      display: block;
+      padding: 0.5rem 0;
+      color: $text-color;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    li a:hover {
+      color: $hover-text;
+      background-color: $hover-bg;
+      border-radius: 4px;
+      padding-left: 10px;
+    }
+  }
+}

@@ -136,7 +136,7 @@ function Orders() {
 
           <Card.Footer className="text-end d-flex justify-content-end gap-2">
             <Button variant="outline-primary">Chi tiết</Button>
-            {(order.status === "COMPLETED" || order.status === "CANCELED") && (
+            {(order.status === "Completed" || order.status === "CANCELED") && (
               <Button
                 variant="danger"
                 onClick={() => handleBuyAgain(orderItemsMap[order.orderID])}

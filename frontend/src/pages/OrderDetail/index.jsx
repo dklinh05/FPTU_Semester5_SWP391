@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import { renderOrderById, renderOrderItemsByOrderId } from "../../services/orderService";
+import { formatDate } from "../../utils/formatDate"; 
 
 function OrderDetail() {
   const { userId } = useUser();
@@ -54,7 +55,7 @@ useEffect(() => {
               </p>
               <p>
                 <strong>Order Date:</strong>{" "}
-                {new Date(order.orderDate).toLocaleString()}
+                {formatDate(order.orderDate)}
               </p>
               <p>
                 {/* <strong>Payment Method:</strong> {order.method} */}

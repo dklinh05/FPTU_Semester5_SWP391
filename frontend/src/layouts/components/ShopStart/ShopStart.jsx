@@ -10,18 +10,30 @@ function ShopStart() {
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState("");
 
+  const [currentPage, setCurrentPage] = useState(1); // trang đang xem (1-based)
+  const pageSize = 12; // số dòng mỗi trang
+  const [totalItems, setTotalItems] = useState(0); // tổng số đơn hàng
+  const [totalPages, setTotalPages] = useState(0);
+
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const response = await renderProductByCategory(category);
+        const response = await renderProductByCategory(
+          category,
+          null,
+          null,
+          currentPage - 1,
+          pageSize
+        );
         setProducts(response.content);
-        console.log("Response:", response.content);
+        setTotalPages(response.totalPages);
+        setTotalItems(response.totalElements);
       } catch (error) {
         console.error("Lỗi khi lấy sản phẩm:", error);
       }
     };
     getProducts();
-  }, [category]);
+  }, [category,currentPage, pageSize, location.search]);
 
   return (
     <div className="container-fluid fruite py-5">
@@ -35,9 +47,11 @@ function ShopStart() {
               <ul className="nav nav-pills d-inline-flex text-center mb-5">
                 <li className="nav-item">
                   <a
-                    className={`d-flex m-2 py-2 bg-light rounded-pill ${category === "" ? "active" : ""}`}
+                    className={`d-flex m-2 py-2 bg-light rounded-pill ${
+                      category === "" ? "active" : ""
+                    }`}
                     data-bs-toggle="pill"
-                     onClick={() => setCategory("")}
+                    onClick={() => setCategory("")}
                   >
                     <span className="text-dark" style={{ width: "130px" }}>
                       All Products
@@ -46,7 +60,9 @@ function ShopStart() {
                 </li>
                 <li className="nav-item">
                   <a
-                    className={`d-flex m-2 py-2 bg-light rounded-pill ${category === "Rau" ? "active" : ""}`}
+                    className={`d-flex m-2 py-2 bg-light rounded-pill ${
+                      category === "Rau" ? "active" : ""
+                    }`}
                     data-bs-toggle="pill"
                     onClick={() => setCategory("Rau")}
                   >
@@ -57,7 +73,9 @@ function ShopStart() {
                 </li>
                 <li className="nav-item">
                   <a
-                    className={`d-flex m-2 py-2 bg-light rounded-pill ${category === "Củ, quả" ? "active" : ""}`}
+                    className={`d-flex m-2 py-2 bg-light rounded-pill ${
+                      category === "Củ, quả" ? "active" : ""
+                    }`}
                     data-bs-toggle="pill"
                     onClick={() => setCategory("Củ, quả")}
                   >
@@ -68,7 +86,9 @@ function ShopStart() {
                 </li>
                 <li className="nav-item">
                   <a
-                    className={`d-flex m-2 py-2 bg-light rounded-pill ${category === "Trái cây" ? "active" : ""}`}
+                    className={`d-flex m-2 py-2 bg-light rounded-pill ${
+                      category === "Trái cây" ? "active" : ""
+                    }`}
                     data-bs-toggle="pill"
                     onClick={() => setCategory("Trái cây")}
                   >
@@ -79,7 +99,9 @@ function ShopStart() {
                 </li>
                 <li className="nav-item">
                   <a
-                    className={`d-flex m-2 py-2 bg-light rounded-pill ${category === "Thực phẩm" ? "active" : ""}`}
+                    className={`d-flex m-2 py-2 bg-light rounded-pill ${
+                      category === "Thực phẩm" ? "active" : ""
+                    }`}
                     data-bs-toggle="pill"
                     onClick={() => setCategory("Thực phẩm")}
                   >
@@ -119,12 +141,54 @@ function ShopStart() {
                 </div>
               </div>
             </div>
-            <div id="tab-2" className="tab-pane fade show p-0"></div>
-            <div id="tab-3" className="tab-pane fade show p-0"></div>
-            <div id="tab-4" className="tab-pane fade show p-0"></div>
-            <div id="tab-5" className="tab-pane fade show p-0"></div>
+            {/* Pagination */}
+            <div className="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4">
+              <div>
+                Showing {currentPage}- {totalPages} of {totalItems}
+              </div>
+              <ul className="pagination">
+                {/* Previous button */}
+                <li className={currentPage === 1 ? "disabled" : ""}>
+                  <button
+                    className="pagination-link"
+                    onClick={() =>
+                      currentPage > 1 && setCurrentPage(currentPage - 1)
+                    }
+                  >
+                    &lt;
+                  </button>
+                </li>
 
-            {/* Các tab khác (tab-2, tab-3...) có thể thêm tương tự ở đây */}
+                {/* Page numbers */}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (pageNum) => (
+                    <li key={pageNum}>
+                      <button
+                        className={`pagination-link ${
+                          pageNum === currentPage ? "active" : ""
+                        }`}
+                        onClick={() => setCurrentPage(pageNum)}
+                      >
+                        {pageNum}
+                      </button>
+                    </li>
+                  )
+                )}
+
+                {/* Next button */}
+                <li className={currentPage === totalPages ? "disabled" : ""}>
+                  <button
+                    className="pagination-link"
+                    onClick={() =>
+                      currentPage < totalPages &&
+                      setCurrentPage(currentPage + 1)
+                    }
+                  >
+                    &gt;
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

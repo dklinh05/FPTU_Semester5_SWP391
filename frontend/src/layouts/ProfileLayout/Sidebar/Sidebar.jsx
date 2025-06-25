@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+
 import styles from "./Sidebar.module.scss";
 
 function Sidebar() {
@@ -10,30 +12,36 @@ function Sidebar() {
       </div>
 
       <div className="list-group list-group-flush" role="tablist">
-        <Link
-          className="list-group-item list-group-item-action active"
-          data-bs-toggle="list"
+        <NavLink
           to="/profile"
+          className={({ isActive }) =>
+            `list-group-item list-group-item-action ${isActive ? "active" : ""}`
+          }
           role="tab"
         >
           Account
-        </Link>
-        <Link
-          className="list-group-item list-group-item-action"
-          data-bs-toggle="list"
+        </NavLink>
+
+        <NavLink
           to="/change-password"
+          className={({ isActive }) =>
+            `list-group-item list-group-item-action ${isActive ? "active" : ""}`
+          }
           role="tab"
         >
           Password
-        </Link>
-        <a
-          className="list-group-item list-group-item-action"
-          data-bs-toggle="list"
-          href="#web-notifications"
+        </NavLink>
+
+        <NavLink
+          to="/orders"
+          className={({ isActive }) =>
+            `list-group-item list-group-item-action ${isActive ? "active" : ""}`
+          }
           role="tab"
         >
           My purchase
-        </a>
+        </NavLink>
+
         <a
           className="list-group-item list-group-item-action"
           data-bs-toggle="list"

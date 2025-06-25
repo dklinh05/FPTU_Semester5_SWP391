@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { Button, Card, Spinner, Badge } from "react-bootstrap";
 import { useUser } from "../../context/UserContext";
 import {
-  renderOrderByBuyerId,
+  cancelOrder,
   renderOrderItemsByOrderId,
   renderOrderGroupByBuyerId,
   renderOrdersByOrderGroupId,
@@ -11,6 +12,7 @@ import { createPayment } from "../../services/paymentService";
 
 function OrdersNotPayment() {
   const { userId } = useUser();
+  const [cancelTrigger, setCancelTrigger] = useState(0);
   const [orderGroupsData, setOrderGroupsData] = useState([]);
 
   const fetchOrders = async () => {
@@ -48,11 +50,21 @@ function OrdersNotPayment() {
     }
   };
 
-  useEffect(() => {
-    if (userId) {
-      fetchOrders();
-    }
-  }, [userId]);
+  const handleCancelOrder = async (id) => {
+  try {
+    const response = await cancelOrder(id);
+    toast.success(response);
+    setCancelTrigger(prev => prev + 1);  // Tăng để đảm bảo luôn thay đổi
+  } catch (error) {
+    console.error("Lỗi khi huỷ đơn hàng:", error);
+  }
+};
+
+useEffect(() => {
+  if (userId) {
+    fetchOrders();
+  }
+}, [userId, cancelTrigger]);
 
   return (
     <div className="container mt-4">
@@ -104,25 +116,28 @@ function OrdersNotPayment() {
                   </strong>
                 </div>
               </Card.Body>
-              
             </Card>
           ))}
           <Card.Footer className="text-end">
-                <Button variant="outline-primary" className="me-2">
-                  Chi tiết
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() =>
-                    handlePayment(
-                      group.finalAmount,
-                      group.orderGroupID
-                    )
-                  }
-                >
-                  Thanh toán
-                </Button>
-              </Card.Footer>
+            <Button variant="outline-primary" className="me-2">
+              Chi tiết
+            </Button>
+            <Button
+              variant="primary"
+              className="me-2"
+              onClick={() => handleCancelOrder(group.orderGroupID)}
+            >
+              Hủy
+            </Button>
+            <Button
+              variant="danger"
+              onClick={() =>
+                handlePayment(group.finalAmount, group.orderGroupID)
+              }
+            >
+              Thanh toán
+            </Button>
+          </Card.Footer>
         </Card>
       ))}
     </div>

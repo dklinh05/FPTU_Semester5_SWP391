@@ -1,0 +1,110 @@
+.card-service-section {
+  background-color: #28a745;
+  border-radius: 12px;
+
+  .bg-teal {
+    background-color: #28a745;
+    color: white;
+  }
+
+  .search-box {
+    max-width: 400px;
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+}
+
+.product-section {
+  .card {
+    border-radius: 12px;
+    .card-body {
+      h5 {
+        color: #28a745;
+      }
+    }
+  }
+
+  table {
+    th {
+      background-color: #e6ffe6;
+      color: #333;
+      font-weight: bold;
+      vertical-align: middle;
+    }
+
+    td {
+      vertical-align: middle;
+    }
+
+    .p-img-thumbnail {
+      width: 50px;
+      height: auto;
+      border-radius: 6px;
+    }
+
+    .custom-checkbox {
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 14px;
+      &.status-success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      &.status-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    }
+
+    .btn-sm {
+      background-color: transparent;
+      color: #28a745;
+      border: none;
+      &:hover {
+        color: darken(#28a745, 10%);
+      }
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+
+  li {
+    margin: 0 4px;
+  }
+
+  .pagination-link {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: #e9ecef;
+    }
+
+    &.active {
+      background-color: #28a745;
+      color: white;
+      border-color: #28a745;
+    }
+
+    &[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

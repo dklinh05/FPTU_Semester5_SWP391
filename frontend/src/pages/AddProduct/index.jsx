@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import styles from "./AddProduct.module.scss"; // Import CSS Module
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import { addProduct } from "../../services/productService";
-import './AddProduct.scss';
 
 function AddProduct() {
   const { userId } = useUser();
@@ -49,11 +49,11 @@ function AddProduct() {
     if (formData.image) {
       productData.append("image", formData.image);
     }
-    console.log(userId);
+
     try {
       const response = await addProduct(productData);
       toast.success("Thêm sản phẩm thành công! Yêu cầu duyệt sẽ được gửi đến admin.");
-      navigate("/listproduct")
+      navigate("/listproduct");
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm:", error);
       alert("Thêm sản phẩm thất bại.");
@@ -61,117 +61,119 @@ function AddProduct() {
   };
 
   return (
-    <div className="add-product-container">
-      <h2 className="title-block">Thêm Sản Phẩm Mới</h2>
-      <form onSubmit={handleSubmit} className="add-product-form" encType="multipart/form-data">
-        <div className="form-group">
-          <label className="form-label">Tên sản phẩm</label>
-          <input
-            type="text"
-            name="name"
-            className="form-input"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
+    <div className={styles["background-wrapper"]}>
+      <div className={styles["add-product-container"]}>
+        <h2 className={styles["title-block"]}>Thêm Sản Phẩm Mới</h2>
+        <form onSubmit={handleSubmit} className={styles["add-product-form"]} encType="multipart/form-data">
+          <div className={styles["form-group"]}>
+            <label className={styles["form-label"]}>Tên sản phẩm</label>
+            <input
+              type="text"
+              name="name"
+              className={styles["form-input"]}
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label className="form-label">Mô tả</label>
-          <textarea
-            name="description"
-            className="form-textarea"
-            rows="4"
-            value={formData.description}
-            onChange={handleChange}
-          ></textarea>
-        </div>
+          <div className={styles["form-group"]}>
+            <label className={styles["form-label"]}>Mô tả</label>
+            <textarea
+              name="description"
+              className={styles["form-textarea"]}
+              rows="4"
+              value={formData.description}
+              onChange={handleChange}
+            ></textarea>
+          </div>
 
-        <div className="form-group">
-          <label className="form-label">Giá</label>
-          <input
-            type="number"
-            name="price"
-            className="form-input"
-            value={formData.price}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div className={styles["form-group"]}>
+            <label className={styles["form-label"]}>Giá</label>
+            <input
+              type="number"
+              name="price"
+              className={styles["form-input"]}
+              value={formData.price}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label className="form-label">Đơn vị</label>
-          <select
-            name="unit"
-            className="form-select"
-            value={formData.unit}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Chọn đơn vị</option>
-            <option value="kg">kg</option>
-            <option value="g">g</option>
-            <option value="cái">cái</option>
-            <option value="chục">chục</option>
-          </select>
-        </div>
+          <div className={styles["form-group"]}>
+            <label className={styles["form-label"]}>Đơn vị</label>
+            <select
+              name="unit"
+              className={styles["form-select"]}
+              value={formData.unit}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Chọn đơn vị</option>
+              <option value="kg">kg</option>
+              <option value="g">g</option>
+              <option value="cái">cái</option>
+              <option value="chục">chục</option>
+            </select>
+          </div>
 
-        <div className="form-group">
-          <label className="form-label">Số lượng tồn kho</label>
-          <input
-            type="number"
-            name="stockQuantity"
-            className="form-input"
-            value={formData.stockQuantity}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div className={styles["form-group"]}>
+            <label className={styles["form-label"]}>Số lượng tồn kho</label>
+            <input
+              type="number"
+              name="stockQuantity"
+              className={styles["form-input"]}
+              value={formData.stockQuantity}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label className="form-label">Xuất xứ</label>
-          <input
-            type="text"
-            name="origin"
-            className="form-input"
-            value={formData.origin}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div className={styles["form-group"]}>
+            <label className={styles["form-label"]}>Xuất xứ</label>
+            <input
+              type="text"
+              name="origin"
+              className={styles["form-input"]}
+              value={formData.origin}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label className="form-label">Danh mục</label>
-          <select
-            name="category"
-            className="form-select"
-            value={formData.category}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Chọn danh mục</option>
-            <option value="rau">Rau</option>
-            <option value="củ, quả">Củ, quả</option>
-            <option value="trái cây">Trái cây</option>
-            <option value="thực phẩm">Thực phẩm</option>
-          </select>
-        </div>
+          <div className={styles["form-group"]}>
+            <label className={styles["form-label"]}>Danh mục</label>
+            <select
+              name="category"
+              className={styles["form-select"]}
+              value={formData.category}
+              onChange={handleChange}
+              required
+            >
+              <option value="">Chọn danh mục</option>
+              <option value="rau">Rau</option>
+              <option value="củ, quả">Củ, quả</option>
+              <option value="trái cây">Trái cây</option>
+              <option value="thực phẩm">Thực phẩm</option>
+            </select>
+          </div>
 
-        <div className="form-group">
-          <label className="form-label">Hình ảnh</label>
-          <input
-            type="file"
-            name="image"
-            className="form-input"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-        </div>
+          <div className={styles["form-group"]}>
+            <label className={styles["form-label"]}>Hình ảnh</label>
+            <input
+              type="file"
+              name="image"
+              className={styles["form-input"]}
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+          </div>
 
-        <button type="submit" className="action-button submit-button">
-          Thêm sản phẩm
-        </button>
-      </form>
+          <button type="submit" className={styles["action-button"] + " " + styles["submit-button"]}>
+            Thêm sản phẩm
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

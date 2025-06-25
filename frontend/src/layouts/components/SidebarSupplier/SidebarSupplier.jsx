@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import "./SidebarSupplier.module.scss"; // Tạo file CSS riêng
-
+import styles from "./SidebarSupplier.module.scss"; // Dùng CSS Module
 
 function SidebarSupplier() {
   const [activeSubmenu, setActiveSubmenu] = useState(null);
@@ -9,35 +8,30 @@ function SidebarSupplier() {
   const toggleSubmenu = (index) => {
     setActiveSubmenu(activeSubmenu === index ? null : index);
   };
+
   return (
-    <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
+    <div className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""}`}>
       <div
-        className="collapse-sidebar d-none d-lg-block"
+        className={styles["collapse-sidebar"]}
         onClick={() => setCollapsed(!collapsed)}
       >
         <span>
           <i className="fa-solid fa-chevron-left"></i>
         </span>
       </div>
-
-      <div className="sidebar-header">
-        <div className="lg-logo">
-          <a href="index.html">
-            <img src="./assets/images/logo.png" alt="logo large" />
-          </a>
-        </div>
-        <div className="sm-logo">
-          <a href="index.html">
-            <img src="./assets/images/sm-logo.png" alt="logo small" />
+      <div className={styles["sidebar-header"]}>
+        <div className={styles["lg-logo"]}>
+          <a href="http://localhost:5173/">
+            <span>FramTrade Supplier</span>
           </a>
         </div>
       </div>
 
-      <div className="sidebar-body custom-scrollbar">
-        <ul className="sidebar-menu">
-          <li className="sidebar-label">Menu</li>
+      <div className={styles["sidebar-body"] + " custom-scrollbar"}>
+        <ul className={styles["sidebar-menu"]}>
+          <li className={styles["sidebar-label"]}>Menu</li>
           <li>
-            <a href="/dashboard-supplier" className="text-black sidebar-link">
+            <a href="/dashboard-supplier" className={styles["sidebar-link"]}>
               <i className="fa-solid fa-house"></i>
               <p>Dashboard</p>
             </a>
@@ -47,7 +41,7 @@ function SidebarSupplier() {
           <li>
             <a
               href="#"
-              className="text-black sidebar-link submenu-parent"
+              className={`${styles["sidebar-link"]} ${styles["submenu-parent"]}`}
               onClick={(e) => {
                 e.preventDefault();
                 toggleSubmenu(2);
@@ -56,23 +50,24 @@ function SidebarSupplier() {
               <i className="fa-brands fa-microsoft"></i>
               <p>
                 Product Management{" "}
-                <i className="fa-solid fa-angle-down right-icon"></i>
+                <i className={`fa-solid fa-angle-down ${styles["right-icon"]}`}></i>
               </p>
             </a>
             <ul
-              className={`sidebar-submenu ${activeSubmenu === 2 ? "open" : ""}`}
+              className={`${styles["sidebar-submenu"]} ${
+                activeSubmenu === 2 ? styles.open : ""
+              }`}
             >
               <li>
-                <a href="/addproduct" className="submenu-link">
+                <a href="/addproduct" className={styles["submenu-link"]}>
                   Add
                 </a>
               </li>
               <li>
-                <a href="/listproduct" className="submenu-link">
+                <a href="/listproduct" className={styles["submenu-link"]}>
                   List
                 </a>
               </li>
-             
             </ul>
           </li>
 
@@ -80,7 +75,7 @@ function SidebarSupplier() {
           <li>
             <a
               href="#"
-              className="text-black sidebar-link submenu-parent"
+              className={`${styles["sidebar-link"]} ${styles["submenu-parent"]}`}
               onClick={(e) => {
                 e.preventDefault();
                 toggleSubmenu(3);
@@ -88,30 +83,33 @@ function SidebarSupplier() {
             >
               <i className="fa-solid fa-bucket"></i>
               <p>
-                Order <i className="fa-solid fa-angle-down right-icon"></i>
+                Order{" "}
+                <i className={`fa-solid fa-angle-down ${styles["right-icon"]}`}></i>
               </p>
             </a>
             <ul
-              className={`sidebar-submenu ${activeSubmenu === 3 ? "open" : ""}`}
+              className={`${styles["sidebar-submenu"]} ${
+                activeSubmenu === 3 ? styles.open : ""
+              }`}
             >
               <li>
-                <a href="/orderlist" className="submenu-link">
+                <a href="/orderlist" className={styles["submenu-link"]}>
                   List
                 </a>
               </li>
             </ul>
           </li>
-          
-          <li className="sidebar-label">Other</li>
+
+          <li className={styles["sidebar-label"]}>Other</li>
 
           <li>
-            <a href="#" className="text-black sidebar-link">
+            <a href="#" className={styles["sidebar-link"]}>
               <i className="fa-regular fa-message"></i>
               <p>Message</p>
             </a>
           </li>
           <li>
-            <a href="#" className="text-black sidebar-link">
+            <a href="#" className={styles["sidebar-link"]}>
               <i className="fa-solid fa-phone"></i>
               <p>Help & Support</p>
             </a>

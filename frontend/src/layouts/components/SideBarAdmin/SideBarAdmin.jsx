@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./SidebarAdmin.scss"; // Tạo file CSS riêng
+import styles from "./SidebarAdmin.module.scss";
 
 const SidebarAdmin = () => {
   const [activeSubmenu, setActiveSubmenu] = useState(null);
@@ -10,31 +10,29 @@ const SidebarAdmin = () => {
   };
 
   return (
-    <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
-      <div className="collapse-sidebar d-none d-lg-block" onClick={() => setCollapsed(!collapsed)}>
+    <div className={`${styles.sidebar} ${collapsed ? styles.collapsed : ""}`}>
+      <div
+        className={styles["collapse-sidebar"]}
+        onClick={() => setCollapsed(!collapsed)}
+      >
         <span>
           <i className="fa-solid fa-chevron-left"></i>
         </span>
       </div>
 
-      <div className="sidebar-header">
-        <div className="lg-logo">
-          <a href="index.html">
-            <img src="./assets/images/logo.png" alt="logo large" />
-          </a>
-        </div>
-        <div className="sm-logo">
-          <a href="index.html">
-            <img src="./assets/images/sm-logo.png" alt="logo small" />
+      <div className={styles["sidebar-header"]}>
+        <div className={styles["lg-logo"]}>
+          <a href="http://localhost:5173/">
+            <span>FramTrade Admin</span>
           </a>
         </div>
       </div>
 
-      <div className="sidebar-body custom-scrollbar">
-        <ul className="sidebar-menu">
-          <li className="sidebar-label">Menu</li>
+      <div className={`${styles["sidebar-body"]} custom-scrollbar`}>
+        <ul className={styles["sidebar-menu"]}>
+          <li className={styles["sidebar-label"]}>Menu</li>
           <li>
-            <a href="/dashboard" className="text-black sidebar-link">
+            <a href="/dashboard" className={`${styles["sidebar-link"]} text-black`}>
               <i className="fa-solid fa-house"></i>
               <p>Dashboard</p>
             </a>
@@ -44,7 +42,7 @@ const SidebarAdmin = () => {
           <li>
             <a
               href="#"
-              className="text-black sidebar-link submenu-parent"
+              className={`${styles["sidebar-link"]} ${styles["submenu-parent"]} text-black`}
               onClick={(e) => {
                 e.preventDefault();
                 toggleSubmenu(2);
@@ -52,22 +50,27 @@ const SidebarAdmin = () => {
             >
               <i className="fa-brands fa-microsoft"></i>
               <p>
-                Product Management <i className="fa-solid fa-angle-down right-icon"></i>
+                Product Management{" "}
+                <i className={`fa-solid fa-angle-down ${styles["right-icon"]}`}></i>
               </p>
             </a>
-            <ul className={`sidebar-submenu ${activeSubmenu === 2 ? "open" : ""}`}>
+            <ul
+              className={`${styles["sidebar-submenu"]} ${
+                activeSubmenu === 2 ? styles.open : ""
+              }`}
+            >
               <li>
-                <a href="/addproduct" className="submenu-link">
+                <a href="/addproduct" className={styles["submenu-link"]}>
                   Add
                 </a>
               </li>
               <li>
-                <a href="/listproduct" className="submenu-link">
+                <a href="/listproduct" className={styles["submenu-link"]}>
                   List
                 </a>
               </li>
               <li>
-                <a href="/requestproduct" className="submenu-link">
+                <a href="/requestproduct" className={styles["submenu-link"]}>
                   Request Product
                 </a>
               </li>
@@ -78,7 +81,7 @@ const SidebarAdmin = () => {
           <li>
             <a
               href="#"
-              className="text-black sidebar-link submenu-parent"
+              className={`${styles["sidebar-link"]} ${styles["submenu-parent"]} text-black`}
               onClick={(e) => {
                 e.preventDefault();
                 toggleSubmenu(3);
@@ -86,12 +89,17 @@ const SidebarAdmin = () => {
             >
               <i className="fa-solid fa-bucket"></i>
               <p>
-                Order <i className="fa-solid fa-angle-down right-icon"></i>
+                Order{" "}
+                <i className={`fa-solid fa-angle-down ${styles["right-icon"]}`}></i>
               </p>
             </a>
-            <ul className={`sidebar-submenu ${activeSubmenu === 3 ? "open" : ""}`}>
+            <ul
+              className={`${styles["sidebar-submenu"]} ${
+                activeSubmenu === 3 ? styles.open : ""
+              }`}
+            >
               <li>
-                <a href="/orderlist" className="submenu-link">
+                <a href="/orderlist" className={styles["submenu-link"]}>
                   List
                 </a>
               </li>
@@ -102,7 +110,7 @@ const SidebarAdmin = () => {
           <li>
             <a
               href="#"
-              className="text-black sidebar-link submenu-parent"
+              className={`${styles["sidebar-link"]} ${styles["submenu-parent"]} text-black`}
               onClick={(e) => {
                 e.preventDefault();
                 toggleSubmenu(5); // Dùng index 5 cho submenu này
@@ -110,27 +118,32 @@ const SidebarAdmin = () => {
             >
               <i className="fa-regular fa-user"></i>
               <p>
-                User Management <i className="fa-solid fa-angle-down right-icon"></i>
+                User Management{" "}
+                <i className={`fa-solid fa-angle-down ${styles["right-icon"]}`}></i>
               </p>
             </a>
-            <ul className={`sidebar-submenu ${activeSubmenu === 5 ? "open" : ""}`}>
+            <ul
+              className={`${styles["sidebar-submenu"]} ${
+                activeSubmenu === 5 ? styles.open : ""
+              }`}
+            >
               <li>
-                <a href="/customerlist" className="submenu-link">
+                <a href="/customerlist" className={styles["submenu-link"]}>
                   Customer
                 </a>
               </li>
               <li>
-                <a href="/supplierlist" className="submenu-link">
+                <a href="/supplierlist" className={styles["submenu-link"]}>
                   Supplier
                 </a>
               </li>
               <li>
-                <a href="/shipperlist" className="submenu-link">
+                <a href="/shipperlist" className={styles["submenu-link"]}>
                   Shipper
                 </a>
               </li>
               <li>
-                <a href="/acceptupdaterole" className="submenu-link">
+                <a href="/acceptupdaterole" className={styles["submenu-link"]}>
                   Customer Request
                 </a>
               </li>
@@ -141,7 +154,7 @@ const SidebarAdmin = () => {
           <li>
             <a
               href="#"
-              className="text-black sidebar-link submenu-parent"
+              className={`${styles["sidebar-link"]} ${styles["submenu-parent"]} text-black`}
               onClick={(e) => {
                 e.preventDefault();
                 toggleSubmenu(4);
@@ -149,38 +162,43 @@ const SidebarAdmin = () => {
             >
               <i className="fa-solid fa-pager"></i>
               <p>
-                Page <i className="fa-solid fa-angle-down right-icon"></i>
+                Page{" "}
+                <i className={`fa-solid fa-angle-down ${styles["right-icon"]}`}></i>
               </p>
             </a>
-            <ul className={`sidebar-submenu ${activeSubmenu === 4 ? "open" : ""}`}>
+            <ul
+              className={`${styles["sidebar-submenu"]} ${
+                activeSubmenu === 4 ? styles.open : ""
+              }`}
+            >
               <li>
-                <a href="/login" className="submenu-link">
+                <a href="/login" className={styles["submenu-link"]}>
                   Login
                 </a>
               </li>
               <li>
-                <a href="signup.html" className="submenu-link">
+                <a href="signup.html" className={styles["submenu-link"]}>
                   Signup
                 </a>
               </li>
               <li>
-                <a href="404.html" className="submenu-link">
+                <a href="404.html" className={styles["submenu-link"]}>
                   404
                 </a>
               </li>
             </ul>
           </li>
 
-          <li className="sidebar-label">Other</li>
+          <li className={styles["sidebar-label"]}>Other</li>
 
           <li>
-            <a href="#" className="text-black sidebar-link">
+            <a href="#" className={`${styles["sidebar-link"]} text-black`}>
               <i className="fa-regular fa-message"></i>
               <p>Message</p>
             </a>
           </li>
           <li>
-            <a href="#" className="text-black sidebar-link">
+            <a href="#" className={`${styles["sidebar-link"]} text-black`}>
               <i className="fa-solid fa-phone"></i>
               <p>Help & Support</p>
             </a>

@@ -33,9 +33,9 @@ public class UserVoucherService {
         Voucher voucher = voucherRepository.findById(Integer.valueOf(voucherId))
                 .orElseThrow(() -> new IllegalArgumentException("Voucher not found with ID: " + voucherId));
 
-        // Kiểm tra đã đổi chưa
-        if (userVoucherRepository.findByUserAndVoucher(user, voucher).isPresent()) {
-            throw new IllegalArgumentException("User already redeemed this voucher");
+        // Kiểm tra đã đổi và chưa sử dụng chưa
+        if (userVoucherRepository.findByUserAndVoucherAndIsUsedFalse(user, voucher).isPresent()) {
+            throw new IllegalArgumentException("User already redeemed this voucher and hasn't used it yet");
         }
 
         // Kiểm tra điểm
@@ -59,6 +59,7 @@ public class UserVoucherService {
 
         return userVoucherRepository.save(userVoucher);
     }
+
 
     /**
      * Lấy tất cả voucher của người dùng

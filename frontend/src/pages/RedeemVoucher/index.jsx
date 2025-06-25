@@ -33,20 +33,33 @@ function RedeemVoucher() {
   };
 
   const handleRedeem = async (voucherId) => {
-    console.log(userId, voucherId)
-    try {
-      const response = await redeemVoucher(userId, voucherId);
+  try {
+    const response = await redeemVoucher(userId, voucherId);
 
-      if (response) {
-       toast.success("Đổi voucher thành công!");
-        fetchData(); // Cập nhật lại danh sách nếu cần
-      } else {
-        toast.error(response || "Đã có lỗi xảy ra.");
-      }
-    } catch (err) {
-      toast.error(err || "Đã có lỗi xảy ra.");
+    if (response) {
+      toast.success("Đổi voucher thành công!");
+      fetchData(); // Cập nhật lại danh sách nếu cần
+    } else {
+      toast.error("Đã có lỗi xảy ra.");
     }
-  };
+  } catch (err) {
+    if (err.response) {
+      // Có phản hồi từ server (ví dụ lỗi 500, 400, v.v.)
+      if (err.response.status === 500) {
+        toast.error("Lỗi hệ thống. Vui lòng thử lại sau.");
+      } else {
+        toast.error(err.response.data.message || "Đã có lỗi xảy ra.");
+      }
+    } else if (err.request) {
+      // Yêu cầu được gửi nhưng không có phản hồi
+      toast.error("Không nhận được phản hồi từ server.");
+    } else {
+      // Lỗi khác (ví dụ khi gọi hàm sai)
+      toast.error(err.message);
+    }
+  }
+};
+
 
   return (
     <div>

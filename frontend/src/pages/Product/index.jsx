@@ -85,7 +85,7 @@ function Product({ product }) {
         <div className="col-lg-6">
           <h4 className="fw-bold mb-3">{product.name}</h4>
           <p className="mb-3">Category: {product.category}</p>
-          <h5 className="fw-bold mb-3">{product.price} $</h5>
+          <h5 className="fw-bold mb-3">{product.price} VND / {product.unit}</h5>
           <div className="d-flex mb-4">{renderStars(4)}</div>
           <p className="mb-4">{product.description}</p>
           <div className="input-group quantity mb-5" style={{ width: "100px" }}>

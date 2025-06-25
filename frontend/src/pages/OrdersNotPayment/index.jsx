@@ -51,20 +51,24 @@ function OrdersNotPayment() {
   };
 
   const handleCancelOrder = async (id) => {
-  try {
-    const response = await cancelOrder(id);
-    toast.success(response);
-    setCancelTrigger(prev => prev + 1);  // Tăng để đảm bảo luôn thay đổi
-  } catch (error) {
-    console.error("Lỗi khi huỷ đơn hàng:", error);
-  }
-};
+    try {
+      const response = await cancelOrder(id);
+      toast.success(response);
+      setCancelTrigger((prev) => prev + 1); // Tăng để đảm bảo luôn thay đổi
+    } catch (error) {
+      console.error("Lỗi khi huỷ đơn hàng:", error);
+    }
+  };
 
-useEffect(() => {
-  if (userId) {
-    fetchOrders();
-  }
-}, [userId, cancelTrigger]);
+  const handleDetailOrder = (id) => {
+    navigate(`/order-information/${id}`);
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchOrders();
+    }
+  }, [userId, cancelTrigger]);
 
   return (
     <div className="container mt-4">
@@ -119,9 +123,13 @@ useEffect(() => {
             </Card>
           ))}
           <Card.Footer className="text-end">
-            <Button variant="outline-primary" className="me-2">
+            {/* <Button
+              variant="outline-primary"
+              className="me-2"
+              onClick={() => handleDetailOrder(order.orderID)}
+            >
               Chi tiết
-            </Button>
+            </Button> */}
             <Button
               variant="primary"
               className="me-2"

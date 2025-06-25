@@ -13,6 +13,7 @@ function CartItem({
   name,
   price,
   id,
+  unit,
   onDeleted,
   checked,
   onCheck,
@@ -122,7 +123,7 @@ function CartItem({
           <p className="mb-0 mt-4">{name}</p>
         </td>
         <td>
-          <p className="mb-0 mt-4">{price} VND</p>
+          <p className="mb-0 mt-4">{price} VND / {unit}</p>
         </td>
         <td>
           <div className="input-group quantity mt-4" style={{ width: "100px" }}>
@@ -152,7 +153,7 @@ function CartItem({
           </div>
         </td>
         <td>
-          <p className="mb-0 mt-4">{price * localQuantity} $</p>
+          <p className="mb-0 mt-4">{price * localQuantity} VND</p>
         </td>
         <td>
           <button

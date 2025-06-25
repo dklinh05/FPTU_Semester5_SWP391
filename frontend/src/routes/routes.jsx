@@ -40,6 +40,7 @@ import DashboardSupplier from "../pages/DashboardSupplier/index.jsx";
 import SearchResultLayout from "../layouts/SearchResultLayout/index.js";
 import AcceptUpdateRole from "../pages/AcceptUpdateRole/index.jsx";
 import OrderDetail from "../pages/OrderDetail/index.jsx";
+import OrderDetailCustomer from "../pages/OrderDetailCustomer/index.jsx";
 
 
 const publicRoutes = [
@@ -99,6 +100,7 @@ const publicRoutes = [
 
   { path: config.routes.orders, component: Orders, layout: OrdersLayout },
   { path: config.routes.orderDetail, component: OrderDetail, layout: SupplierLayout },
+   { path: config.routes.orderDetailCustomer, component: OrderDetailCustomer, layout: OrdersLayout },
   {
     path: config.routes.ordersPending,
     component: OrdersNotPayment,

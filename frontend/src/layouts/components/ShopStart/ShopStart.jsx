@@ -132,7 +132,7 @@ function ShopStart() {
                           title={product.name}
                           description={product.description}
                           price={product.price}
-                          shopName={product.supplier.fullName}
+                          shopName={product.supplier.businessName}
                           soldCount={product.sales}
                         />
                       </Link>

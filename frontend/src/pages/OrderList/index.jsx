@@ -147,7 +147,7 @@ const OrderList = () => {
                 {orders.map((order, index) => (
                   <tr key={index}>
                     <td>{order.orderID}</td>
-                    <td>{order.buyerId}</td>
+                    <td>{order.customerName}</td>
                     <td>{order.totalAmount}</td>
                    <td>{formatDate(order.orderDate)}</td>
                     <td>

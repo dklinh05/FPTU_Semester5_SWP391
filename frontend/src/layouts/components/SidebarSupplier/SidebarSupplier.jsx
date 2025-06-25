@@ -37,7 +37,7 @@ function SidebarSupplier() {
         <ul className="sidebar-menu">
           <li className="sidebar-label">Menu</li>
           <li>
-            <a href="/dashboard" className="text-black sidebar-link">
+            <a href="/dashboard-supplier" className="text-black sidebar-link">
               <i className="fa-solid fa-house"></i>
               <p>Dashboard</p>
             </a>

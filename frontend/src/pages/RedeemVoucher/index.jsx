@@ -13,6 +13,7 @@ function RedeemVoucher() {
   const { userId, points } = useUser();
   const [vouchers, setVouchers] = useState([]);
   const [ownedVouchers, setOwnedVouchers] = useState([]);
+
   useEffect(() => {
     if (userId) fetchData();
   }, [userId]);
@@ -40,7 +41,7 @@ function RedeemVoucher() {
        toast.success("Đổi voucher thành công!");
         fetchData(); // Cập nhật lại danh sách nếu cần
       } else {
-        setError(response || "Đổi voucher thất bại.");
+        toast.error(response || "Đã có lỗi xảy ra.");
       }
     } catch (err) {
       toast.error(err || "Đã có lỗi xảy ra.");

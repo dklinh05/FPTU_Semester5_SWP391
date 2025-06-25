@@ -1,0 +1,86 @@
+.background-wrapper {
+  width: 100vw;
+  min-height: 100vh;
+  background: url('/img/hero-img.jpg') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+}
+
+.add-product-container {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 100%;
+  max-width: 75%; /* Chiếm 75% chiều ngang */
+  margin: auto;
+}
+
+.title-block {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #228B22; /* forestgreen */
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #228B22;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(34, 139, 34, 0.2);
+  }
+}
+
+.form-textarea {
+  resize: vertical;
+}
+
+.form-select {
+  cursor: pointer;
+}
+
+.action-button {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: white;
+  background-color: #228B22;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #1a6f1a;
+  }
+}
+
+.background-wrapper{
+ width:100%;
+
+}

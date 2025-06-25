@@ -9,7 +9,6 @@ function Dashboard() {
           <div class="container-fluid">
             <div class="row">
               <CardDashboard />
-
             </div>
           </div>
         </div>

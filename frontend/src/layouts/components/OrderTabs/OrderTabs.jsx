@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 
 const tabs = [
-  { label: "Tất cả", path: "/orders" },
+  // { label: "Tất cả", path: "/orders" },
   { label: "Chờ thanh toán", path: "/orders/pending" },
   { label: "Vận chuyển", path: "/orders?status=delivered" },
   { label: "Chờ giao hàng", path: "/orders?status=PAID" },

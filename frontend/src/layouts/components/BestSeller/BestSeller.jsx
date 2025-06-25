@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import BestSellerItem from "../BestSellerItem";
 import { renderBestSellerProduct } from "../../../services/productService";
 
@@ -30,13 +31,15 @@ function BestSeller() {
         </div>
         <div className="row g-4">
           {products.map((product, index) => (
-            <BestSellerItem
-              key={index}
-              id={product.productID}
-              img={product.imageURL}
-              title={product.name}
-              price={product.price}
-            />
+            
+              <BestSellerItem
+                key={index}
+                id={product.productID}
+                img={product.imageURL}
+                title={product.name}
+                price={product.price}
+              />
+            
           ))}
         </div>
       </div>

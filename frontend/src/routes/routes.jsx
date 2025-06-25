@@ -36,6 +36,7 @@ import SupplierList from "../pages/SupplierList";
 import ShipperList from "../pages/ShipperList";
 import ProductSearch from "../pages/ProductSearch";
 import RedeemVoucher from "../pages/RedeemVoucher";
+import DashboardSupplier from "../pages/DashboardSupplier/index.jsx";
 import SearchResultLayout from "../layouts/SearchResultLayout/index.js";
 import AcceptUpdateRole from "../pages/AcceptUpdateRole/index.jsx";
 import OrderDetail from "../pages/OrderDetail/index.jsx";
@@ -75,6 +76,7 @@ const publicRoutes = [
     layout: AdminLayout,
   },
   { path: config.routes.dashboard, component: Dashboard, layout: AdminLayout },
+   { path: config.routes.dashboardSupplier, component: DashboardSupplier, layout: SupplierLayout },
   {
     path: config.routes.addProduct,
     component: AddProduct,
@@ -120,6 +122,7 @@ const publicRoutes = [
   { path: config.routes.productSearch, component: ProductSearch, layout: SearchResultLayout },
   { path: config.routes.redeemVoucher, component: RedeemVoucher, layout: null },
   { path: config.routes.acceptUpdateRole, component: AcceptUpdateRole, layout: AdminLayout },
+
 ];
 
 const privateRoutes = [];

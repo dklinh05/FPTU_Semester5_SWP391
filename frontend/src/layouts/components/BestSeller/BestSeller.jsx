@@ -38,6 +38,7 @@ function BestSeller() {
                 img={product.imageURL}
                 title={product.name}
                 price={product.price}
+                unit={product.unit}
               />
             
           ))}

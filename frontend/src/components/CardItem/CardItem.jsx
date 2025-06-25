@@ -4,7 +4,7 @@ import { useCart } from "../../context/CartContext";
 import { addProductToCart } from "../../services/cartItemService";
 import styles from "./CardItem.module.scss"
 
-function CardItem({ id, category, title, description, price, img, shopName,soldCount }) {
+function CardItem({ id, category, title, description, price, img, shopName, unit,soldCount }) {
   const { userId } = useUser();
   const { setReload } = useCart();
 
@@ -52,7 +52,7 @@ function CardItem({ id, category, title, description, price, img, shopName,soldC
         <h4>{title}</h4>
           <p className={styles.cardDescription}>{description}</p>
         <div className="d-flex justify-content-between flex-lg-wrap">
-          <p className="text-dark fs-5 fw-bold mb-0">${price} / kg</p>
+          <p className="text-dark fs-5 fw-bold mb-0">{price} VND / {unit}</p>
             <p className="text-muted mb-2">Sold: {soldCount || 0}</p>
           <div
             className="btn border border-secondary rounded-pill px-3 text-primary"

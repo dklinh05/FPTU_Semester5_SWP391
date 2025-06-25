@@ -132,6 +132,7 @@ function ShopStart() {
                           title={product.name}
                           description={product.description}
                           price={product.price}
+                          unit={product.unit}
                           shopName={product.supplier.businessName}
                           soldCount={product.sales}
                         />

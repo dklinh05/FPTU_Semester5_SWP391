@@ -20,4 +20,6 @@ public interface UserVoucherRepository extends JpaRepository<UserVoucher, Intege
 
     UserVoucher findByUserVoucherID(Integer userVoucherID);
     List<UserVoucher> findByUserUserIDAndIsUsed(Integer userId, Boolean isUsed);
+    Optional<UserVoucher> findByUserAndVoucherAndIsUsedFalse(User user, Voucher voucher);
+
 }

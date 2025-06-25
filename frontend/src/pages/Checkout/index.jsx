@@ -118,7 +118,7 @@ function Checkout() {
                         ([supplierName, carts]) => (
                           <React.Fragment key={supplierName}>
                             <tr className="font-semibold text-lg mb-2">
-                              {supplierName}
+                              {carts[0].product.supplier.businessName}
                             </tr>
                             {carts.map((cart, index) => (
                               <CheckoutItem
@@ -244,8 +244,8 @@ function Checkout() {
                     </strong>
                   </div>
                 </div>
-                <div className="mb-4">
-                  <label className="form-label fw-bold">
+                <div className="mb-4 border-top mt-4">
+                  <label className="form-label fw-bold  text-dark">
                     Địa chỉ giao hàng
                   </label>
 

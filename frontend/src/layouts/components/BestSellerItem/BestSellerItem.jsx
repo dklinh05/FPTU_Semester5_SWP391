@@ -1,7 +1,7 @@
 import AddToCartButton from "../../../components/AddToCartButton";
 import { Link } from "react-router-dom";
 
-function BestSellerItem({ id, title, price, img }) {
+function BestSellerItem({ id, title, price, img, unit }) {
   return (
     <Link to={`/product/${id}`} className="col-lg-6 col-xl-4">
       <div className="p-4 rounded bg-light">
@@ -22,7 +22,7 @@ function BestSellerItem({ id, title, price, img }) {
               <i className="fas fa-star text-primary"></i>
               <i className="fas fa-star"></i>
             </div>
-            <h4 className="mb-3">{price} $</h4>
+            <h4 className="mb-3">{price} VND / {unit}</h4>
             <AddToCartButton id={id} />
           </div>
         </div>

@@ -65,6 +65,7 @@ public class UserService {
         user.setRewardPoints(0);
         user.setTotalSpend(0L);
         user.setRole(Role.CUSTOMER.name());
+        user.setIsLocked(false);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPasswordHash(passwordEncoder.encode(request.getPasswordHash()));
 

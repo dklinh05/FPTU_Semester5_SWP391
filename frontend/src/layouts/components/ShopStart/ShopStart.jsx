@@ -1,12 +1,19 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useLocation } from "../../../context/LocationContext";
 import CardItem from "../../../components/CardItem/CardItem";
-import {
-  renderProduct,
-  renderProductByCategory,
-} from "../../../services/productService";
+import { renderProductByCategory } from "../../../services/productService";
+import LocationDropdown from "../../../components/LocationDropdown";
 
 function ShopStart() {
+  const {
+    currentLocation,
+    selectedDistrict,
+    setSelectedDistrict,
+    selectedLocation,
+    setSelectedLocation,
+    currentDistrict,
+  } = useLocation();
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState("");
 
@@ -15,30 +22,43 @@ function ShopStart() {
   const [totalItems, setTotalItems] = useState(0); // tổng số đơn hàng
   const [totalPages, setTotalPages] = useState(0);
 
+  const getProducts = async () => {
+    try {
+      const response = await renderProductByCategory(
+        category,
+        selectedLocation?.lat,
+        selectedLocation?.lng,
+        null,
+        null,
+        currentPage - 1,
+        pageSize
+      );
+      setProducts(response.content);
+      setTotalPages(response.totalPages);
+      setTotalItems(response.totalElements);
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm:", error);
+    }
+  };
+
   useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const response = await renderProductByCategory(
-          category,
-          null,
-          null,
-          currentPage - 1,
-          pageSize
-        );
-        setProducts(response.content);
-        setTotalPages(response.totalPages);
-        setTotalItems(response.totalElements);
-      } catch (error) {
-        console.error("Lỗi khi lấy sản phẩm:", error);
-      }
-    };
     getProducts();
-  }, [category,currentPage, pageSize, location.search]);
+  }, [category, currentPage, pageSize, selectedLocation]);
 
   return (
     <div className="container-fluid fruite py-5">
       <div className="container py-5">
         <div className="tab-class text-center">
+          <LocationDropdown
+            currentDistrict={currentDistrict}
+            selectedDistrict={selectedDistrict}
+            setSelectedDistrict={setSelectedDistrict}
+            setCurrentPage={setCurrentPage}
+            currentLocation={currentLocation}
+            selectedLocation={selectedLocation}
+            setSelectedLocation={setSelectedLocation}
+          />
+
           <div className="row g-4">
             <div className="col-lg-4 text-start">
               <h1>Our Organic Products</h1>

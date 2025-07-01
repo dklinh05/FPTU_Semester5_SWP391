@@ -8,19 +8,18 @@ import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.repository.*;
 import com.farm.farmtrade.service.fileStorage.FileStorageService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
+import org.springframework.data.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -129,6 +128,40 @@ public class ProductService {
 
     }
 
+    public Page<Product> getFilteredProducts(String category, Double lat, Double lng, Pageable pageable) {
+        List<Product> allProducts = productRepository.findAllByStatus("active");
+
+        // Lọc theo category nếu có
+        if (category != null && !category.isBlank()) {
+            allProducts = allProducts.stream()
+                    .filter(p -> category.equalsIgnoreCase(p.getCategory()))
+                    .collect(Collectors.toList());
+        }
+
+        // Lọc theo quận nếu có
+//        if (district != null && !district.isBlank()) {
+//            allProducts = allProducts.stream()
+//                    .filter(p -> district.equalsIgnoreCase(p.getSupplier().getAddress()))
+//                    .collect(Collectors.toList());
+//        }
+
+        // Nếu có vị trí (lat/lng), sắp xếp theo khoảng cách gần nhất
+        if (lat != null && lng != null) {
+            allProducts.sort(Comparator.comparingDouble(p -> {
+                double productLat = p.getSupplier().getLat();
+                double productLng = p.getSupplier().getLng();
+                return haversineDistance(lat, lng, productLat, productLng);
+            }));
+        }
+
+        // Chuyển sang dạng Page (thủ công vì đang lọc và sort thủ công)
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), allProducts.size());
+        List<Product> pageContent = allProducts.subList(start, end);
+
+        return new PageImpl<>(pageContent, pageable, allProducts.size());
+    }
+
 
     @Transactional
     public void deleteProductById(Integer productId) {
@@ -158,6 +191,7 @@ public class ProductService {
         return productRepository.findAllByStatus(status);
     }
 
+
     public Product updateProductStatus(Integer productId, String status) {
         if (productId == null || status == null || status.trim().isEmpty()) {
             throw new IllegalArgumentException("ID hoặc status không hợp lệ");
@@ -168,4 +202,17 @@ public class ProductService {
         product.setStatus(status.trim());
         return productRepository.save(product);
     }
+
+    public static double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
+        final int R = 6371; // Earth radius in km
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
 }

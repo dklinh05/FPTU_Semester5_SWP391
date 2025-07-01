@@ -28,6 +28,8 @@ public class User {
     String role;
     String avatar;
     LocalDateTime createdAt;
+    Double lat; // Vĩ độ
+    Double lng; // Kinh độ
     Boolean isActive;
     Boolean isLocked;
     // Buyer

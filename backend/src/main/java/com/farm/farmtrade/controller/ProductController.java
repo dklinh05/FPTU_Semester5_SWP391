@@ -75,6 +75,8 @@ public class ProductController {
     @GetMapping("/category")
     public ResponseEntity<Page<Product>> getProductsByCategory(
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) Double lat,
+            @RequestParam(required = false) Double lng,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -86,9 +88,10 @@ public class ProductController {
                 sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
         );
 
-        Page<Product> products = productService.getActiveProductsByCategory(category, pageable);
+        Page<Product> products = productService.getFilteredProducts(category, lat, lng, pageable);
         return ResponseEntity.ok(products);
     }
+
 
     // Add product
 //    @PostMapping

@@ -6,6 +6,7 @@ import {
   updateUser,
   uploadAvatar,
 } from "../../services/userService";
+import AddressPopup from "../../components/AddressPopup";
 
 const Profile = () => {
   const { user, userId, setUser } = useUser();
@@ -15,6 +16,7 @@ const Profile = () => {
   const fileInputRef = useRef(null);
   const [avatarTimestamp, setAvatarTimestamp] = useState(Date.now());
   const [dirtyFields, setDirtyFields] = useState({});
+  const [showAddressForm, setShowAddressForm] = useState(false);
 
   const handleAvatarClick = () => {
     fileInputRef.current.click();
@@ -161,7 +163,10 @@ const Profile = () => {
               <div className="row">
                 <div className="col-md-8">
                   <div className="mb-3">
-                    <label htmlFor="inputUsername" className="form-label text-dark">
+                    <label
+                      htmlFor="inputUsername"
+                      className="form-label text-dark"
+                    >
                       Username
                     </label>
                     <input
@@ -296,21 +301,58 @@ const Profile = () => {
                   disabled
                 />
               </div>
+              {!showAddressForm && (
+                <div className="mb-3">
+                  <label
+                    htmlFor="inputAddress"
+                    className="form-label text-dark"
+                  >
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="inputAddress"
+                    value={user.address}
+                    onChange={handleChange("address")}
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline-primary mt-2"
+                    onClick={() => setShowAddressForm(true)}
+                  >
+                    Thay đổi địa chỉ
+                  </button>
+                </div>
+              )}
+              <AddressPopup
+                isOpen={showAddressForm}
+                onClose={() => setShowAddressForm(false)}
+                shippingAddress={{
+                  address: user.address,
+                  lat: user.lat,
+                  lng: user.lng,
+                }}
+                setShippingAddress={({ address, lat, lng }) => {
+                  setUser((prev) => ({
+                    ...prev,
+                    address,
+                    lat,
+                    lng,
+                  }));
+                  setDirtyFields((prev) => ({
+                    ...prev,
+                    address,
+                    lat,
+                    lng,
+                  }));
+                }}
+              />
               <div className="mb-3">
-                <label htmlFor="inputAddress" className="form-label text-dark">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="inputAddress"
-                  value={user.address}
-                  onChange={handleChange("address")}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="inputRewardPoints" className="form-label text-dark">
+                <label
+                  htmlFor="inputRewardPoints"
+                  className="form-label text-dark"
+                >
                   Reward Points
                 </label>
                 <input
@@ -323,7 +365,10 @@ const Profile = () => {
               </div>
 
               <div className="mb-3">
-                <label htmlFor="inputTotalSpend" className="form-label text-dark">
+                <label
+                  htmlFor="inputTotalSpend"
+                  className="form-label text-dark"
+                >
                   Total Spend (VND)
                 </label>
                 <input
@@ -341,8 +386,6 @@ const Profile = () => {
           </div>
         </div>
       </div>
-
-
     </div>
   );
 };

@@ -38,6 +38,7 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private RoleUpgradeService roleUpgradeService;
+
     @PostMapping("/request")
     public ResponseEntity<RoleUpgrade> submitUpgradeRequest(
             @RequestPart("businessName") String businessName,
@@ -52,11 +53,11 @@ public class UserController {
         RoleUpgrade roleUpgrade = roleUpgradeService.submitRequest(user.getUserID(), businessName, certification);
         return ResponseEntity.ok(roleUpgrade);
     }
+
     @PostMapping("/register")
     User createUser(@RequestBody @Valid UserCreationRequest request) throws MessagingException {
         return userService.createRequest(request);
     }
-
 
     @GetMapping
     List<User> getAllUsers() {

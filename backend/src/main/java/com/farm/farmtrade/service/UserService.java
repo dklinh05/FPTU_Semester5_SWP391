@@ -149,6 +149,14 @@ public class UserService {
             user.setAddress(request.getAddress());
         }
 
+        if (request.getLat() != null) {
+            user.setLat(request.getLat());
+        }
+
+        if (request.getLng() != null) {
+            user.setLng(request.getLng());
+        }
+
         userRepository.save(user); // Lưu lại người dùng sau khi cập nhật
         return true;
     }

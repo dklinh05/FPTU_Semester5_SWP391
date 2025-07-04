@@ -18,9 +18,13 @@ function Checkout() {
   const location = useLocation();
   const chooseCartItems = location.state?.cartItems || [];
   const chooseVoucher = location.state?.voucher || {};
-  const [shippingAddress, setShippingAddress] = useState(user.address);
-  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [shippingAddress, setShippingAddress] = useState({
+    address: user.address || "",
+    lat: user.lat || null,
+    lng: user.lng || null,
+  });
 
+  const [showAddressForm, setShowAddressForm] = useState(false);
 
   // Group cart items by supplier name
   const groupedBySupplier = chooseCartItems.reduce((groups, cart) => {
@@ -34,7 +38,7 @@ function Checkout() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log( chooseVoucher?.userVoucherID);
+    console.log(chooseVoucher?.userVoucherID);
     if (!selectedPaymentMethod) {
       toast.error("Hãy chọn phương thức thanh toán để tiếp tục");
       return;
@@ -46,7 +50,7 @@ function Checkout() {
           buyerId: userId,
           supplierId: parseInt(supplierId),
           status: "pending",
-          address: shippingAddress,
+          address: shippingAddress.address,
           items: items.map((item) => ({
             productId: item.product.productID,
             quantity: item.quantity,
@@ -69,7 +73,7 @@ function Checkout() {
       await handlePayment(amount, groupId);
     } catch (error) {
       console.error("Lỗi khi tạo đơn hàng:", error);
-      toast.error(error.message)
+      toast.error(error.message);
     }
   };
 
@@ -252,7 +256,9 @@ function Checkout() {
                   {/* Hiển thị địa chỉ mặc định */}
                   {!showAddressForm && (
                     <div className="border p-3 bg-light rounded">
-                      <p className="mb-1">{shippingAddress}</p>
+                      <p className="mb-1">
+                        {shippingAddress?.address || "Chưa có địa chỉ"}
+                      </p>
                       <button
                         type="button"
                         className="btn btn-sm btn-outline-primary mt-2"

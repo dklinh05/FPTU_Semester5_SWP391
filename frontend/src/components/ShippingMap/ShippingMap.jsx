@@ -26,14 +26,14 @@ function LocationPicker({ setMarker, setShippingAddress }) {
       const { lat, lng } = e.latlng;
       setMarker({ lat, lng });
 
-      // Reverse geocoding để lấy địa chỉ từ toạ độ
+      // Reverse geocoding để lấy địa chỉ từ tọa độ
       fetch(
         `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
       )
         .then((res) => res.json())
         .then((data) => {
           const address = data.display_name;
-          setShippingAddress(address);
+          setShippingAddress({ address, lat, lng }); // ✅ Gửi cả 3
         })
         .catch((err) => {
           console.error("Lỗi reverse geocoding:", err);
@@ -59,8 +59,14 @@ export default function ShippingMap({ shippingAddress, setShippingAddress }) {
 
   // Khi người dùng nhập địa chỉ thủ công
   useEffect(() => {
-    if (shippingAddress && shippingAddress.length > 5) {
-      const encoded = encodeURIComponent(shippingAddress);
+    const addressText =
+      typeof shippingAddress === "string"
+        ? shippingAddress
+        : shippingAddress?.address;
+
+    if (addressText && addressText.length > 5) {
+      const encoded = encodeURIComponent(addressText);
+
       fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&viewbox=107.96,16.16,108.31,15.91&bounded=1`
       )
@@ -69,14 +75,25 @@ export default function ShippingMap({ shippingAddress, setShippingAddress }) {
           if (data && data.length > 0) {
             const lat = parseFloat(data[0].lat);
             const lon = parseFloat(data[0].lon);
-            setMarker({ lat, lng: lon });
+
+            const alreadySame =
+              shippingAddress?.lat === lat && shippingAddress?.lng === lon;
+
+            if (!alreadySame) {
+              setMarker({ lat, lng: lon });
+              setShippingAddress({
+                address: addressText,
+                lat,
+                lng: lon,
+              });
+            }
           }
         })
         .catch((err) => {
           console.error("Lỗi forward geocoding:", err);
         });
     }
-  }, [shippingAddress]);
+  }, [shippingAddress?.address]); // ✅ chỉ lắng nghe khi address thay đổi
 
   const centerDaNang = [16.0471, 108.2068];
 

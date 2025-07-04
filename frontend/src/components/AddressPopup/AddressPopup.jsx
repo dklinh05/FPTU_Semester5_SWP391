@@ -29,8 +29,13 @@ function AddressPopup({
           className="form-control mt-3 w-full border rounded p-2"
           rows="3"
           required
-          value={shippingAddress}
-          onChange={(e) => setShippingAddress(e.target.value)}
+           value={shippingAddress.address || ""}
+  onChange={(e) =>
+    setShippingAddress((prev) => ({
+      ...prev,
+      address: e.target.value,
+    }))
+  }
         ></textarea>
       </div>
     </div>

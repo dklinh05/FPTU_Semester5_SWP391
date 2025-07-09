@@ -25,13 +25,16 @@ public class Order {
     User buyer;
     @ManyToOne
     @JoinColumn(name = "SupplierID")
-    private User supplier;
+    User supplier;
+    @ManyToOne
+    @JoinColumn(name = "SupplierID")
+    User shipper;
     LocalDateTime orderDate;
     String status;
     BigDecimal totalAmount;
     @ManyToOne
     @JoinColumn(name = "orderGroupID")
-    private OrderGroup orderGroup;
+    OrderGroup orderGroup;
 
     String address;
 }

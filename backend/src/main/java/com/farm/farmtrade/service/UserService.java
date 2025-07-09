@@ -67,7 +67,7 @@ public class UserService {
         user.setRole(Role.CUSTOMER.name());
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPasswordHash(passwordEncoder.encode(request.getPasswordHash()));
-
+        user.setIsLocked(false);
         User savedUser = userRepository.save(user);
 
         String token = UUID.randomUUID().toString();

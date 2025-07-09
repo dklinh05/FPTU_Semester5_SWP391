@@ -104,3 +104,13 @@ export const searchProducts = async (keyword, category, rating) => {
     throw error.response?.data || error.message;
   }
 };
+
+export const getBestSellersByShop = async (sellerId) => {
+  try {
+    const response = await request.get(`/products/shop/${sellerId}/best-sellers`);
+    return response.data.content || [];
+  } catch (error) {
+    console.error("Lỗi khi gọi API lấy top sản phẩm:", error);
+    return [];
+  }
+};

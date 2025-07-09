@@ -215,4 +215,8 @@ public class ProductService {
         return R * c;
     }
 
+    public Page<Product> getBestSellerProductsByShop(Integer sellerId, Pageable pageable) {
+        return productRepository.findPageBySupplierUserIDAndStatus(sellerId, "Active", pageable);
+    }
+
 }

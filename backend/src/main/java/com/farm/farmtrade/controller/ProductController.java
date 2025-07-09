@@ -31,7 +31,7 @@ public class ProductController {
 //        return ResponseEntity.ok(products);
 //    }
 
-    //    @GetMapping("/search")
+//        @GetMapping("/search")
 //    public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword) {
 //        List<Product> products = productService.searchProducts(keyword);
 //        return ResponseEntity.ok(products);
@@ -159,5 +159,15 @@ public class ProductController {
         return ResponseEntity.ok(updatedProduct);
     }
 
+    @GetMapping("/shop/{sellerId}/best-sellers")
+    public ResponseEntity<Page<Product>> getBestSellersByShop(
+            @PathVariable Integer sellerId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("sales").descending());
+        Page<Product> products = productService.getBestSellerProductsByShop(sellerId, pageable);
+        return ResponseEntity.ok(products);
+    }
 
 }

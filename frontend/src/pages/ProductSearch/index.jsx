@@ -89,7 +89,6 @@ const ProductSearch = () => {
                                             if ((index + 1) % 3 === 0) {
                                                 cards.push(
                                                     <div
-                                                        key={`placeholder-${index}`}
                                                         className="col-md-6 col-lg-4 col-xl-3 placeholder-card"
                                                     ></div>
                                                 );

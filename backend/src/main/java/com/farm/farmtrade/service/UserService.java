@@ -68,7 +68,7 @@ public class UserService {
         user.setIsLocked(false);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPasswordHash(passwordEncoder.encode(request.getPasswordHash()));
-
+        user.setIsLocked(false);
         User savedUser = userRepository.save(user);
 
         String token = UUID.randomUUID().toString();

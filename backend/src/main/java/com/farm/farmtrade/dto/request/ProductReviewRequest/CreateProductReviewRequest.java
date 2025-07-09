@@ -13,8 +13,7 @@ public class CreateProductReviewRequest {
     @Min(1)
     @Max(5)
     private Integer productQuality;
-
-    @NotEmpty(message = "Comment cannot be empty")
+//    @NotEmpty(message = "Comment cannot be empty")
     private String comment;
 
     @NotNull(message = "Seller Service is required")

@@ -33,6 +33,5 @@ public class Product {
     @Column(name = "status", nullable = false)
     private String status;
 
-    // Getters and setters...
 }
 

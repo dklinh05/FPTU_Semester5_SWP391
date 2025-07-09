@@ -29,5 +29,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     Page<Product> findBySupplierUserID(Integer supplierId, Pageable pageable);
 
+    Page<Product> findPageBySupplierUserIDAndStatus(Integer sellerId, String status, Pageable pageable);
 
 }

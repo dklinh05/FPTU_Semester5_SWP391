@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useUser } from "../../context/UserContext";
 import { useCart } from "../../context/CartContext";
 import { addProductToCart } from "../../services/cartItemService";
 import { getReviewsByProductId } from "../../services/feedbackService";
+import "/src/components/SidebarDetail/SideBarDetail.module.scss"
 
 function Product({ product }) {
   const { userId } = useUser();
@@ -30,9 +31,9 @@ function Product({ product }) {
     try {
       await addProductToCart(productData);
       setReload((prev) => !prev);
-      alert("Done");
+      alert("Added to cart!");
     } catch (error) {
-      console.error("Lỗi khi thêm vào giỏ:", error);
+      console.error("Error adding to cart:", error);
     }
   };
 
@@ -40,10 +41,9 @@ function Product({ product }) {
     const fetchReviews = async () => {
       try {
         const data = await getReviewsByProductId(product.productID);
-        console.log("Reviews fetched:", data);
         setReviews(data);
       } catch (err) {
-        console.error("Không thể load đánh giá:", err);
+        console.error("Failed to load reviews:", err);
       }
     };
     if (product?.productID) fetchReviews();
@@ -68,11 +68,10 @@ function Product({ product }) {
   };
 
   const average = getAverageRating();
-  // const averageRounded = Math.round(average * 10) / 10;
-  // const averageDisplay = Math.round(average);
 
   return (
       <>
+        {/* Product Image and Details */}
         <div className="col-lg-6">
           <div className="border rounded">
             <img
@@ -82,12 +81,14 @@ function Product({ product }) {
             />
           </div>
         </div>
+
         <div className="col-lg-6">
           <h4 className="fw-bold mb-3">{product.name}</h4>
           <p className="mb-3">Category: {product.category}</p>
           <h5 className="fw-bold mb-3">{product.price} VND / {product.unit}</h5>
-          <div className="d-flex mb-4">{renderStars(4)}</div>
           <p className="mb-4">{product.description}</p>
+
+          {/* Quantity Selector */}
           <div className="input-group quantity mb-5" style={{ width: "100px" }}>
             <div className="input-group-btn">
               <button
@@ -118,40 +119,67 @@ function Product({ product }) {
           >
             <i className="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
           </div>
+
+          <div>
+            <button
+                className="btn btn-success btn-sm px-4 rounded-pill"
+                onClick={() => {
+                  window.location.href = `#`;
+                }}
+            >
+              Chat with Supplier
+            </button>
+          </div>
         </div>
 
-        {/* REVIEW SUMMARY */}
-        <div className="bg-white col-12 mt-5">
+        {/* Product Ratings Section */}
+        <div className="product-ratings-section col-12 mt-5">
           <h3 className="fw-bold">Product Ratings</h3>
           <div className="p-4 rounded bg-light border mb-3">
             <h4 className="fw-bold mb-2 text-danger">
-              {reviews.length === 0 ? "0.0" : ((
-                  Math.round(
-                      (reviews.reduce((sum, r) => sum + (r.productQuality + r.sellerService + r.deliverySpeed) / 3, 0) / reviews.length
-                      ) * 10
-                  ) / 10).toFixed(1))} out of 5
+              {reviews.length === 0
+                  ? "0.0"
+                  : (
+                      Math.round(
+                          (reviews.reduce(
+                                  (sum, r) =>
+                                      sum + (r.productQuality + r.sellerService + r.deliverySpeed) / 3,
+                                  0
+                              ) /
+                              reviews.length) *
+                          10
+                      ) / 10
+                  ).toFixed(1)}
+              {" "}out of 5
             </h4>
             <div className="d-flex mb-3">
-              {
-                renderStars(
-                    reviews.length === 0
-                        ? 0
-                        : Math.round(
-                            reviews.reduce((sum, r) => sum + (r.productQuality + r.sellerService + r.deliverySpeed) / 3, 0) / reviews.length
-                        )
-                    , reviews.length === 0)
-              }
+              {renderStars(
+                  reviews.length === 0
+                      ? 0
+                      : Math.round(
+                          reviews.reduce(
+                              (sum, r) =>
+                                  sum + (r.productQuality + r.sellerService + r.deliverySpeed) / 3,
+                              0
+                          ) / reviews.length
+                      ),
+                  reviews.length === 0
+              )}
             </div>
 
-            {/* Dummy filter buttons (optional) */}
+            {/* Filter Buttons (Optional) */}
             <div className="d-flex flex-wrap gap-2">
-              {["All", "5 Star", "4 Star", "3 Star", "2 Star", "1 Star", "With Comments", "With Media"].map((label, i) => (
-                  <button key={i} className="btn btn-sm border text-warning px-3 rounded-pill">{label}</button>
-              ))}
+              {["All", "5 Star", "4 Star", "3 Star", "2 Star", "1 Star", "With Comments", "With Media"].map(
+                  (label, i) => (
+                      <button key={i} className="btn btn-sm border text-warning px-3 rounded-pill">
+                        {label}
+                      </button>
+                  )
+              )}
             </div>
           </div>
 
-          {/* USER REVIEWS */}
+          {/* User Reviews */}
           {reviews.length === 0 ? (
               <p className="text-muted">Chưa có đánh giá nào.</p>
           ) : (
@@ -161,7 +189,7 @@ function Product({ product }) {
                 const formattedDate = new Date(rev.reviewDate).toLocaleDateString("vi-VN", {
                   year: "numeric",
                   month: "short",
-                  day: "numeric"
+                  day: "numeric",
                 });
 
                 const username = rev.buyer?.username || "Người dùng";
@@ -174,26 +202,13 @@ function Product({ product }) {
                     <div className="border rounded p-3 mb-3" key={idx}>
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <div className="fw-bold">{maskedUsername}</div>
-                        {/*<div className="text-muted small">{formattedDate}</div>*/}
                       </div>
 
                       <div className="d-flex align-items-center gap-2 mb-3">
                         {renderStars(rounded)}
-                        <span className="text-muted small">({(avg).toFixed(1)})</span>
+                        <span className="text-muted small">({avg.toFixed(1)})</span>
                       </div>
 
-                      {/*/!* Sub Scores *!/*/}
-                      {/*<div className="mb-2">*/}
-                      {/*  <strong>Chất lượng sản phẩm:</strong> {renderStars(rev.productQuality)}*/}
-                      {/*</div>*/}
-                      {/*<div className="mb-2">*/}
-                      {/*  <strong>Dịch vụ người bán:</strong> {renderStars(rev.sellerService)}*/}
-                      {/*</div>*/}
-                      {/*<div className="mb-2">*/}
-                      {/*  <strong>Tốc độ giao hàng:</strong> {renderStars(rev.deliverySpeed)}*/}
-                      {/*</div>*/}
-
-                      {/* Comment */}
                       {rev.comment && <p className="mb-2">{rev.comment}</p>}
 
                       {/* Images */}

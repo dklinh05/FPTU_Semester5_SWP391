@@ -22,10 +22,12 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     //    @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
 //    List<Product> findProductsByName(@Param("keyword") String keyword);
+    List<Product> findByNameContainingIgnoreCaseAndStatus(String keyword, String status);
     List<Product> findByNameContainingIgnoreCase(String keyword);
-
 
     Page<Product> findPageByCategoryAndStatus(String category, String status,  Pageable pageable);
 
     Page<Product> findBySupplierUserID(Integer supplierId, Pageable pageable);
+
+
 }

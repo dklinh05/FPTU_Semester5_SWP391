@@ -26,6 +26,7 @@ function ShopStart() {
   const getProducts = async () => {
     try {
       const response = await renderProductByCategory(
+        null,
         category,
         selectedLocation?.lat,
         selectedLocation?.lng,

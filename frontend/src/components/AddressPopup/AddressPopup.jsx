@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ShippingMap from "../ShippingMap/ShippingMap";
-function AddressPopup({
-  isOpen,
-  onClose,
-  shippingAddress,
-  setShippingAddress,
-}) {
+
+function AddressPopup({ isOpen, onClose, shippingAddress, setShippingAddress }) {
+  const [localAddress, setLocalAddress] = useState(shippingAddress);
+
+  useEffect(() => {
+    if (isOpen) {
+      setLocalAddress(shippingAddress);
+    }
+  }, [isOpen, shippingAddress]);
+
   if (!isOpen) return null;
 
   return (
@@ -21,22 +25,32 @@ function AddressPopup({
         <h2 className="text-xl font-semibold mb-3">Chọn địa chỉ giao hàng</h2>
 
         <ShippingMap
-          shippingAddress={shippingAddress}
-          setShippingAddress={setShippingAddress}
+          shippingAddress={localAddress}
+          setShippingAddress={setLocalAddress}
         />
 
         <textarea
           className="form-control mt-3 w-full border rounded p-2"
           rows="3"
           required
-           value={shippingAddress.address || ""}
-  onChange={(e) =>
-    setShippingAddress((prev) => ({
-      ...prev,
-      address: e.target.value,
-    }))
-  }
+          value={localAddress.address}
+          onChange={(e) =>
+            setLocalAddress((prev) => ({
+              ...prev,
+              address: e.target.value,
+            }))
+          }
         ></textarea>
+
+        <button
+          className="btn btn-primary mt-3"
+          onClick={() => {
+            setShippingAddress(localAddress);
+            onClose();
+          }}
+        >
+          Lưu địa chỉ
+        </button>
       </div>
     </div>
   );

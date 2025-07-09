@@ -70,15 +70,34 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+//    @GetMapping("/category")
+//    public ResponseEntity<Page<Product>> getProductsByCategory(
+//            @RequestParam(required = false) String category,
+//            @RequestParam(required = false) Double lat,
+//            @RequestParam(required = false) Double lng,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @RequestParam(defaultValue = "createdAt") String sortBy,
+//            @RequestParam(defaultValue = "desc") String sortDir
+//    ) {
+//        Pageable pageable = PageRequest.of(
+//                page,
+//                size,
+//                sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
+//        );
+//
+//        Page<Product> products = productService.getFilteredProducts(category, lat, lng, pageable);
+//        return ResponseEntity.ok(products);
+//    }
 
-
-    @GetMapping("/category")
-    public ResponseEntity<Page<Product>> getProductsByCategory(
+    @GetMapping("/filter")
+    public ResponseEntity<Page<Product>> filterProducts(
+            @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) Double lat,
             @RequestParam(required = false) Double lng,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "12") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir
     ) {
@@ -88,10 +107,9 @@ public class ProductController {
                 sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
         );
 
-        Page<Product> products = productService.getFilteredProducts(category, lat, lng, pageable);
+        Page<Product> products = productService.getFilteredProducts(keyword, category, lat, lng, pageable);
         return ResponseEntity.ok(products);
     }
-
 
     // Add product
 //    @PostMapping

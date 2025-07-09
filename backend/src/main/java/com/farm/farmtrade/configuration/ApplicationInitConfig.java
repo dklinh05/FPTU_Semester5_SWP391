@@ -33,6 +33,8 @@ public class    ApplicationInitConfig {
                         .username("admin")
                         .passwordHash(passwordEncoder.encode("admin"))
                         .role(role)
+                        .isActive(true)
+                        .isLocked(false)
                         .build();
                 userRepository.save(user);
                 log.warn("admin user has been created with default password: admin, please change it");

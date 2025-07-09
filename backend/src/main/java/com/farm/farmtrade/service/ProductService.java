@@ -112,8 +112,6 @@ public class ProductService {
         return productRepository.findPageByStatus("active", pageable);
     }
 
-
-
     public Page<Product> getActiveProductsWithPagination(Pageable pageable) {
 
         return productRepository.findPageByStatus("active", pageable);
@@ -128,8 +126,14 @@ public class ProductService {
 
     }
 
-    public Page<Product> getFilteredProducts(String category, Double lat, Double lng, Pageable pageable) {
+    public Page<Product> getFilteredProducts(String keyword, String category, Double lat, Double lng, Pageable pageable) {
         List<Product> allProducts = productRepository.findAllByStatus("active");
+
+        // Lọc theo từ khóa nếu có
+        if (keyword != null && !keyword.isBlank()) {
+            String lowerKeyword = keyword.toLowerCase();
+            allProducts = productRepository.findByNameContainingIgnoreCaseAndStatus(keyword, "active");
+        }
 
         // Lọc theo category nếu có
         if (category != null && !category.isBlank()) {
@@ -138,14 +142,7 @@ public class ProductService {
                     .collect(Collectors.toList());
         }
 
-        // Lọc theo quận nếu có
-//        if (district != null && !district.isBlank()) {
-//            allProducts = allProducts.stream()
-//                    .filter(p -> district.equalsIgnoreCase(p.getSupplier().getAddress()))
-//                    .collect(Collectors.toList());
-//        }
-
-        // Nếu có vị trí (lat/lng), sắp xếp theo khoảng cách gần nhất
+        // Nếu có lat/lng → sắp xếp theo khoảng cách
         if (lat != null && lng != null) {
             allProducts.sort(Comparator.comparingDouble(p -> {
                 double productLat = p.getSupplier().getLat();
@@ -154,7 +151,7 @@ public class ProductService {
             }));
         }
 
-        // Chuyển sang dạng Page (thủ công vì đang lọc và sort thủ công)
+        // Tạo Page thủ công
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), allProducts.size());
         List<Product> pageContent = allProducts.subList(start, end);

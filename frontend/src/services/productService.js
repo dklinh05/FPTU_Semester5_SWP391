@@ -28,6 +28,7 @@ export const renderBestSellerProduct = async () => {
 };
 
 export const renderProductByCategory = async (
+  keyword,
   category,
   lat,
   lng,
@@ -37,8 +38,9 @@ export const renderProductByCategory = async (
   size
 ) => {
   try {
-    const response = await request.get("/products/category", {
+    const response = await request.get("/products/filter", {
       params: {
+        keyword,
         category,
         lat,
         lng,

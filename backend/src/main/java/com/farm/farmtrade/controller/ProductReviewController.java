@@ -1,6 +1,7 @@
 package com.farm.farmtrade.controller;
 
 import com.farm.farmtrade.dto.request.ProductReviewRequest.CreateProductReviewRequest;
+import com.farm.farmtrade.dto.request.ProductReviewRequest.UpdateProductReviewRequest;
 import com.farm.farmtrade.dto.response.ReviewResponse;
 import com.farm.farmtrade.entity.Order;
 import com.farm.farmtrade.entity.Product;
@@ -63,9 +64,10 @@ public class ProductReviewController {
     }
 
     @PutMapping("/{reviewId}")
-    public ResponseEntity<ProductReview> updateReview(@PathVariable Integer reviewId,
-                                                      @RequestBody @Valid com.farm.farmtrade.dto.request.ProductReviewRequest.UpdateProductReviewRequest request,
-                                                      Principal principal) {
+    public ResponseEntity<ProductReview> updateReview(
+            @PathVariable Integer reviewId,
+            @ModelAttribute UpdateProductReviewRequest request,
+            Principal principal) {
         String username = principal.getName();
         ProductReview updatedReview = reviewService.updateReview(reviewId, request, username);
         return ResponseEntity.ok(updatedReview);

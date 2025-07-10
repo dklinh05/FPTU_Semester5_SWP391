@@ -2,6 +2,7 @@ package com.farm.farmtrade.service;
 
 import com.farm.farmtrade.dto.request.ProductReviewRequest.CreateProductReviewRequest;
 import com.farm.farmtrade.dto.request.ProductReviewRequest.UpdateProductReviewRequest;
+import com.farm.farmtrade.dto.response.ReviewResponse;
 import com.farm.farmtrade.entity.Order;
 import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.entity.ProductReview;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -78,21 +80,84 @@ public class ProductReviewService {
         return savedReview;
     }
 
-    public List<ProductReview> getReviewsByProduct(Integer productId) {
+    public ReviewResponse getReviewDetail(Integer productId, Integer orderId, String username) {
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        User buyer = userRepo.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        ProductReview review = productReviewRepository
+                .findByProductAndBuyerAndOrder(product, buyer, order)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+        ReviewResponse dto = new ReviewResponse();
+        dto.setReviewID(review.getReviewID());
+        dto.setComment(review.getComment());
+        dto.setProductQuality(review.getProductQuality());
+        dto.setSellerService(review.getSellerService());
+        dto.setDeliverySpeed(review.getDeliverySpeed());
+        dto.setReviewDate(review.getReviewDate());
+        dto.setBuyerUsername(buyer.getUsername());
+
+        if (review.getImage() != null && !review.getImage().isEmpty()) {
+            dto.setImageList(Arrays.asList(review.getImage().split(";")));
+        }
+
+        return dto;
+    }
+
+    public Optional<ReviewResponse> getReviewByProductOrderBuyer(Integer productId, Integer orderId, String username) {
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        User buyer = userRepo.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Order order = orderRepo.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        return productReviewRepository.findByProductAndBuyerAndOrder(product, buyer, order)
+                .map(review -> {
+                    ReviewResponse dto = new ReviewResponse();
+                    dto.setReviewID(review.getReviewID());
+                    dto.setComment(review.getComment());
+                    dto.setProductQuality(review.getProductQuality());
+                    dto.setSellerService(review.getSellerService());
+                    dto.setDeliverySpeed(review.getDeliverySpeed());
+                    dto.setReviewDate(review.getReviewDate());
+                    dto.setBuyerUsername(review.getBuyer().getUsername());
+
+                    if (review.getImage() != null && !review.getImage().isEmpty()) {
+                        dto.setImageList(Arrays.asList(review.getImage().split(";")));
+                    }
+                    return dto;
+                });
+    }
+
+    public List<ReviewResponse> getReviewsByProduct(Integer productId) {
         Product product = productRepo.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
         List<ProductReview> reviews = productReviewRepository.findByProduct(product);
 
-        for (ProductReview review : reviews) {
-            if (review.getImage() != null && !review.getImage().isEmpty()) {
-                review.setImageList(Arrays.asList(review.getImage().split(";")));
-            } else {
-                review.setImageList(new ArrayList<>());
-            }
-        }
+        return reviews.stream().map(review -> {
+            ReviewResponse dto = new ReviewResponse();
+            dto.setReviewID(review.getReviewID());
+            dto.setComment(review.getComment());
+            dto.setProductQuality(review.getProductQuality());
+            dto.setSellerService(review.getSellerService());
+            dto.setDeliverySpeed(review.getDeliverySpeed());
+            dto.setReviewDate(review.getReviewDate());
+            dto.setBuyerUsername(review.getBuyer().getUsername());
 
-        return reviews;
+            if (review.getImage() != null && !review.getImage().isEmpty()) {
+                dto.setImageList(Arrays.asList(review.getImage().split(";")));
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     public ProductReview updateReview(Integer reviewId, UpdateProductReviewRequest request, String username) {

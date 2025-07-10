@@ -1,18 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
-import { Camera } from "lucide-react";
-import { submitReview } from "../../services/feedbackService";
+import { Camera, X } from "lucide-react";
+import {
+    submitReview,
+    updateReview,
+    getReviewDetail,
+} from "../../services/feedbackService";
 import styles from "./ReviewModal.module.scss";
-import selectedImages from "lodash";
 
-const renderStars = (value, setValue) =>
+const starTooltips = ["Tệ", "Không hài lòng", "Bình thường", "Tốt", "Xuất sắc"];
+
+const renderStars = (value, setValue, hoveredIndex, setHoveredIndex, type) =>
     Array.from({ length: 5 }, (_, i) => (
         <span
             key={i}
             className={`${styles.star} ${i < value ? styles.active : ""}`}
-            onClick={() => setValue(i + 1)}
+            onClick={() => {
+                setValue(i + 1);
+                setHoveredIndex(i);
+                setTimeout(() => setHoveredIndex(null), 2000);
+            }}
+            style={{ position: "relative", cursor: "pointer" }}
         >
       ★
+            {hoveredIndex === i && (
+                <div className={styles.tooltip}>{starTooltips[i]}</div>
+            )}
     </span>
     ));
 
@@ -22,13 +35,56 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
     const [deliverySpeed, setDeliverySpeed] = useState(0);
     const [comment, setComment] = useState("");
     const [images, setImages] = useState([]);
+    const [oldImages, setOldImages] = useState([]);
+    const [reviewId, setReviewId] = useState(null);
+    const [hoveredQuality, setHoveredQuality] = useState(null);
+    const [hoveredService, setHoveredService] = useState(null);
+    const [hoveredDelivery, setHoveredDelivery] = useState(null);
     const maxImages = 5;
+
+    // Load review cũ nếu là edit
+    useEffect(() => {
+        const loadReviewData = async () => {
+            if (product?.isEdit) {
+                try {
+                    const res = await getReviewDetail(product.productId, product.orderId);
+                    setReviewId(res.reviewID);
+                    setProductQuality(res.productQuality);
+                    setSellerService(res.sellerService);
+                    setDeliverySpeed(res.deliverySpeed);
+                    setComment(res.comment);
+                    setOldImages(res.imageList || []);
+                } catch (err) {
+                    console.error("Không load được review cũ:", err);
+                }
+            }
+        };
+
+        if (show) {
+            loadReviewData();
+        } else {
+
+            setProductQuality(0);
+            setSellerService(0);
+            setDeliverySpeed(0);
+            setComment("");
+            setImages([]);
+            setOldImages([]);
+            setReviewId(null);
+            setHoveredQuality(null);
+            setHoveredService(null);
+            setHoveredDelivery(null);
+        }
+    }, [show, product]);
 
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
-        if (files.length + images.length <= maxImages) {
-            setImages((prev) => [...prev, ...files]);
-        }
+        const total = [...images, ...files].slice(0, maxImages);
+        setImages(total);
+    };
+
+    const removeImage = (idx) => {
+        setImages((prev) => prev.filter((_, i) => i !== idx));
     };
 
     const handleSubmit = async () => {
@@ -37,58 +93,64 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
         formData.append("sellerService", sellerService);
         formData.append("deliverySpeed", deliverySpeed);
         formData.append("comment", comment);
-        formData.append("orderId", product.orderId);
-        selectedImages.slice(0, 5).forEach(file => {
-            formData.append("image[]", file);
-        });
+        images.forEach((file) => formData.append("image", file));
 
         try {
-            await submitReview(product.productId, formData);
-            alert("Đánh giá thành công!");
+            if (product.isEdit && reviewId) {
+                await updateReview(reviewId, formData);
+                alert("Cập nhật đánh giá thành công!");
+            } else {
+                formData.append("orderId", product.orderId);
+                await submitReview(product.productId, formData);
+                alert("Đánh giá thành công!");
+            }
             onHide();
             if (onSuccess) onSuccess();
         } catch (error) {
-            console.error(error);
-            alert("Lỗi khi gửi đánh giá.");
+            console.error("Gửi đánh giá thất bại:", error);
+            alert("Đã xảy ra lỗi khi gửi đánh giá.");
         }
     };
-
-    useEffect(() => {
-        if (!show) {
-            setProductQuality(0);
-            setSellerService(0);
-            setDeliverySpeed(0);
-            setComment("");
-            setImages([]);
-        }
-    }, [show]);
 
     return (
         <Modal show={show} onHide={onHide} centered size="lg">
             <Modal.Header closeButton>
-                <Modal.Title>Đánh giá sản phẩm: {product.productName}</Modal.Title>
+                <Modal.Title>
+                    {product.isEdit ? "Chỉnh sửa đánh giá" : "Đánh giá sản phẩm"}:{" "}
+                    {product.productName}
+                </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <div className={styles.reviewForm}>
                     <div className={styles.section}>
-                        <label>Product quality</label>
-                        {renderStars(productQuality, setProductQuality)}
+                        <label>Chất lượng sản phẩm</label>
+                        {renderStars(productQuality, setProductQuality, hoveredQuality, setHoveredQuality)}
                     </div>
+
                     <div className={styles.section}>
-                        <label>Upload images</label>
+                        <label>Ảnh đã tải lên</label>
                         <div className={styles.imageWrapper}>
-                            {images.map((img, idx) => (
-                                <img
-                                    key={idx}
-                                    src={URL.createObjectURL(img)}
-                                    alt="preview"
-                                    className={styles.previewImg}
-                                />
+                            {oldImages.map((url, idx) => (
+                                <div className={styles.imageBox} key={idx}>
+                                    <img src={url} alt="uploaded" className={styles.previewImg} />
+                                </div>
                             ))}
-                            {images.length < maxImages && (
+                            {images.map((img, idx) => (
+                                <div className={styles.imageBox} key={`new-${idx}`}>
+                                    <img
+                                        src={URL.createObjectURL(img)}
+                                        alt="preview"
+                                        className={styles.previewImg}
+                                    />
+                                    <span className={styles.removeBtn} onClick={() => removeImage(idx)}>
+                    <X size={14} />
+                  </span>
+                                </div>
+                            ))}
+                            {images.length + oldImages.length < maxImages && (
                                 <label className={styles.uploadBox}>
                                     <Camera />
-                                    <span>{images.length}/5</span>
+                                    <span>{images.length + oldImages.length}/{maxImages}</span>
                                     <input
                                         type="file"
                                         accept="image/*"
@@ -100,22 +162,25 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
                             )}
                         </div>
                     </div>
+
                     <Form.Group className="mb-3">
                         <Form.Control
                             as="textarea"
-                            placeholder="Description"
+                            placeholder="Mô tả chi tiết trải nghiệm của bạn..."
                             rows={3}
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
                         />
                     </Form.Group>
+
                     <div className={styles.section}>
-                        <label>Seller service</label>
-                        {renderStars(sellerService, setSellerService)}
+                        <label>Dịch vụ người bán</label>
+                        {renderStars(sellerService, setSellerService, hoveredService, setHoveredService)}
                     </div>
+
                     <div className={styles.section}>
-                        <label>Delivery speed</label>
-                        {renderStars(deliverySpeed, setDeliverySpeed)}
+                        <label>Tốc độ giao hàng</label>
+                        {renderStars(deliverySpeed, setDeliverySpeed, hoveredDelivery, setHoveredDelivery)}
                     </div>
                 </div>
             </Modal.Body>
@@ -124,7 +189,7 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
                     Hủy
                 </Button>
                 <Button variant="primary" onClick={handleSubmit}>
-                    Gửi đánh giá
+                    {product.isEdit ? "Cập nhật đánh giá" : "Gửi đánh giá"}
                 </Button>
             </Modal.Footer>
         </Modal>

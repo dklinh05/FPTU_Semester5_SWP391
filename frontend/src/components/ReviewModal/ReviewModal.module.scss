@@ -1,44 +1,82 @@
-.reviewForm {
-  .section {
-    margin-bottom: 1rem;
-  }
+.star {
+  font-size: 24px;
+  color: #ccc;
+  margin-right: 5px;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s ease;
+}
 
-  .star {
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #ccc;
-    margin-right: 4px;
-  }
+.star.active {
+  color: #ffc107;
+}
 
-  .active {
-    color: gold;
-  }
+.tooltip {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 10;
+  animation: fadeIn 0.3s ease;
+}
 
-  .imageWrapper {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-  .previewImg {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 6px;
-  }
+.imageWrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
 
-  .uploadBox {
-    width: 80px;
-    height: 80px;
-    border: 1px dashed #ccc;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 12px;
-    text-align: center;
-    color: #555;
-    border-radius: 6px;
-  }
+.imageBox {
+  position: relative;
+  display: inline-block;
+}
+
+.previewImg {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.removeBtn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ff4d4f;
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px;
+  cursor: pointer;
+}
+
+.uploadBox {
+  width: 80px;
+  height: 80px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  cursor: pointer;
+  font-size: 12px;
 }

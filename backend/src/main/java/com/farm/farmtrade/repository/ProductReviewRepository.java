@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface ProductReviewRepository extends JpaRepository<ProductReview, Integer> {
     boolean existsByProductAndBuyerAndOrder(Product product, User buyer, Order order);
     List<ProductReview> findByProduct(Product product);
+    Optional<ProductReview> findByProductAndBuyerAndOrder(Product product, User buyer, Order order);
 }

@@ -9,6 +9,7 @@ import {
 } from "../../services/orderService";
 import { addProductToCart } from "../../services/cartItemService";
 import ReviewModal from "../../components/ReviewModal/ReviewModal";
+import { checkIfReviewed, deleteReview, getReviewDetail } from "../../services/feedbackService";
 
 function Orders() {
   const navigate = useNavigate();
@@ -26,16 +27,25 @@ function Orders() {
 
   const fetchOrders = async () => {
     try {
-      console.log(status);
       const fetchedOrders = await renderOrderByBuyerId(userId, status);
       setOrders(fetchedOrders);
 
       const itemsMap = {};
+      const reviewedMap = {};
+
       for (const order of fetchedOrders) {
         const items = await renderOrderItemsByOrderId(order.orderID);
         itemsMap[order.orderID] = items;
+
+        // Kiểm tra từng item đã đánh giá hay chưa
+        for (const item of items) {
+          const reviewed = await checkIfReviewed(item.productId, order.orderID);
+          reviewedMap[`${order.orderID}_${item.productId}`] = reviewed;
+        }
       }
+
       setOrderItemsMap(itemsMap);
+      setReviewedItems(reviewedMap);
     } catch (error) {
       console.error("Error loading orders:", error);
     }
@@ -76,13 +86,32 @@ function Orders() {
     setShowReviewModal(true);
   };
 
-  const handleReviewSuccess = () => {
+  const handleReviewSuccess = async () => {
     setShowReviewModal(false);
     if (selectedProduct) {
+      const { orderId, productId } = selectedProduct;
+      const reviewed = await checkIfReviewed(productId, orderId);
       setReviewedItems((prev) => ({
         ...prev,
-        [`${selectedProduct.orderId}_${selectedProduct.productId}`]: true,
+        [`${orderId}_${productId}`]: reviewed,
       }));
+    }
+  };
+
+  const handleDeleteReview = async (orderId, productId) => {
+    try {
+      const review = await getReviewDetail(productId, orderId);
+      const reviewId = review.reviewID;
+
+      await deleteReview(reviewId);
+
+      const key = `${orderId}_${productId}`;
+      setReviewedItems((prev) => ({ ...prev, [key]: false }));
+
+      alert("Xóa đánh giá thành công!");
+    } catch (err) {
+      console.error("Delete review failed:", err);
+      alert("Lỗi khi xóa đánh giá");
     }
   };
 
@@ -124,32 +153,48 @@ function Orders() {
                     Giá: ₫{item.price.toLocaleString()}
                   </div>
 
-                  {order.status === "COMPLETED" &&
-                    (reviewedItems[`${order.orderID}_${item.productId}`] ? (
-                      <Button
-                        size="sm"
-                        variant="outline-secondary"
-                        className="mt-2"
-                        disabled
-                      >
-                        Đã đánh giá
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        variant="outline-success"
-                        className="mt-2"
-                        onClick={() =>
-                          handleFeedback(order.orderID, {
-                            productId: item.productId,
-                            productName: item.productName,
-                            productImage: item.productImage,
-                          })
-                        }
-                      >
-                        Đánh giá
-                      </Button>
-                    ))}
+                  {order.status === "COMPLETED" && (
+                      reviewedItems[`${order.orderID}_${item.productId}`] ? (
+                          <div className="mt-2 d-flex gap-2">
+                            <Button
+                                size="sm"
+                                variant="outline-warning"
+                                onClick={() => handleFeedback(order.orderID, {
+                                  productId: item.productId,
+                                  productName: item.productName,
+                                  productImage: item.productImage,
+                                  isEdit: true
+                                })}
+                            >
+                              Chỉnh sửa đánh giá
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline-danger"
+                                onClick={() => handleDeleteReview(order.orderID, item.productId)}
+                            >
+                              Xóa đánh giá
+                            </Button>
+                          </div>
+                      ) : (
+                          <Button
+                              size="sm"
+                              variant="outline-success"
+                              className="mt-2"
+                              onClick={() =>
+                                  handleFeedback(order.orderID, {
+                                    productId: item.productId,
+                                    productName: item.productName,
+                                    productImage: item.productImage,
+                                    isEdit: false
+                                  })
+                              }
+                          >
+                            Đánh giá
+                          </Button>
+                      )
+                  )}
+
                 </div>
               </div>
             ))}

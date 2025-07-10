@@ -35,14 +35,12 @@ function ProductLayout({ children }) {
             <div className="container-fluid py-5 mt-5">
                 <div className="container py-5">
                     <div className="row g-4 mb-5">
-                        {/* Main Content Area */}
                         <div className="col-lg-8 col-xl-9">
                             <div className="row g-4">
                                 {cloneElement(children, { product })}
                             </div>
                         </div>
 
-                        {/* Sidebar Area */}
                         <div className="col-lg-4 col-xl-3">
                             <SidebarDetail
                                 supplier={product.supplier}

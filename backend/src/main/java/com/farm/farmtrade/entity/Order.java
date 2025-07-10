@@ -27,7 +27,7 @@ public class Order {
     @JoinColumn(name = "SupplierID")
     User supplier;
     @ManyToOne
-    @JoinColumn(name = "SupplierID")
+    @JoinColumn(name = "ShipperID")
     User shipper;
     LocalDateTime orderDate;
     String status;

@@ -5,15 +5,23 @@ import { getUserIdFromToken } from "./authService";
 const API_BASE = "/users";
 
 const checkAuthAndCall = async (apiCall) => {
-    const token = localStorage.getItem("token");
-    if (!token) throw new Error("Vui lòng đăng nhập.");
-    return await apiCall();
+  const token = localStorage.getItem("token");
+  console.log("userService checkAuthAndCall: token =", token);
+  if (!token) throw new Error("Vui lòng đăng nhập: Không tìm thấy token.");
+  return await apiCall();
 };
 
-// Gọi API GET /users/{id}
-export const getUserById = async (id) => {
-    const res = await request.get(`${API_BASE}/${id}`); // ✅ Bây giờ request đã được định nghĩa
-    return res.data;
+// Gọi API GET /farmtrade/users/{userID}
+export const getUserById = async (userId) => {
+  try {
+    console.log("getUserById: userId =", userId);
+    const res = await checkAuthAndCall(() => request.get(`${API_BASE}/${userId}`));
+    console.log("getUserById: response =", res.data);
+    return res.data; // Returns user object with rewardPoints
+  } catch (error) {
+    console.error("getUserById error:", error);
+    throw new Error(`Lỗi khi lấy thông tin user: ${error.response?.data?.message || error.message}`);
+  }
 };
 
 // Gửi yêu cầu nâng cấp

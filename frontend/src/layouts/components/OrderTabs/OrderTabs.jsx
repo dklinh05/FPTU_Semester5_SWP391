@@ -8,6 +8,7 @@ const tabs = [
   { label: "Hoàn thành", path: "/orders?status=completed" },
   { label: "Đã hủy", path: "/orders?status=cancelled" },
   { label: "Trả hàng/Hoàn tiền", path: "/orders?status=returns" },
+  { label: "Đánh giá", path: "/orders/rated"},
 ];
 
 const OrderTabs = () => {

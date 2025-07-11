@@ -15,7 +15,6 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
     Optional<User> findByUsername(String username);
     Optional<User> findByEmail(String email);
     List<User> findByRole(String role);
-
     // Kiểm tra xem email đã tồn tại chưa
     Boolean existsByEmail(String email);
 

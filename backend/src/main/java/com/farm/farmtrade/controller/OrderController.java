@@ -7,7 +7,6 @@ import com.farm.farmtrade.dto.response.orderResponse.OrderGroupResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderItemResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderResponse;
 import com.farm.farmtrade.entity.Order;
-import com.farm.farmtrade.entity.OrderGroup;
 import com.farm.farmtrade.repository.OrderRepository;
 import com.farm.farmtrade.service.order.OrderGroupService;
 import com.farm.farmtrade.service.order.OrderService;
@@ -162,6 +161,11 @@ public class OrderController {
             @RequestParam int year
     ) {
         return ResponseEntity.ok(orderService.getMonthlyMetricsForSupplier(supplierId, month, year));
+    }
+  
+    @PutMapping("assign-shipper/{orderId}")
+    public ResponseEntity<OrderResponse> assignNearestShipper(@PathVariable Integer orderId) {
+        return ResponseEntity.ok(orderService.assignNearestShipper(orderId));
     }
 
 }

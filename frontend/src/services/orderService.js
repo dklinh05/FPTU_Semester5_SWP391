@@ -40,6 +40,20 @@ export const renderOrderByBuyerId = async (id, status) => {
   }
 };
 
+export const analysisOrder= async (id, month, year) => {
+  try {
+    const response = await request.get(`/orders/suppliers/${id}/dashboard/monthly`, {
+      params: {
+       month: month,
+       year: year
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 export const renderOrderItemsByOrderId = async (id) => {
   try {
     const response = await request.get(`/orders/${id}/items`);
@@ -95,3 +109,5 @@ export const updateStatusOrder = async (orderId, newStatus, supplierId) => {
     throw error.response?.data || error.message;
   }
 };
+
+

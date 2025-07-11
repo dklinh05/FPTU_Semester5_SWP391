@@ -19,8 +19,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -290,4 +293,53 @@ public class OrderService {
         order.setStatus(request.getNewStatus());
         orderRepository.save(order);
     }
+
+    public Map<String, Object> getTodayMetricsForSupplier(Long supplierId) {
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+
+        double todayRevenue = orderRepository.getRevenueByDateAndSupplier(today, supplierId);
+        double yesterdayRevenue = orderRepository.getRevenueByDateAndSupplier(yesterday, supplierId);
+        long todayOrders = orderRepository.getOrderCountByDateAndSupplier(today, supplierId);
+        long yesterdayOrders = orderRepository.getOrderCountByDateAndSupplier(yesterday, supplierId);
+
+        double revenueChange = calculatePercentageChange(todayRevenue, yesterdayRevenue);
+        double orderChange = calculatePercentageChange(todayOrders, yesterdayOrders);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("todayRevenue", todayRevenue);
+        result.put("revenueChange", revenueChange);
+        result.put("todayOrders", todayOrders);
+        result.put("orderChange", orderChange);
+
+        return result;
+    }
+
+    public Map<String, Object> getMonthlyMetricsForSupplier(Long supplierId, int month, int year) {
+        int lastMonth = (month == 1) ? 12 : month - 1;
+        int lastMonthYear = (month == 1) ? year - 1 : year;
+
+        double thisMonthRevenue = orderRepository.getRevenueByMonthAndSupplier(month, year, supplierId);
+        double lastMonthRevenue = orderRepository.getRevenueByMonthAndSupplier(lastMonth, lastMonthYear, supplierId);
+
+        long thisMonthOrders = orderRepository.getOrderCountByMonthAndSupplier(month, year, supplierId);
+        long lastMonthOrders = orderRepository.getOrderCountByMonthAndSupplier(lastMonth, lastMonthYear, supplierId);
+
+        double revenueChange = calculatePercentageChange(thisMonthRevenue, lastMonthRevenue);
+        double orderChange = calculatePercentageChange(thisMonthOrders, lastMonthOrders);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("monthlyRevenue", thisMonthRevenue);
+        result.put("revenueChange", revenueChange);
+        result.put("monthlyOrders", thisMonthOrders);
+        result.put("orderChange", orderChange);
+
+        return result;
+    }
+
+    private double calculatePercentageChange(double current, double previous) {
+        if (previous == 0) return current > 0 ? 100 : 0;
+        return ((current - previous) / previous) * 100;
+    }
+
 }

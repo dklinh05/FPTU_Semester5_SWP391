@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/orders")
@@ -148,4 +149,19 @@ public class OrderController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("/suppliers/{supplierId}/dashboard/today")
+    public ResponseEntity<Map<String, Object>> getSupplierTodayMetrics(@PathVariable Long supplierId) {
+        return ResponseEntity.ok(orderService.getTodayMetricsForSupplier(supplierId));
+    }
+
+    @GetMapping("/suppliers/{supplierId}/dashboard/monthly")
+    public ResponseEntity<Map<String, Object>> getSupplierMonthlyMetrics(
+            @PathVariable Long supplierId,
+            @RequestParam int month,
+            @RequestParam int year
+    ) {
+        return ResponseEntity.ok(orderService.getMonthlyMetricsForSupplier(supplierId, month, year));
+    }
+
 }

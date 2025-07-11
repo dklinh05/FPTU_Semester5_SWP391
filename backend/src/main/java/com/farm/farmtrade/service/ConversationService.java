@@ -1,70 +1,70 @@
 package com.farm.farmtrade.service;
 
-import com.farm.farmtrade.dto.request.chatRequest.ConversationRequestDTO;
 import com.farm.farmtrade.dto.request.chatRequest.MessageRequestDTO;
 import com.farm.farmtrade.dto.response.chatResponse.ConversationResponseDTO;
 import com.farm.farmtrade.dto.response.chatResponse.MessageResponseDTO;
 import com.farm.farmtrade.entity.Conversation;
-import com.farm.farmtrade.entity.ConversationParticipant;
+import com.farm.farmtrade.entity.ConversationParticipants; // Sử dụng lại
 import com.farm.farmtrade.entity.Message;
-import com.farm.farmtrade.repository.ConversationParticipantRepository;
+import com.farm.farmtrade.entity.User;
+import com.farm.farmtrade.repository.ConversationParticipantsRepository; // Sử dụng lại
 import com.farm.farmtrade.repository.ConversationRepository;
 import com.farm.farmtrade.repository.MessageRepository;
 import com.farm.farmtrade.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class ConversationService {
     private final ConversationRepository conversationRepository;
-    private final ConversationParticipantRepository conversationParticipantRepository;
+    private final ConversationParticipantsRepository conversationParticipantsRepository; // Sử dụng lại
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
 
     public ConversationService(ConversationRepository conversationRepository,
-                               ConversationParticipantRepository conversationParticipantRepository,
+                               ConversationParticipantsRepository conversationParticipantsRepository, // Sử dụng lại
                                MessageRepository messageRepository,
                                UserRepository userRepository) {
         this.conversationRepository = conversationRepository;
-        this.conversationParticipantRepository = conversationParticipantRepository;
+        this.conversationParticipantsRepository = conversationParticipantsRepository; // Sử dụng lại
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
     }
 
-    @Transactional
-    public Long createConversation(ConversationRequestDTO dto) {
-        if (dto.getUserIds() == null || dto.getUserIds().isEmpty()) {
-            throw new IllegalArgumentException("At least one user ID is required");
-        }
-        if (!dto.isGroup() && dto.getUserIds().size() != 2) {
-            throw new IllegalArgumentException("One-on-one conversations must have exactly two users");
-        }
-        if (dto.isGroup() && (dto.getName() == null || dto.getName().isEmpty())) {
-            throw new IllegalArgumentException("Group conversations must have a name");
-        }
-        for (Integer userId : dto.getUserIds()) {
-            if (!userRepository.existsById(userId)) {
-                throw new IllegalArgumentException("User ID " + userId + " does not exist");
-            }
-        }
+    public Long getExistingConversation(Integer userID1, Integer userID2) {
+        return conversationRepository.findConversationIdByUserIDs(userID1, userID2);
+    }
 
+    @Transactional
+    public Conversation createConversation(List<Integer> userIDs, boolean isGroup, String name) {
+        // Tạo mới đối tượng Conversation
         Conversation conversation = new Conversation();
-        conversation.setIsGroup(dto.isGroup());
-        conversation.setName(dto.getName());
+        conversation.setName(name);
+        conversation.setGroup(isGroup);
+        conversation.setCreatedAt(LocalDateTime.now());
+
+        // Lưu Conversation vào cơ sở dữ liệu
         Conversation savedConversation = conversationRepository.save(conversation);
 
-        for (Integer userId : dto.getUserIds()) {
-            ConversationParticipant participant = new ConversationParticipant();
+        // Thêm các thành viên vào ConversationParticipants
+        for (Integer userId : userIDs) {
+            ConversationParticipants participant = new ConversationParticipants();
             participant.setConversationId(savedConversation.getConversationId());
             participant.setUserId(userId);
-            participant.setRole(userId.equals(dto.getUserIds().get(0)) ? ConversationParticipant.ParticipantRole.Admin : ConversationParticipant.ParticipantRole.Member);
-            conversationParticipantRepository.save(participant);
+            // Đặt role: người đầu tiên trong danh sách là Admin, các người khác là Member
+            participant.setRole(userId.equals(userIDs.get(0)) ? ConversationParticipants.ParticipantRole.Admin : ConversationParticipants.ParticipantRole.Member);
+            participant.setJoinedAt(LocalDateTime.now());
+            conversationParticipantsRepository.save(participant);
         }
 
-        return savedConversation.getConversationId();
+        return savedConversation;
     }
 
     @Transactional
@@ -72,7 +72,7 @@ public class ConversationService {
         if (!conversationRepository.existsById(dto.getConversationId())) {
             throw new IllegalArgumentException("Conversation not found");
         }
-        if (!conversationParticipantRepository.existsByConversationIdAndUserId(dto.getConversationId(), dto.getUserId())) {
+        if (!conversationParticipantsRepository.existsByConversationIdAndUserId(dto.getConversationId(), dto.getUserId())) {
             throw new IllegalArgumentException("User is not part of this conversation");
         }
         if (!userRepository.existsById(dto.getUserId())) {
@@ -94,7 +94,7 @@ public class ConversationService {
             throw new IllegalArgumentException("User ID " + userId + " does not exist");
         }
 
-        List<ConversationParticipant> participants = conversationParticipantRepository.findAll()
+        List<ConversationParticipants> participants = conversationParticipantsRepository.findAll()
                 .stream()
                 .filter(p -> p.getUserId().equals(userId))
                 .collect(Collectors.toList());
@@ -106,7 +106,7 @@ public class ConversationService {
             dto.setName(conversation.getName());
             dto.setIsGroup(conversation.isGroup());
             dto.setCreatedAt(conversation.getCreatedAt());
-            dto.setUserIds(conversationParticipantRepository.findUserIdsByConversationId(conversation.getConversationId()));
+            dto.setUserIds(conversationParticipantsRepository.findUserIdsByConversationId(conversation.getConversationId()));
             return dto;
         }).collect(Collectors.toList());
     }

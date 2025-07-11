@@ -43,6 +43,8 @@ import AcceptUpdateRole from "../pages/AcceptUpdateRole/index.jsx";
 import OrderDetail from "../pages/OrderDetail/index.jsx";
 import OrderDetailCustomer from "../pages/OrderDetailCustomer/index.jsx";
 import OrderShipping from "../pages/OrderShipping/index.jsx";
+import ChatPage from "../pages/ChatPage/index.jsx";
+
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
@@ -88,6 +90,7 @@ const publicRoutes = [
     component: OrderShipping,
     layout: ShipperLayout,
   },
+
   {
     path: config.routes.addProduct,
     component: AddProduct,
@@ -117,6 +120,7 @@ const publicRoutes = [
   },
 
   { path: config.routes.orders, component: Orders, layout: OrdersLayout },
+
   {
     path: config.routes.orderDetail,
     component: OrderDetail,
@@ -153,11 +157,11 @@ const publicRoutes = [
     layout: SearchResultLayout,
   },
   { path: config.routes.redeemVoucher, component: RedeemVoucher, layout: null },
-  {
-    path: config.routes.acceptUpdateRole,
-    component: AcceptUpdateRole,
-    layout: AdminLayout,
-  },
+
+  { path: config.routes.acceptUpdateRole, component: AcceptUpdateRole, layout: AdminLayout },
+  { path: config.routes.chat, component: ChatPage, layout: null },
+  { path: "/chat", component: ChatPage, layout: null }
+
 ];
 
 const privateRoutes = [];

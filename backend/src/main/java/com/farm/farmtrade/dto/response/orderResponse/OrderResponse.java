@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderResponse {
     Integer orderID;
+    Integer shipperId;
     Integer buyerId;
     Integer supplierId;
     String supplierName;

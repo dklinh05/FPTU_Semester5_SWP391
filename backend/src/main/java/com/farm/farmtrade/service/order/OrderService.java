@@ -7,6 +7,7 @@ import com.farm.farmtrade.dto.response.orderResponse.OrderItemResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderResponse;
 import com.farm.farmtrade.entity.*;
 import com.farm.farmtrade.repository.*;
+import com.farm.farmtrade.service.ProductService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -37,6 +40,8 @@ public class OrderService {
     ProductRepository productRepository;
     @Autowired
     OrderItemRepository orderItemRepository;
+    @Autowired
+    ProductService productService;
     @Autowired
     VoucherRepository voucherRepository;
 
@@ -195,6 +200,7 @@ public class OrderService {
         return orders.stream()
                 .map(order -> new OrderResponse(
                         order.getOrderID(),
+                        order.getShipper() != null ? order.getShipper().getUserID() : null,
                         order.getBuyer() != null ? order.getBuyer().getUserID() : null,
                         order.getSupplier() != null ? order.getSupplier().getUserID() : null,
                         order.getSupplier() != null ? order.getSupplier().getFullName() : null,
@@ -290,4 +296,109 @@ public class OrderService {
         order.setStatus(request.getNewStatus());
         orderRepository.save(order);
     }
+
+
+    public Map<String, Object> getTodayMetricsForSupplier(Long supplierId) {
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+
+        double todayRevenue = orderRepository.getRevenueByDateAndSupplier(today, supplierId);
+        double yesterdayRevenue = orderRepository.getRevenueByDateAndSupplier(yesterday, supplierId);
+        long todayOrders = orderRepository.getOrderCountByDateAndSupplier(today, supplierId);
+        long yesterdayOrders = orderRepository.getOrderCountByDateAndSupplier(yesterday, supplierId);
+
+        double revenueChange = calculatePercentageChange(todayRevenue, yesterdayRevenue);
+        double orderChange = calculatePercentageChange(todayOrders, yesterdayOrders);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("todayRevenue", todayRevenue);
+        result.put("revenueChange", revenueChange);
+        result.put("todayOrders", todayOrders);
+        result.put("orderChange", orderChange);
+
+        return result;
+    }
+
+    public Map<String, Object> getMonthlyMetricsForSupplier(Long supplierId, int month, int year) {
+        int lastMonth = (month == 1) ? 12 : month - 1;
+        int lastMonthYear = (month == 1) ? year - 1 : year;
+
+        double thisMonthRevenue = orderRepository.getRevenueByMonthAndSupplier(month, year, supplierId);
+        double lastMonthRevenue = orderRepository.getRevenueByMonthAndSupplier(lastMonth, lastMonthYear, supplierId);
+
+        long thisMonthOrders = orderRepository.getOrderCountByMonthAndSupplier(month, year, supplierId);
+        long lastMonthOrders = orderRepository.getOrderCountByMonthAndSupplier(lastMonth, lastMonthYear, supplierId);
+
+        double revenueChange = calculatePercentageChange(thisMonthRevenue, lastMonthRevenue);
+        double orderChange = calculatePercentageChange(thisMonthOrders, lastMonthOrders);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("monthlyRevenue", thisMonthRevenue);
+        result.put("revenueChange", revenueChange);
+        result.put("monthlyOrders", thisMonthOrders);
+        result.put("orderChange", orderChange);
+
+        return result;
+    }
+
+    private double calculatePercentageChange(double current, double previous) {
+        if (previous == 0) return current > 0 ? 100 : 0;
+        return ((current - previous) / previous) * 100;
+    }
+
+    public OrderResponse  assignNearestShipper(Integer orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        User supplier = order.getSupplier();
+        if (supplier.getLat() == null || supplier.getLng() == null) {
+            throw new IllegalArgumentException("Supplier does not have location info");
+        }
+
+        List<User> shippers = userRepository.findByRole("SHIPPER");
+        if (shippers.isEmpty()) {
+            throw new IllegalStateException("No shippers available");
+        }
+
+        // Tìm shipper gần nhất
+        User nearestShipper = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (User shipper : shippers) {
+            if (shipper.getLat() == null || shipper.getLng() == null) continue;
+
+            double distance = productService.haversineDistance(
+                    supplier.getLat(), supplier.getLng(),
+                    shipper.getLat(), shipper.getLng()
+            );
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearestShipper = shipper;
+            }
+        }
+
+        if (nearestShipper == null) {
+            throw new IllegalStateException("No valid shipper with location found");
+        }
+
+        order.setShipper(nearestShipper);
+        orderRepository.save(order);
+
+        return OrderResponse.builder()
+                .orderID(order.getOrderID())
+                .shipperId(order.getShipper() != null ? order.getShipper().getUserID() : null)
+                .buyerId(order.getBuyer() != null ? order.getBuyer().getUserID() : null)
+                .supplierId(order.getSupplier() != null ? order.getSupplier().getUserID() : null)
+                .supplierName(order.getSupplier() != null ? order.getSupplier().getFullName() : null)
+                .orderDate(order.getOrderDate())
+                .status("DELIVERING")
+                .totalAmount(order.getTotalAmount())
+                .orderGroupId(order.getOrderGroup() != null ? order.getOrderGroup().getOrderGroupID() : null)
+                .customerName(order.getBuyer() != null ? order.getBuyer().getFullName() : null)
+                .build();
+    }
+
+
+
 }

@@ -1,8 +1,39 @@
-import CardDashboard from "../../components/CardDashboard";
+import { useEffect, useState } from "react";
+import { useUser } from "../../context/UserContext";
+import { analysisOrder } from "../../services/orderService";
+import { getBestSellersByShop } from "../../services/productService";
+import DashboardCard from "../../components/DashboardCard/DashboardCard";
 
 function DashboardSupplier() {
+  const { userId } = useUser();
+  const [data, setData] = useState({});
+  const [products, setProducts] = useState([]);
 
-    
+  const getProducts = async () => {
+    try {
+      const response = await getBestSellersByShop(userId);
+      setProducts(response);
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm:", error);
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const data = await analysisOrder(userId, 7, 2025);
+      setData(data);
+    } catch (err) {
+      console.error("Failed to load data:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      getProducts();
+      fetchData();
+    }
+  }, [userId]);
+
   return (
     <div className="main-content">
       <div className="extra-header"></div>
@@ -13,79 +44,20 @@ function DashboardSupplier() {
               {/* Cards Section */}
               <div className="row">
                 {/* Card 1: Today's Revenue */}
-                <div className="col-xl-4 col-xxl-4 col-lg-6 col-sm-6 mb-3">
-                  <div className="card shadow-sm border-0 border-radius-12">
-                    <div className="card-body p-4">
-                      <div className="row">
-                        <div className="col-10">
-                          <h6 className="text-muted mb-2">Today's Revenue</h6>
-                          <h3 className="fw-bold">₹15,00,000</h3>
-                          <div className="d-flex align-items-center">
-                            <span className="status-badge status-success">
-                              <i className="fa-solid fa-arrow-up"></i> 4.8%
-                            </span>
-                            <span className="text-muted ms-2">
-                              from yesterday
-                            </span>
-                          </div>
-                        </div>
-                        <div className="col-2 d-flex justify-content-center align-items-center">
-                          <i className="fa-solid fa-arrow-up-right-dots size-2 text-success"></i>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <DashboardCard
+                  name={"Month's Revenue"}
+                  total={data.monthlyRevenue}
+                  percentage={data.revenueChange}
+                  title={"from last month"}
+                />
 
                 {/* Card 2: Today's Orders */}
-                <div className="col-xl-4 col-xxl-4 col-lg-6 col-sm-6 mb-3">
-                  <div className="card shadow-sm border-0 border-radius-12">
-                    <div className="card-body p-4">
-                      <div className="row">
-                        <div className="col-10">
-                          <h6 className="text-muted mb-2">Today's Orders</h6>
-                          <h3 className="fw-bold">7,506</h3>
-                          <div className="d-flex align-items-center">
-                            <span className="status-badge status-danger">
-                              <i className="fa-solid fa-arrow-down"></i> 4.8%
-                            </span>
-                            <span className="text-muted ms-2">
-                              from yesterday
-                            </span>
-                          </div>
-                        </div>
-                        <div className="col-2 d-flex justify-content-center align-items-center">
-                          <i className="fa-solid fa-cart-plus size-2-5 text-success"></i>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Card 3: Today's Visitors */}
-                <div className="col-xl-4 col-xxl-4 col-lg-6 col-sm-6 mb-3">
-                  <div className="card shadow-sm border-0 border-radius-12">
-                    <div className="card-body p-4">
-                      <div className="row">
-                        <div className="col-10">
-                          <h6 className="text-muted mb-2">Today's Visitors</h6>
-                          <h3 className="fw-bold">36,524</h3>
-                          <div className="d-flex align-items-center">
-                            <span className="status-badge status-success">
-                              <i className="fa-solid fa-arrow-up"></i> 4.8%
-                            </span>
-                            <span className="text-muted ms-2">
-                              from yesterday
-                            </span>
-                          </div>
-                        </div>
-                        <div className="col-2 d-flex justify-content-center align-items-center">
-                          <i className="fa-solid fa-street-view size-2-5 text-success"></i>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <DashboardCard
+                  name={"Month's Orders"}
+                  total={data.monthlyOrders}
+                  percentage={data.orderChange}
+                  title={"from last month"}
+                />
               </div>
 
               {/* Best Selling Products Table Section */}
@@ -194,87 +166,43 @@ function DashboardSupplier() {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td>#12598</td>
-                              <td>
-                                <img
-                                  src="./assets/images/p1.jfif"
-                                  alt="Product Image"
-                                  className="p-img-thumbnail"
-                                />
-                              </td>
-                              <td>Off-white shoulder wide...</td>
-                              <td>₹4,099</td>
-                              <td>1246</td>
-                              <td>25</td>
-                              <td>
-                                <span className="status-badge status-success">
-                                  In Stock
-                                </span>
-                              </td>
-                              <td>
-                                <a href="#" className="btn btn-sm">
-                                  <i className="fa-solid fa-edit"></i>
-                                </a>
-                                <a href="#" className="btn btn-sm">
-                                  <i className="fa-solid fa-trash"></i>
-                                </a>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>#12598</td>
-                              <td>
-                                <img
-                                  src="./assets/images/p2.jfif"
-                                  alt="Product Image"
-                                  className="p-img-thumbnail"
-                                />
-                              </td>
-                              <td>Green Velvet semi-sleeve...</td>
-                              <td>₹4,099</td>
-                              <td>1246</td>
-                              <td>25</td>
-                              <td>
-                                <span className="status-badge status-danger">
-                                  Out of Stock
-                                </span>
-                              </td>
-                              <td>
-                                <a href="#" className="btn btn-sm">
-                                  <i className="fa-solid fa-edit"></i>
-                                </a>
-                                <a href="#" className="btn btn-sm">
-                                  <i className="fa-solid fa-trash"></i>
-                                </a>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>#12598</td>
-                              <td>
-                                <img
-                                  src="./assets/images/p3.jfif"
-                                  alt="Product Image"
-                                  className="p-img-thumbnail"
-                                />
-                              </td>
-                              <td>Nike air max 2099</td>
-                              <td>₹4,099</td>
-                              <td>1246</td>
-                              <td>25</td>
-                              <td>
-                                <span className="status-badge status-info">
-                                  Restock
-                                </span>
-                              </td>
-                              <td>
-                                <a href="#" className="btn btn-sm">
-                                  <i className="fa-solid fa-edit"></i>
-                                </a>
-                                <a href="#" className="btn btn-sm">
-                                  <i className="fa-solid fa-trash"></i>
-                                </a>
-                              </td>
-                            </tr>
+                            {products?.map((product) => (
+                              <tr key={product.productID}>
+                                <td>{product.productID}</td>
+                                <td>
+                                  <img
+                                    src={product.imageURL}
+                                    alt="Product"
+                                    className="p-img-thumbnail"
+                                    width="50"
+                                  />
+                                </td>
+                                <td>{product.name}</td>
+                              
+                                <td>{product.price}</td>
+                                <td>{product.stockQuantity}</td>
+                                <td>{product?.sales}</td>
+                                <td>
+                                  <span
+                                    className={`status-badge ${
+                                      product.status === "In Stock"
+                                        ? "status-success"
+                                        : "status-danger"
+                                    }`}
+                                  >
+                                    {product.status}
+                                  </span>
+                                </td>
+                                <td>
+                                  <a href="#" className="btn btn-sm me-1">
+                                    <i className="fa-solid fa-edit"></i>
+                                  </a>
+                                  <btn className="btn btn-sm">
+                                    <i className="fa-solid fa-trash"></i>
+                                  </btn>
+                                </td>
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                       </div>

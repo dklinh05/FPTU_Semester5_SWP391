@@ -22,15 +22,16 @@ import ContactLayout from "../layouts/ContactLayout";
 import ProductLayout from "../layouts/ProductLayout";
 import CartLayout from "../layouts/CartLayout";
 import AdminLayout from "../layouts/AdminLayout";
-import OrdersLayout from "../layouts/OrdersLayout"
+import OrdersLayout from "../layouts/OrdersLayout";
 import SupplierLayout from "../layouts/SupplierLayout";
+import ShipperLayout from "../layouts/ShipperLayout";
 import OrderList from "../pages/OrderList";
 import UserList from "../pages/UserList";
-import RequestUpgradeRole from '../pages/RequestUpgradeRole/index.jsx';
-import Checkout from '../pages/Checkout';
-import RequestProduct from '../pages/RequestProduct';
-import Orders from '../pages/Orders';
-import OrdersNotPayment from '../pages/OrdersNotPayment';
+import RequestUpgradeRole from "../pages/RequestUpgradeRole/index.jsx";
+import Checkout from "../pages/Checkout";
+import RequestProduct from "../pages/RequestProduct";
+import Orders from "../pages/Orders";
+import OrdersNotPayment from "../pages/OrdersNotPayment";
 import CustomerList from "../pages/CustomerList";
 import SupplierList from "../pages/SupplierList";
 import ShipperList from "../pages/ShipperList";
@@ -41,7 +42,7 @@ import SearchResultLayout from "../layouts/SearchResultLayout/index.js";
 import AcceptUpdateRole from "../pages/AcceptUpdateRole/index.jsx";
 import OrderDetail from "../pages/OrderDetail/index.jsx";
 import OrderDetailCustomer from "../pages/OrderDetailCustomer/index.jsx";
-
+import OrderShipping from "../pages/OrderShipping/index.jsx";
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
@@ -77,7 +78,16 @@ const publicRoutes = [
     layout: AdminLayout,
   },
   { path: config.routes.dashboard, component: Dashboard, layout: AdminLayout },
-   { path: config.routes.dashboardSupplier, component: DashboardSupplier, layout: SupplierLayout },
+  {
+    path: config.routes.dashboardSupplier,
+    component: DashboardSupplier,
+    layout: SupplierLayout,
+  },
+  {
+    path: config.routes.orderShipper,
+    component: OrderShipping,
+    layout: ShipperLayout,
+  },
   {
     path: config.routes.addProduct,
     component: AddProduct,
@@ -88,9 +98,17 @@ const publicRoutes = [
     component: ListProduct,
     layout: SupplierLayout,
   },
-  { path: config.routes.orderList, component: OrderList, layout: SupplierLayout },
+  {
+    path: config.routes.orderList,
+    component: OrderList,
+    layout: SupplierLayout,
+  },
   { path: config.routes.userList, component: UserList, layout: AdminLayout },
-  { path: config.routes.requestUpgradeRole, component: RequestUpgradeRole, layout: null },
+  {
+    path: config.routes.requestUpgradeRole,
+    component: RequestUpgradeRole,
+    layout: null,
+  },
   { path: config.routes.checkout, component: Checkout, layout: null },
   {
     path: config.routes.requestProduct,
@@ -99,8 +117,16 @@ const publicRoutes = [
   },
 
   { path: config.routes.orders, component: Orders, layout: OrdersLayout },
-  { path: config.routes.orderDetail, component: OrderDetail, layout: SupplierLayout },
-   { path: config.routes.orderDetailCustomer, component: OrderDetailCustomer, layout: OrdersLayout },
+  {
+    path: config.routes.orderDetail,
+    component: OrderDetail,
+    layout: SupplierLayout,
+  },
+  {
+    path: config.routes.orderDetailCustomer,
+    component: OrderDetailCustomer,
+    layout: OrdersLayout,
+  },
   {
     path: config.routes.ordersPending,
     component: OrdersNotPayment,
@@ -121,10 +147,17 @@ const publicRoutes = [
     component: SupplierList,
     layout: AdminLayout,
   },
-  { path: config.routes.productSearch, component: ProductSearch, layout: SearchResultLayout },
+  {
+    path: config.routes.productSearch,
+    component: ProductSearch,
+    layout: SearchResultLayout,
+  },
   { path: config.routes.redeemVoucher, component: RedeemVoucher, layout: null },
-  { path: config.routes.acceptUpdateRole, component: AcceptUpdateRole, layout: AdminLayout },
-
+  {
+    path: config.routes.acceptUpdateRole,
+    component: AcceptUpdateRole,
+    layout: AdminLayout,
+  },
 ];
 
 const privateRoutes = [];

@@ -96,6 +96,8 @@ function Header() {
                     ? "/dashboard-supplier"
                     : user?.role === "ADMIN"
                     ? "/dashboard"
+                    : user?.role === "SHIPPER"
+                    ? "/order-manage-shipping"
                     : "/request-upgrade-role"
                 }
                 className="text-white"

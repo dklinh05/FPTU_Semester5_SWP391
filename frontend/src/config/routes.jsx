@@ -35,7 +35,8 @@ const routes = {
   redeemVoucher: '/redeem-voucher',
   acceptUpdateRole: '/acceptupdaterole',
   orderDetail: '/order-detail/:id',
-  orderDetailCustomer: '/order-information/:id'
+  orderDetailCustomer: '/order-information/:id',
+  orderShipper: '/order-manage-shipping'
 };
 
 export default routes;

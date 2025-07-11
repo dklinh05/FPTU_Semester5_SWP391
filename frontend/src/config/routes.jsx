@@ -36,7 +36,9 @@ const routes = {
   acceptUpdateRole: '/acceptupdaterole',
   orderDetail: '/order-detail/:id',
   orderDetailCustomer: '/order-information/:id',
+  orderShipper: '/order-manage-shipping',
   chat : '/chat/:conversationId',
+
 };
 
 export default routes;

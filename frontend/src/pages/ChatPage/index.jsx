@@ -1,10 +1,10 @@
+// src/pages/ChatPage/ChatPage.js
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { request } from "../../utils/httpRequest";
-
-
-const API_BASE_URL = "/conversations";
+import styles from "./ChatPage.module.scss"; // ✅ Import SCSS module
 
 const ChatPage = () => {
   const { conversationId } = useParams();
@@ -24,14 +24,11 @@ const ChatPage = () => {
       if (!currentUserId) return;
       setLoading(true);
       try {
-        console.log("Fetching conversations for userId =", currentUserId);
-        const response = await request.get(API_BASE_URL, {
+        const response = await request.get("/conversations", {
           params: { userId: currentUserId },
         });
-        console.log("Conversations response:", response.data);
         setConversations(response.data);
       } catch (err) {
-        console.error("Error fetching conversations:", err.response?.data || err.message);
         setError("Không thể tải danh sách cuộc trò chuyện");
       } finally {
         setLoading(false);
@@ -41,32 +38,16 @@ const ChatPage = () => {
     fetchConversations();
   }, [currentUserId]);
 
-  // Làm mới danh sách cuộc trò chuyện
-  const refreshConversations = async () => {
-    if (!currentUserId) return;
-    try {
-      const response = await request.get(API_BASE_URL, {
-        params: { userId: currentUserId },
-      });
-      setConversations(response.data);
-    } catch (err) {
-      console.error("Error refreshing conversations:", err.response?.data || err.message);
-    }
-  };
-
   // Lấy tin nhắn trong cuộc trò chuyện đang chọn
   useEffect(() => {
     const fetchMessages = async () => {
       if (!conversationId) return;
       setLoading(true);
       try {
-        console.log("getMessages: conversationId =", conversationId);
-        const response = await request.get(`${API_BASE_URL}/${conversationId}/messages`);
-        console.log("getMessages: response =", response.data);
+        const response = await request.get(`/conversations/${conversationId}/messages`);
         setMessages(response.data);
       } catch (err) {
-        console.error("getMessages error:", err.response?.data || err.message);
-        setError(`Không thể tải tin nhắn: ${err.message}`);
+        setError(`Không thể tải tin nhắn`);
       } finally {
         setLoading(false);
       }
@@ -83,16 +64,8 @@ const ChatPage = () => {
     setError(null);
 
     try {
-      console.log(
-        "sendMessage: currentUserId =",
-        currentUserId,
-        "conversationId =",
-        conversationId,
-        "content =",
-        content
-      );
       await request.post(
-        `${API_BASE_URL}/${conversationId}/messages`,
+        `/conversations/${conversationId}/messages`,
         {
           conversationId: Number(conversationId),
           userId: currentUserId,
@@ -102,13 +75,11 @@ const ChatPage = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log("sendMessage: success");
       setContent("");
-      const msgResponse = await request.get(`${API_BASE_URL}/${conversationId}/messages`);
+      const msgResponse = await request.get(`/conversations/${conversationId}/messages`);
       setMessages(msgResponse.data);
     } catch (err) {
-      console.error("sendMessage error:", err.response?.data || err.message);
-      setError(`Không thể gửi tin nhắn: ${err.message}`);
+      setError(`Không thể gửi tin nhắn`);
     } finally {
       setLoading(false);
     }
@@ -121,112 +92,119 @@ const ChatPage = () => {
 
   if (!currentUserId) {
     return (
-      <div className="text-center text-red-500 mt-4">
+      <div className={styles.loginPrompt}>
         Vui lòng đăng nhập để xem cuộc trò chuyện.
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar - Danh sách cuộc trò chuyện (chiếm 25%) */}
-      <div className="w-1/4 bg-white p-4 border-r shadow-md overflow-y-auto">
-        <h3 className="text-lg font-bold mb-4 text-gray-700">Danh sách cuộc trò chuyện</h3>
-        {loading && <p className="text-gray-500">Đang tải...</p>}
-        {error && <p className="text-red-500">{error}</p>}
-        <ul className="space-y-2">
-          {conversations.map((conv) => (
-            <li
-              key={conv.conversationId}
-              className={`p-2 rounded cursor-pointer hover:bg-gray-200 ${
-                conversationId === conv.conversationId.toString()
-                  ? "bg-blue-100"
-                  : ""
-              }`}
-              onClick={() => handleConversationSelect(conv.conversationId)}
-            >
-              <div className="text-sm font-medium">
-                {conv.name || `Nhà cung cấp #${conv.conversationId}`}
-              </div>
-              <div className="text-xs text-gray-500">
-                {conv.lastMessageTime
-                  ? new Date(conv.lastMessageTime).toLocaleTimeString("vi-VN")
-                  : new Date(conv.createdAt).toLocaleTimeString("vi-VN")}
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Main Content - Nội dung cuộc trò chuyện (chiếm 75%) */}
-      <div className="w-3/4 flex flex-col bg-white">
-        <div className="p-4 border-b">
-          <h2 className="text-xl font-bold text-gray-800">
-            {conversations.find(
-              (c) => c.conversationId.toString() === conversationId
-            )?.name || `Cuộc trò chuyện #${conversationId}`}
-          </h2>
-        </div>
-
-        {/* Khung tin nhắn */}
-        <div className="flex-1 overflow-y-auto p-4 bg-white" style={{ maxHeight: "calc(100vh - 200px)" }}>
-          {loading && <p className="text-gray-500">Đang tải...</p>}
-          {error && <p className="text-red-500">{error}</p>}
-          {!conversationId && (
-            <p className="text-gray-500">Vui lòng chọn một cuộc trò chuyện.</p>
-          )}
-
-          <div className="space-y-3">
-            {messages.map((msg) => (
-              <div
-                key={msg.messageId}
-                className={`${
-                  msg.senderId === currentUserId ? "text-right" : "text-left"
-                }`
-                }
-              >
-                <div
-                  className={`inline-block p-3 rounded-lg max-w-xs md:max-w-md lg:max-w-lg ${
-                    msg.senderId === currentUserId
-                      ? "bg-blue-100"
-                      : "bg-gray-100"
-                  }`}
-                >
-                  <p className="text-sm">{msg.content}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {new Date(msg.sentAt).toLocaleTimeString("vi-VN")}
-                  </p>
-                </div>
-              </div>
-            ))}
+    <div className={styles.chatContainerWrapper}>
+      {/* Sidebar - Danh sách cuộc trò chuyện */}
+      <div className={styles.sidebar}>
+        <div className={styles.chatSearchBox}>
+          <div className="input-group">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Tìm kiếm..."
+            />
+            <span className="input-group-btn">
+              <button className="btn btn-primary">Tìm</button>
+            </span>
           </div>
         </div>
 
-        {/* Form nhập tin nhắn */}
-        <div className="p-4 border-t bg-white">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSendMessage();
-            }}
-            className="flex items-center gap-2"
-          >
-            <input
-              type="text"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Nhập tin nhắn..."
-              className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={loading}
-            />
-            <button
-              type="submit"
-              disabled={loading || !content.trim()}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+        <div className={styles.usersContainer}>
+          <ul className={styles.users}>
+            {loading && <p className={styles.loading}>Đang tải...</p>}
+            {error && <p className={styles.error}>{error}</p>}
+            {!conversationId && (
+              <p className={styles.noChat}>Vui lòng chọn một cuộc trò chuyện.</p>
+            )}
+            {conversations.map((conv) => (
+              <li
+                key={conv.conversationId}
+                className={`${styles.person} ${
+                  conversationId === conv.conversationId.toString()
+                    ? styles.activeUser
+                    : ""
+                }`}
+                onClick={() => handleConversationSelect(conv.conversationId)}
+              >
+                <div className={styles.user}>
+                  <img
+                    src={conv.supplier?.avatar || "https://via.placeholder.com/48 "}
+                    alt="User"
+                  />
+                  <div className={`${styles.status} ${styles.online}`}></div>
+                </div>
+                <p className={styles.nameTime}>
+                  {conv.name || `Nhà cung cấp #${conv.conversationId}`}
+                  <span className={styles.time}>
+                    {conv.lastMessageTime
+                      ? new Date(conv.lastMessageTime).toLocaleTimeString("vi-VN")
+                      : new Date(conv.createdAt).toLocaleTimeString("vi-VN")}
+                  </span>
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Main Content - Nội dung cuộc trò chuyện */}
+      <div className={styles.chatArea}>
+        <div className={styles.selectedUser}>
+          <span className={styles.name}>
+            {conversations.find(
+              (c) => c.conversationId.toString() === conversationId
+            )?.name || `Cuộc trò chuyện #${conversationId}`}
+          </span>
+        </div>
+
+        {/* Khung tin nhắn */}
+        <div className={styles.messageContainer}>
+          {messages.map((msg) => (
+            <div
+              key={msg.messageId}
+              className={
+                msg.senderId === currentUserId
+                  ? styles.chatRight
+                  : styles.chatLeft
+              }
             >
-              Gửi
-            </button>
-          </form>
+              <div className={styles.chatAvatar}>
+                <img
+                  src="https://via.placeholder.com/48 "
+                  alt="User"
+                  className={styles.avatar}
+                />
+              </div>
+              <div className={styles.chatText}>{msg.content}</div>
+              <small className={styles.chatHour}>
+                {new Date(msg.sentAt).toLocaleTimeString("vi-VN")}
+              </small>
+            </div>
+          ))}
+        </div>
+
+        {/* Form nhập tin nhắn */}
+        <div className={styles.chatForm}>
+          <textarea
+            rows="3"
+            placeholder="Nhập tin nhắn..."
+            className="form-control"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          ></textarea>
+          <button
+            onClick={handleSendMessage}
+            disabled={loading || !content.trim()}
+            className="btn btn-primary mt-2"
+          >
+            Gửi
+          </button>
         </div>
       </div>
     </div>

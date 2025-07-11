@@ -125,6 +125,7 @@ const publicRoutes = [
   { path: config.routes.redeemVoucher, component: RedeemVoucher, layout: null },
   { path: config.routes.acceptUpdateRole, component: AcceptUpdateRole, layout: AdminLayout },
   { path: config.routes.chat, component: ChatPage, layout: null },
+  { path: "/chat", component: ChatPage, layout: null }
 ];
 
 const privateRoutes = [];

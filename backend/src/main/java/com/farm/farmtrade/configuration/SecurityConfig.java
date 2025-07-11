@@ -53,6 +53,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
@@ -67,7 +68,8 @@ public class SecurityConfig {
                         .requestMatchers(ADMIN_ENDPOINTS).hasAuthority("ROLE_ADMIN")// chỉ admin mới truy cập được endpoint này(mặc định là ADMIN truy cập được full đường truyền được config cho SUPPLIER và CUSTOMER, tương tự SUPPLIER cũng được truy cập endpoint của CUSTOMER), nhưng phải cung cấp token)
                         .requestMatchers("/users/**").hasAuthority("ROLE_CUSTOMER")
                         // Mặc định yêu cầu đăng nhập
-                        .anyRequest().authenticated()
+                        .requestMatchers("/conversations/**").authenticated() // Yêu cầu xác thực cho conversations
+                        .anyRequest().authenticated() // Mặc định yêu cầu đăng nhập
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(user -> user.userService(customOAuth2UserService))
@@ -85,19 +87,33 @@ public class SecurityConfig {
     // Cấu hình CORS cho phép frontend truy cập
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
-        return new CorsConfigurationSource() {
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(List.of("http://localhost:5173"));
-                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                config.setAllowedHeaders(List.of("*"));
-                config.setExposedHeaders(List.of("Set-Cookie"));
-                config.setAllowCredentials(true);
-                return config;
-            }
-        };
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:5173"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Set-Cookie"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config); // Áp dụng cho tất cả endpoint
+        return source;
     }
+
+//    @Bean
+//    CorsConfigurationSource corsConfigurationSource() {
+//        return new CorsConfigurationSource() {
+//            @Override
+//            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+//                CorsConfiguration config = new CorsConfiguration();
+//                config.setAllowedOrigins(List.of("http://localhost:5173"));
+//                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//                config.setAllowedHeaders(List.of("*"));
+//                config.setExposedHeaders(List.of("Set-Cookie"));
+//                config.setAllowCredentials(true);
+//                return config;
+//            }
+//        };
+//    }
 
     // JwtAuthenticationConverter để ánh xạ role từ token
     @Bean

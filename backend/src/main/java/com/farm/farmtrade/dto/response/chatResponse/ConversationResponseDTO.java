@@ -11,6 +11,13 @@ public class ConversationResponseDTO {
     private LocalDateTime createdAt;
     private List<Integer> userIds;
 
+    public ConversationResponseDTO(Long conversationId, List<Integer> userIDs, boolean group, String name) {
+    }
+
+    public ConversationResponseDTO() {
+
+    }
+
     // Getters and setters
     public Long getConversationId() {
         return conversationId;

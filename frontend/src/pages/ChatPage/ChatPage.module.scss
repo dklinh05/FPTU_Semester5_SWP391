@@ -1,0 +1,181 @@
+// src/pages/ChatPage/ChatPage.module.scss
+
+$primary-color: #007bff;
+$secondary-color: #6c757d;
+$bg-color: #f8f9fa;
+$border-color: #dee2e6;
+$radius: 8px;
+
+.chatContainer {
+  display: flex;
+  height: 100vh;
+  background-color: $bg-color;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  width: 25%;
+  background-color: #fff;
+  padding: 1rem;
+  border-right: 1px solid $border-color;
+  overflow-y: auto;
+}
+
+.sidebarTitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.conversationList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.conversationItem {
+  padding: 1rem;
+  border-radius: $radius;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f1f1f1;
+  }
+
+  &.active {
+    background-color: #e9f0ff;
+    font-weight: bold;
+  }
+}
+
+.conversationName {
+  font-weight: 600;
+}
+
+.conversationTime {
+  font-size: 0.8rem;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.chatArea {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  padding: 1rem;
+}
+
+.chatHeader {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.messageContainer {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  max-height: calc(100vh - 220px);
+}
+
+.messageSent {
+  text-align: right;
+  margin-bottom: 1rem;
+
+  .messageContent {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    margin-left: auto;
+    border-radius: $radius;
+    max-width: 70%;
+    padding: 0.75rem 1rem;
+    display: inline-block;
+  }
+}
+
+.messageReceived {
+  text-align: left;
+  margin-bottom: 1rem;
+
+  .messageContent {
+    background-color: #e9ecef;
+    color: #495057;
+    border-radius: $radius;
+    max-width: 70%;
+    padding: 0.75rem 1rem;
+    display: inline-block;
+  }
+}
+
+.messageTime {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 0.25rem;
+}
+
+.inputContainer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid $border-color;
+  border-radius: $radius;
+  font-size: 1rem;
+  &:focus {
+    outline: none;
+    border-color: $primary-color;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+}
+
+.sendButton {
+  background-color: $primary-color;
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: $radius;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+}
+
+.loading {
+  color: $secondary-color;
+  text-align: center;
+}
+
+.error {
+  color: red;
+  text-align: center;
+}
+
+.noChat {
+  color: $secondary-color;
+  text-align: center;
+}
+
+.loginPrompt {
+  text-align: center;
+  color: red;
+  margin-top: 2rem;
+  font-weight: bold;
+}

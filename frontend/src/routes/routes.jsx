@@ -41,7 +41,7 @@ import SearchResultLayout from "../layouts/SearchResultLayout/index.js";
 import AcceptUpdateRole from "../pages/AcceptUpdateRole/index.jsx";
 import OrderDetail from "../pages/OrderDetail/index.jsx";
 import OrderDetailCustomer from "../pages/OrderDetailCustomer/index.jsx";
-
+import ChatPage from "../pages/ChatPage/index.jsx";
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
@@ -77,7 +77,7 @@ const publicRoutes = [
     layout: AdminLayout,
   },
   { path: config.routes.dashboard, component: Dashboard, layout: AdminLayout },
-   { path: config.routes.dashboardSupplier, component: DashboardSupplier, layout: SupplierLayout },
+  { path: config.routes.dashboardSupplier, component: DashboardSupplier, layout: SupplierLayout },
   {
     path: config.routes.addProduct,
     component: AddProduct,
@@ -100,7 +100,7 @@ const publicRoutes = [
 
   { path: config.routes.orders, component: Orders, layout: OrdersLayout },
   { path: config.routes.orderDetail, component: OrderDetail, layout: SupplierLayout },
-   { path: config.routes.orderDetailCustomer, component: OrderDetailCustomer, layout: OrdersLayout },
+  { path: config.routes.orderDetailCustomer, component: OrderDetailCustomer, layout: OrdersLayout },
   {
     path: config.routes.ordersPending,
     component: OrdersNotPayment,
@@ -124,7 +124,7 @@ const publicRoutes = [
   { path: config.routes.productSearch, component: ProductSearch, layout: SearchResultLayout },
   { path: config.routes.redeemVoucher, component: RedeemVoucher, layout: null },
   { path: config.routes.acceptUpdateRole, component: AcceptUpdateRole, layout: AdminLayout },
-
+  { path: config.routes.chat, component: ChatPage, layout: null },
 ];
 
 const privateRoutes = [];

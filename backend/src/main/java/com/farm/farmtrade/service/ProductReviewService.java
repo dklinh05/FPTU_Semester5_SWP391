@@ -136,28 +136,40 @@ public class ProductReviewService {
                 });
     }
 
-    public List<ReviewResponse> getReviewsByProduct(Integer productId) {
+    public List<ReviewResponse> getFilteredReviews(Integer productId, Integer rating, Boolean hasComment, Boolean hasImage) {
         Product product = productRepo.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        List<ProductReview> reviews = productReviewRepository.findByProduct(product);
+        List<ProductReview> all = productReviewRepository.findByProduct(product);
 
-        return reviews.stream().map(review -> {
-            ReviewResponse dto = new ReviewResponse();
-            dto.setReviewID(review.getReviewID());
-            dto.setComment(review.getComment());
-            dto.setProductQuality(review.getProductQuality());
-            dto.setSellerService(review.getSellerService());
-            dto.setDeliverySpeed(review.getDeliverySpeed());
-            dto.setReviewDate(review.getReviewDate());
-            dto.setBuyerUsername(review.getBuyer().getUsername());
+        List<ProductReview> filtered = all.stream()
+                .filter(r -> {
+                    double avg = (r.getProductQuality() + r.getSellerService() + r.getDeliverySpeed()) / 3.0;
+                    boolean matchRating = rating == null || Math.round(avg) == rating;
+                    boolean matchComment = hasComment == null || (hasComment && r.getComment() != null && !r.getComment().isBlank());
+                    boolean matchImage = hasImage == null || (hasImage && r.getImage() != null && !r.getImage().isBlank());
+                    return matchRating && matchComment && matchImage;
+                })
+                .collect(Collectors.toList());
 
-            if (review.getImage() != null && !review.getImage().isEmpty()) {
-                dto.setImageList(Arrays.asList(review.getImage().split(";")));
-            }
+        return filtered.stream().map(this::mapToDto).collect(Collectors.toList());
+    }
 
-            return dto;
-        }).collect(Collectors.toList());
+    private ReviewResponse mapToDto(ProductReview review) {
+        ReviewResponse dto = new ReviewResponse();
+        dto.setReviewID(review.getReviewID());
+        dto.setComment(review.getComment());
+        dto.setProductQuality(review.getProductQuality());
+        dto.setSellerService(review.getSellerService());
+        dto.setDeliverySpeed(review.getDeliverySpeed());
+        dto.setReviewDate(review.getReviewDate());
+        dto.setBuyerUsername(review.getBuyer().getUsername());
+
+        if (review.getImage() != null && !review.getImage().isEmpty()) {
+            dto.setImageList(Arrays.asList(review.getImage().split(";")));
+        }
+
+        return dto;
     }
 
     public ProductReview updateReview(Integer reviewId, UpdateProductReviewRequest request, String username) {

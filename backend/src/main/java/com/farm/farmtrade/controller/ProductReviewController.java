@@ -83,8 +83,13 @@ public class ProductReviewController {
     }
 
     @GetMapping("/product/{productId}")
-    public ResponseEntity<List<ReviewResponse>> getReviewsByProduct(@PathVariable Integer productId) {
-        List<ReviewResponse> reviews = reviewService.getReviewsByProduct(productId);
+    public ResponseEntity<List<ReviewResponse>> getReviewsByProduct(
+            @PathVariable Integer productId,
+            @RequestParam(required = false) Integer rating,
+            @RequestParam(required = false) Boolean hasComment,
+            @RequestParam(required = false) Boolean hasImage
+    ) {
+        List<ReviewResponse> reviews = reviewService.getFilteredReviews(productId, rating, hasComment, hasImage);
         return ResponseEntity.ok(reviews);
     }
 

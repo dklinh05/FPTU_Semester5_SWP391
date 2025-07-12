@@ -2,33 +2,31 @@ import { request, formRequest } from "../utils/httpRequest";
 
 // src/services/authService.js
 
-
 export const getToken = () => {
-  const token = localStorage.getItem("token");
-  console.log("getToken:", token);
-  return token;
+    return localStorage.getItem("token");
 };
 
 export const getUserIdFromToken = () => {
-  const token = getToken();
-  if (!token) {
-    console.log("getUserIdFromToken: No token found");
-    return null;
-  }
+    const token = getToken();
+    if (!token) return null;
 
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    console.log("getUserIdFromToken payload:", payload);
-    return payload.userId; // Match backend's userId field
-  } catch (e) {
-    console.error("Không thể giải mã token", e);
-    return null;
-  }
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.userId; // hoặc 'sub' tùy backend encode gì vào token
+    } catch (e) {
+        console.error("Không thể giải mã token", e);
+        return null;
+    }
 };
+
 export const getTokenFromCookie = () => {
-  const token = localStorage.getItem("token");
-  console.log("getTokenFromCookie:", token);
-  return token;
+  const cookies = document.cookie.split(";").map((cookie) => cookie.trim());
+  for (const cookie of cookies) {
+    if (cookie.startsWith("accessToken=")) {
+      return cookie.split("=")[1];
+    }
+  }
+  return null;
 };
 
 export const registerUser = async (data) => {

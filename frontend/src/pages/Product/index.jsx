@@ -54,61 +54,76 @@ function Product({product}) {
             console.error("Error adding to cart:", error);
         }
     };
-
-    const handleChatWithSupplier = async () => {
-        console.log("handleChatWithSupplier: userId =", userId, "supplierId =", supplierId);
-        if (!userId) {
-            alert("Vui lòng đăng nhập để chat với nhà cung cấp");
-            navigate("/login");
-            return;
+const handleChatWithSupplier = async () => {
+  console.log("handleChatWithSupplier: userId =", userId, "supplierId =", supplierId);
+  if (!userId) {
+    alert("Vui lòng đăng nhập để chat với nhà cung cấp");
+    navigate("/login");
+    return;
+  }
+  if (!supplierId) {
+    setChatError("Không tìm thấy nhà cung cấp cho sản phẩm này");
+    return;
+  }
+  setChatLoading(true);
+  setChatError(null);
+  const token = localStorage.getItem("token");
+  console.log("Token used:", token);
+  try {
+    console.log("Calling getExistingConversation with userId =", userId, "supplierId =", supplierId, "token =", token);
+    const existingConversationId = await getExistingConversation(userId, supplierId, token);
+    console.log("Existing conversation ID returned:", existingConversationId);
+    if (existingConversationId) {
+      console.log("Navigating to existing conversation:", existingConversationId);
+      navigate(`/chat/${existingConversationId}`);
+    } else {
+      console.log("Creating new conversation with userIds =", [userId, supplierId]);
+      const result = await createConversation([userId, supplierId], false, null, token);
+      console.log("New conversation result:", result);
+      const newConversationId = result?.conversationId;
+      if (newConversationId && !isNaN(Number(newConversationId))) {
+        console.log("Navigating to new conversation:", newConversationId);
+        navigate(`/chat/${newConversationId}`);
+      } else if (result?.error) {
+        throw new Error(`Lỗi từ server: ${result.error}`);
+      } else {
+        throw new Error(`Không thể tạo cuộc hội thoại, ID không hợp lệ: ${JSON.stringify(result)}. Kiểm tra log backend.`);
+      }
+    }
+  } catch (err) {
+    console.error("Chat error:", err);
+    if (err.response?.status === 0 || err.message.includes("CORS")) {
+      console.warn("CORS error or network issue detected. Ensure server allows origin 'http://localhost:5173'.");
+      setChatError("Lỗi kết nối, vui lòng kiểm tra cấu hình server hoặc đăng nhập lại.");
+    } else if (err.response?.status === 500) {
+      console.warn("Server error 500 detected. Details:", err.response?.data || err.message);
+      setChatError("Lỗi server, vui lòng thử lại sau hoặc liên hệ hỗ trợ.");
+      try {
+        const retryConversationId = await getExistingConversation(userId, supplierId, token);
+        if (retryConversationId) {
+          navigate(`/chat/${retryConversationId}`);
+        } else {
+          const newResult = await createConversation([userId, supplierId], false, null, token);
+          const newConversationId = newResult?.conversationId;
+          if (newConversationId && !isNaN(Number(newConversationId))) {
+            navigate(`/chat/${newConversationId}`);
+          } else if (newResult?.error) {
+            throw new Error(`Lỗi từ server: ${newResult.error}`);
+          } else {
+            throw new Error("Retry failed, invalid conversation ID: " + JSON.stringify(newResult));
+          }
         }
-        if (!supplierId) {
-            setChatError("Không tìm thấy nhà cung cấp cho sản phẩm này");
-            return;
-        }
-        setChatLoading(true);
-        setChatError(null);
-        const token = localStorage.getItem('token'); // Lấy token từ localStorage
-        console.log("Token used:", token);
-        try {
-            console.log("Calling getExistingConversation with userId =", userId, "supplierId =", supplierId, "token =", token);
-            const existingConversationId = await getExistingConversation(userId, supplierId, token);
-            console.log("Existing conversation ID:", existingConversationId);
-            if (existingConversationId) {
-                navigate(`/chat/${existingConversationId}`);
-            } else {
-                console.log("Creating new conversation with userIds =", [userId, supplierId]);
-                const conversationId = await createConversation([userId, supplierId], false, null, token);
-                console.log("New conversation ID:", conversationId);
-                navigate(`/chat/${conversationId}`);
-            }
-        } catch (err) {
-            console.error("Chat error:", err);
-            if (err.response?.status === 0 || err.message.includes('CORS')) {
-                console.warn("CORS error or network issue detected. Ensure server allows origin 'http://localhost:5173'.");
-                setChatError("Lỗi kết nối, vui lòng kiểm tra cấu hình server hoặc đăng nhập lại.");
-            } else if (err.response?.status === 500) {
-                console.warn("Server error 500 detected. Details:", err.response?.data || err.message);
-                setChatError("Lỗi server, vui lòng thử lại sau hoặc liên hệ hỗ trợ.");
-                try {
-                    const retryConversationId = await getExistingConversation(userId, supplierId, token);
-                    if (retryConversationId) {
-                        navigate(`/chat/${retryConversationId}`);
-                    } else {
-                        const newConversationId = await createConversation([userId, supplierId], false, null, token);
-                        navigate(`/chat/${newConversationId}`);
-                    }
-                } catch (retryErr) {
-                    console.error("Retry failed:", retryErr);
-                    setChatError(`Không thể bắt đầu chat: ${retryErr.message}`);
-                }
-            } else {
-                setChatError(`Không thể bắt đầu chat: ${err.message}`);
-            }
-        } finally {
-            setChatLoading(false);
-        }
-    };
+      } catch (retryErr) {
+        console.error("Retry failed:", retryErr);
+        setChatError(`Không thể bắt đầu chat: ${retryErr.message}`);
+      }
+    } else {
+      setChatError(`Không thể bắt đầu chat: ${err.message}`);
+    }
+  } finally {
+    setChatLoading(false);
+  }
+};
 
     useEffect(() => {
         const fetchReviews = async () => {

@@ -3,6 +3,8 @@ package com.farm.farmtrade.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Conversations")
@@ -21,6 +23,9 @@ public class Conversation {
     @Column(name = "CreatedAt")
     private LocalDateTime createdAt;
 
+    // Conversation.java
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConversationParticipants> conversationParticipants = new ArrayList<>();
     // Getters and Setters
     public Long getConversationId() { return conversationId; }
     public void setConversationId(Long conversationId) { this.conversationId = conversationId; }

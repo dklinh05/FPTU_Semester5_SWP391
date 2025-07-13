@@ -68,7 +68,8 @@ public class SecurityConfig {
                         .requestMatchers(ADMIN_ENDPOINTS).hasAuthority("ROLE_ADMIN")// chỉ admin mới truy cập được endpoint này(mặc định là ADMIN truy cập được full đường truyền được config cho SUPPLIER và CUSTOMER, tương tự SUPPLIER cũng được truy cập endpoint của CUSTOMER), nhưng phải cung cấp token)
                         .requestMatchers("/users/**").hasAuthority("ROLE_CUSTOMER")
                         // Mặc định yêu cầu đăng nhập
-                        .requestMatchers("/conversations/**").authenticated() // Yêu cầu xác thực cho conversations
+                        .requestMatchers("/conversations/**").authenticated()
+                        .requestMatchers("/conversations/create-community").authenticated() // yêu cầu token hợp lệ// Yêu cầu xác thực cho conversations
                         .anyRequest().authenticated() // Mặc định yêu cầu đăng nhập
                 )
                 .oauth2Login(oauth2 -> oauth2

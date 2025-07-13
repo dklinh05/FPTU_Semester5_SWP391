@@ -181,6 +181,14 @@
   text-align: center;
 }
 
+.senderName {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
 .error {
   color: red;
 }
@@ -195,5 +203,47 @@
     display: block;
     text-align: center;
     margin-bottom: 1rem;
+  }
+}
+
+
+.chatForm {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+}
+
+.inputWithButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.form-control {
+  flex: 1;
+  resize: none;
+  border-radius: 20px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+
+.sendButton {
+  width: 40px;
+  height: 40px;
+  background-color: #28a745; // màu xanh lá
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #28a745;
+  }
+
+  i {
+    pointer-events: none;
   }
 }

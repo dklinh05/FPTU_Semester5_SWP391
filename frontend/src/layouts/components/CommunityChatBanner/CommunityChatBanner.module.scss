@@ -1,0 +1,57 @@
+// src/components/CommunityChatBanner/CommunityChatBanner.module.scss
+
+.banner {
+  background-image: url("../../../../img/cart-page-header-img.jpg");
+  background-color: #81c408; // giữ lại màu nền fallback
+  background-size: cover;
+  background-position: center;
+  color: white; // Chỉnh font chữ thành màu trắng
+  width: 110%;
+  margin: 20px auto;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.content {
+  /* Xóa lớp overlay màu đen */
+  background-color: transparent; // Làm trong suốt
+  padding: 1rem;
+  border-radius: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.content h3 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.4;
+  color: white; // Đảm bảo font chữ luôn trắng
+}
+
+.joinButton {
+  margin-top: 1rem;
+  padding: 0.5rem 1.2rem;
+  background-color: white;
+  color: #81c408; // Màu xanh lá tương phản với nền trắng
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: #f0f0f0;
+    color: #2d7a0a; // Màu xanh lá đậm hơn khi hover
+  }
+}

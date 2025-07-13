@@ -3,11 +3,11 @@ package com.farm.farmtrade.service;
 import com.farm.farmtrade.dto.request.chatRequest.MessageRequestDTO;
 import com.farm.farmtrade.dto.response.chatResponse.ConversationResponseDTO;
 import com.farm.farmtrade.dto.response.chatResponse.MessageResponseDTO;
+import com.farm.farmtrade.dto.response.chatResponse.SupplierDTO;
 import com.farm.farmtrade.entity.Conversation;
-import com.farm.farmtrade.entity.ConversationParticipants; // Sử dụng lại
+import com.farm.farmtrade.entity.ConversationParticipants;
 import com.farm.farmtrade.entity.Message;
-import com.farm.farmtrade.entity.User;
-import com.farm.farmtrade.repository.ConversationParticipantsRepository; // Sử dụng lại
+import com.farm.farmtrade.repository.ConversationParticipantsRepository;
 import com.farm.farmtrade.repository.ConversationRepository;
 import com.farm.farmtrade.repository.MessageRepository;
 import com.farm.farmtrade.repository.UserRepository;
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,15 +26,56 @@ public class ConversationService {
     private final ConversationParticipantsRepository conversationParticipantsRepository; // Sử dụng lại
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     public ConversationService(ConversationRepository conversationRepository,
                                ConversationParticipantsRepository conversationParticipantsRepository, // Sử dụng lại
                                MessageRepository messageRepository,
-                               UserRepository userRepository) {
+                               UserRepository userRepository, UserService userService) {
         this.conversationRepository = conversationRepository;
         this.conversationParticipantsRepository = conversationParticipantsRepository; // Sử dụng lại
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
+    }
+
+    public Conversation createOrUpdateGroupConversation(String district, List<Integer> userIds, double lat, double lng) {
+        // Tìm nhóm chat hiện có cho khu vực
+        Conversation existingConversation = conversationRepository.findByName(district);
+
+        if (existingConversation == null) {
+            existingConversation = new Conversation();
+            existingConversation.setName(district);
+            existingConversation.setGroup(true);
+            existingConversation.setCreatedAt(LocalDateTime.now());
+            existingConversation = conversationRepository.save(existingConversation);
+        }
+
+        // Lấy danh sách SUPPLIER trong khu vực
+        List<SupplierDTO> suppliersInDistrict = userService.getSuppliersByLocation(lat, lng);
+
+        // Trích xuất userId từ SupplierDTO
+        List<Integer> supplierIds = suppliersInDistrict.stream()
+                .map(SupplierDTO::getUserId)
+                .collect(Collectors.toList());
+
+        // Kết hợp với userIds được truyền vào
+        List<Integer> allUserIds = new ArrayList<>(userIds);
+        allUserIds.addAll(supplierIds);
+
+        // Thêm người dùng vào nhóm chat nếu chưa tồn tại
+        for (Integer userId : allUserIds) {
+            boolean exists = conversationParticipantsRepository.existsByConversationAndUserId(existingConversation, userId);
+            if (!exists) {
+                ConversationParticipants participant = new ConversationParticipants();
+                participant.setConversation(existingConversation);
+                participant.setUserId(userId);
+                participant.setRole(ConversationParticipants.ParticipantRole.Member);
+                conversationParticipantsRepository.save(participant);
+            }
+        }
+
+        return existingConversation;
     }
 
     public Long getExistingConversation(Integer userID1, Integer userID2) {

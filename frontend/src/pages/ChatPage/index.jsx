@@ -19,6 +19,30 @@ const ChatPage = () => {
   const [error, setError] = useState(null);
   const [avatars, setAvatars] = useState({});
 
+  // Hàm format thời gian sentAt (hỗ trợ nhiều kiểu dữ liệu)
+  const formatSentAt = (sentAt) => {
+    if (!sentAt) return "Không có thời gian";
+
+    // Nếu là chuỗi → parse thành Date
+    if (typeof sentAt === "string") {
+      const date = new Date(sentAt);
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleTimeString("vi-VN");
+      }
+    }
+
+    // Nếu là mảng số → giả định là [year, month, day, hour, minute]
+    if (Array.isArray(sentAt) && sentAt.length >= 5) {
+      const [year, month, day, hour, minute] = sentAt;
+      const date = new Date(year, month - 1, day, hour, minute); // tháng bắt đầu từ 0
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleTimeString("vi-VN");
+      }
+    }
+
+    return "Thời gian không hợp lệ";
+  };
+
   // Lấy danh sách cuộc trò chuyện của người dùng
   useEffect(() => {
     const fetchConversations = async () => {
@@ -31,11 +55,11 @@ const ChatPage = () => {
 
         const conversationsWithUsers = response.data || [];
 
-        // Lấy tất cả userId khác để tải avatar
+        // Lấy tất cả userId để tải avatar, kể cả chính bạn
         const userIdsToFetch = [];
         conversationsWithUsers.forEach((conv) => {
           conv.userIds?.forEach((uid) => {
-            if (uid !== currentUserId && !avatars[uid]) {
+            if (!avatars[uid]) {
               userIdsToFetch.push(uid);
             }
           });
@@ -84,12 +108,22 @@ const ChatPage = () => {
       const user = await getUserById(userId);
       setAvatars((prev) => ({
         ...prev,
-        [userId]: user.avatar || "https://via.placeholder.com/48 ",
+        [userId]: {
+          avatarUrl: user.avatar || "https://via.placeholder.com/48 ",
+          businessName: user.businessName || null,
+          role: user.role || null,
+          userId: userId
+        }
       }));
     } catch (err) {
       setAvatars((prev) => ({
         ...prev,
-        [userId]: "https://via.placeholder.com/48 ",
+        [userId]: {
+          avatarUrl: "https://via.placeholder.com/48 ",
+          businessName: null,
+          role: null,
+          userId: userId
+        }
       }));
     }
   };
@@ -130,10 +164,19 @@ const ChatPage = () => {
     );
     if (!selectedConv) return "Chưa chọn cuộc trò chuyện";
 
+    // Nếu là nhóm chat → trả về tên nhóm
+    if (selectedConv.isGroup && selectedConv.name) {
+      return selectedConv.name;
+    }
+
+    // Nếu là chat cá nhân → tìm người còn lại
     const otherUserIds = selectedConv.userIds?.filter((uid) => uid !== currentUserId);
     const otherUserId = otherUserIds?.[0];
 
-    return `Cuộc trò chuyện #${selectedConv.conversationId}`;
+    // Lấy BusinessName của người kia (nếu có)
+    const businessName = avatars[otherUserId]?.businessName;
+
+    return businessName || `Người dùng #${otherUserId}`;
   };
 
   if (!currentUserId) {
@@ -148,16 +191,16 @@ const ChatPage = () => {
     <div className={styles.chatContainerWrapper}>
       {/* Sidebar - Danh sách cuộc trò chuyện */}
       <div className={styles.sidebar}>
-          {/* === THÊM MỚI TẠI ĐÂY === */}
-  <div className={styles["sidebar-header"]}>
-    <div className={styles["lg-logo"]}>
-      <a href="http://localhost:5173/">
-        <span>Back To FarmTrade</span>
-      </a>
-    </div>
-  </div>
-  {/* === KẾT THÚC PHẦN THÊM MỚI === */}
+        {/* Header */}
+        <div className={styles["sidebar-header"]}>
+          <div className={styles["lg-logo"]}>
+            <a href="http://localhost:5173/">
+              <span>Back To FarmTrade</span>
+            </a>
+          </div>
+        </div>
 
+        {/* Tìm kiếm */}
         <div className={styles.chatSearchBox}>
           <div className="input-group">
             <input type="text" className="form-control" placeholder="Tìm kiếm..." />
@@ -167,6 +210,7 @@ const ChatPage = () => {
           </div>
         </div>
 
+        {/* Danh sách người dùng */}
         <div className={styles.usersContainer}>
           <ul className={styles.users}>
             {loading && <p className={styles.loading}>Đang tải...</p>}
@@ -176,24 +220,26 @@ const ChatPage = () => {
             {conversations.map((conv) => {
               const otherUserIds = conv.userIds?.filter((uid) => uid !== currentUserId);
               const otherUserId = otherUserIds?.[0];
-              const avatar = avatars[otherUserId];
+              const user = avatars[otherUserId];
 
               return (
                 <li
                   key={conv.conversationId}
-                  className={`${styles.person} ${
-                    conversationId === conv.conversationId.toString()
+                  className={`${styles.person} ${conversationId === conv.conversationId.toString()
                       ? styles.activeUser
                       : ""
-                  }`}
+                    }`}
                   onClick={() => handleConversationSelect(conv.conversationId)}
                 >
                   <div className={styles.user}>
-                    <img src={avatar} alt="User Avatar" />
+                    <img
+                      src={user?.avatarUrl || "https://via.placeholder.com/48 "}
+                      alt="User Avatar"
+                    />
                     <div className={`${styles.status} ${styles.online}`}></div>
                   </div>
                   <p className={styles.nameTime}>
-                    {getCurrentConversationName()}
+                    {user?.businessName || `Người dùng #${otherUserId}`}
                     <span className={styles.time}>
                       {new Date(conv.createdAt).toLocaleTimeString("vi-VN")}
                     </span>
@@ -216,21 +262,32 @@ const ChatPage = () => {
           {messages.length === 0 && !loading && (
             <p className={styles.emptyMessage}>Chưa có tin nhắn nào.</p>
           )}
+
           {messages.map((msg) => {
             const isMine = msg.senderId === currentUserId;
-            const avatar = avatars[msg.senderId] || "https://via.placeholder.com/48 ";
+            const avatar = avatars[msg.senderId]?.avatarUrl || "https://via.placeholder.com/48 ";
 
             return (
               <div
                 key={msg.messageId}
-                className={isMine ? styles.chatRight : styles.chatLeft}
+                className={`${isMine ? styles.chatRight : styles.chatLeft}`}
               >
-                <div className={styles.chatAvatar}>
-                  <img src={avatar} alt="User" className={styles.avatar} />
-                </div>
+                {!isMine && (
+                  <div className={styles.chatAvatar}>
+                    <img src={avatar} alt="User Avatar" className={styles.avatar} />
+                  </div>
+                )}
+
                 <div className={styles.chatText}>{msg.content}</div>
+
+                {isMine && (
+                  <div className={styles.chatAvatar}>
+                    <img src={avatar} alt="User Avatar" className={styles.avatar} />
+                  </div>
+                )}
+
                 <small className={styles.chatHour}>
-                  {new Date(msg.sentAt).toLocaleTimeString("vi-VN")}
+                  {formatSentAt(msg.sentAt)}
                 </small>
               </div>
             );
@@ -238,22 +295,24 @@ const ChatPage = () => {
         </div>
 
         {/* Form nhập tin nhắn */}
-        <div className={styles.chatForm}>
-          <textarea
-            rows="3"
-            placeholder="Nhập tin nhắn..."
-            className="form-control"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          ></textarea>
-          <button
-            onClick={handleSendMessage}
-            disabled={loading || !content.trim()}
-            className="btn btn-primary mt-2"
-          >
-            Gửi
-          </button>
-        </div>
+       <div className={styles.chatForm}>
+  <div className={styles.inputWithButton}>
+    <textarea
+      rows="1"
+      placeholder="Nhập tin nhắn..."
+      className="form-control"
+      value={content}
+      onChange={(e) => setContent(e.target.value)}
+    />
+    <button
+      onClick={handleSendMessage}
+      disabled={loading || !content.trim()}
+      className={styles.sendButton}
+    >
+      <i className="fas fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
       </div>
     </div>
   );

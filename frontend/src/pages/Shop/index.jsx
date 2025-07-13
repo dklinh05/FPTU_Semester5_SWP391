@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { renderProductBySupplierId } from "../../services/productService";
 import CardItem from "../../components/CardItem/CardItem";
 
-function Shop({products}) {
+function Shop({ products }) {
 
   return (
     <div className="col-lg-9">
@@ -25,7 +25,7 @@ function Shop({products}) {
           </Link>
         ))}
 
-        
+
       </div>
     </div>
   );

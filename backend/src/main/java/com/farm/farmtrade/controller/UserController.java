@@ -5,6 +5,7 @@ import com.cloudinary.Cloudinary;
 import com.farm.farmtrade.dto.request.authenticationRequest.RoleUpgradeRequest;
 import com.farm.farmtrade.dto.request.authenticationRequest.UserCreationRequest;
 import com.farm.farmtrade.dto.request.authenticationRequest.UserUpdateRequest;
+import com.farm.farmtrade.dto.response.chatResponse.SupplierDTO;
 import com.farm.farmtrade.entity.RoleUpgrade;
 import com.farm.farmtrade.entity.User;
 
@@ -38,6 +39,18 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private RoleUpgradeService roleUpgradeService;
+
+    @GetMapping("/suppliers-by-location")
+    public ResponseEntity<List<SupplierDTO>> getSuppliersInRadius(
+            @RequestParam double lat,
+            @RequestParam double lng) {
+        try {
+            List<SupplierDTO> suppliers = userService.getSuppliersByLocation(lat, lng);
+            return ResponseEntity.ok(suppliers);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
 
     @PostMapping("/request")
     public ResponseEntity<RoleUpgrade> submitUpgradeRequest(

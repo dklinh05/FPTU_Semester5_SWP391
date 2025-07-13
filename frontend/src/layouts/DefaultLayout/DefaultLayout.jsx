@@ -8,6 +8,7 @@ import FeatureSection from "../components/FeatureSection";
 import ShopStart from "../components/ShopStart";
 import BestSeller from "../components/BestSeller/BestSeller";
 import Footer from "../../components/Footer";
+import CommunityChatBanner from "../components/CommunityChatBanner";
 
 const cx = classNames.bind(styles);
 
@@ -18,6 +19,7 @@ function DefaultLayout({ children }) {
       <Header />
       <ModalSearch />
       <Hero />
+      <CommunityChatBanner/>
       <FeatureSection />
       <ShopStart />
       <BestSeller />

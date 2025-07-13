@@ -28,7 +28,10 @@ public class User {
     String role;
     String avatar;
     LocalDateTime createdAt;
-    Double lat; // Vĩ độ
+
+    @Column(name = "Lat")
+    Double lat;
+    @Column(name = "Lng")
     Double lng; // Kinh độ
     Boolean isActive;
     Boolean isLocked;

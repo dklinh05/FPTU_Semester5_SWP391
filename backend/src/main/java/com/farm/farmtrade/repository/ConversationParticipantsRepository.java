@@ -1,5 +1,6 @@
 package com.farm.farmtrade.repository;
 
+import com.farm.farmtrade.entity.Conversation;
 import com.farm.farmtrade.entity.ConversationParticipants;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,4 +13,5 @@ public interface ConversationParticipantsRepository extends JpaRepository<Conver
     List<ConversationParticipants> findByConversationId(Long conversationId);
     @Query("SELECT cp.userId FROM ConversationParticipants cp WHERE cp.conversationId = :conversationId")
     List<Integer> findUserIdsByConversationId(@Param("conversationId") Long conversationId);
+    boolean existsByConversationAndUserId(Conversation conversation, Integer userId);
 }

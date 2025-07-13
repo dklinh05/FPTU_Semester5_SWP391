@@ -6,6 +6,7 @@ import com.farm.farmtrade.dto.request.authenticationRequest.ChangePasswordReques
 import com.farm.farmtrade.dto.request.authenticationRequest.ResetPasswordRequest;
 import com.farm.farmtrade.dto.request.authenticationRequest.UserCreationRequest;
 import com.farm.farmtrade.dto.request.authenticationRequest.UserUpdateRequest;
+import com.farm.farmtrade.dto.response.chatResponse.SupplierDTO;
 import com.farm.farmtrade.entity.UserSpecification;
 import com.farm.farmtrade.enums.Role;
 import com.farm.farmtrade.exception.AppException;
@@ -48,6 +49,13 @@ public class UserService {
     private VerificationTokenRepository verificationTokenRepository;
     @Autowired
     private EmailService emailService;
+
+
+    public List<SupplierDTO> getSuppliersByLocation(double lat, double lng) {
+        int radiusInMeters = 5000; // Bán kính 5km
+        return userRepository.findSuppliersByLocationWithinRadius(lat, lng, radiusInMeters);
+    }
+
     public User createRequest(UserCreationRequest request) throws MessagingException {
         User user = new User();
         user.setIsActive(false);

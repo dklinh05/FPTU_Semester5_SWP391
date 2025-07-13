@@ -7,11 +7,18 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "ConversationParticipants")
 public class ConversationParticipants {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long participantId;
 
-    @Column(name = "ConversationID", nullable = false)
+    // Thêm quan hệ @ManyToOne tới Conversation
+    @ManyToOne
+    @JoinColumn(name = "ConversationID", referencedColumnName = "ConversationID", nullable = false)
+    private Conversation conversation;
+
+    // Có thể giữ lại field conversationId nếu cần dùng nguyên thủy (tuỳ chọn)
+    @Column(name = "ConversationID", nullable = false, insertable = false, updatable = false)
     private Long conversationId;
 
     @Column(name = "UserID", nullable = false)
@@ -25,20 +32,58 @@ public class ConversationParticipants {
     private LocalDateTime joinedAt;
 
     // Getters and Setters
-    public Long getParticipantId() { return participantId; }
-    public void setParticipantId(Long participantId) { this.participantId = participantId; }
 
-    public Long getConversationId() { return conversationId; }
-    public void setConversationId(Long conversationId) { this.conversationId = conversationId; }
+    public Long getParticipantId() {
+        return participantId;
+    }
 
-    public Integer getUserId() { return userId; }
-    public void setUserId(Integer userId) { this.userId = userId; }
+    public void setParticipantId(Long participantId) {
+        this.participantId = participantId;
+    }
 
-    public ParticipantRole getRole() { return role; }
-    public void setRole(ParticipantRole role) { this.role = role; }
+    public Conversation getConversation() {
+        return conversation;
+    }
 
-    public LocalDateTime getJoinedAt() { return joinedAt; }
-    public void setJoinedAt(LocalDateTime joinedAt) { this.joinedAt = joinedAt; }
+    public void setConversation(Conversation conversation) {
+        this.conversation = conversation;
+        // Đồng bộ conversationId khi gán conversation
+        if (conversation != null) {
+            this.conversationId = conversation.getConversationId();
+        }
+    }
+
+    public Long getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(Long conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public ParticipantRole getRole() {
+        return role;
+    }
+
+    public void setRole(ParticipantRole role) {
+        this.role = role;
+    }
+
+    public LocalDateTime getJoinedAt() {
+        return joinedAt;
+    }
+
+    public void setJoinedAt(LocalDateTime joinedAt) {
+        this.joinedAt = joinedAt;
+    }
 
     public enum ParticipantRole {
         Admin, Member

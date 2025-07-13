@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,28 +37,29 @@ public class ConversationService {
     }
 
     public Long getExistingConversation(Integer userID1, Integer userID2) {
-        return conversationRepository.findConversationIdByUserIDs(userID1, userID2);
+        List<Long> results = conversationRepository.findConversationIdByUserIDs(userID1, userID2);
+        return results.isEmpty() ? null : results.get(0);
     }
 
     @Transactional
     public Conversation createConversation(List<Integer> userIDs, boolean isGroup, String name) {
-        // Tạo mới đối tượng Conversation
         Conversation conversation = new Conversation();
         conversation.setName(name);
         conversation.setGroup(isGroup);
         conversation.setCreatedAt(LocalDateTime.now());
 
-        // Lưu Conversation vào cơ sở dữ liệu
         Conversation savedConversation = conversationRepository.save(conversation);
 
-        // Thêm các thành viên vào ConversationParticipants
         for (Integer userId : userIDs) {
             ConversationParticipants participant = new ConversationParticipants();
-            participant.setConversationId(savedConversation.getConversationId());
+            participant.setConversation(savedConversation);
             participant.setUserId(userId);
-            // Đặt role: người đầu tiên trong danh sách là Admin, các người khác là Member
             participant.setRole(userId.equals(userIDs.get(0)) ? ConversationParticipants.ParticipantRole.Admin : ConversationParticipants.ParticipantRole.Member);
             participant.setJoinedAt(LocalDateTime.now());
+
+            // Quan trọng: gán conversationId thủ công nếu dùng insertable=false
+            participant.setConversationId(savedConversation.getConversationId());
+
             conversationParticipantsRepository.save(participant);
         }
 

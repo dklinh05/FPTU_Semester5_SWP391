@@ -22,10 +22,17 @@ public class ConversationController {
     }
     @GetMapping("/existing")
     public ResponseEntity<Long> checkExistingConversation(
-            @RequestParam("userID1") Integer userID1,
-            @RequestParam("userID2") Integer userID2) {
-        Long conversationId = conversationService.getExistingConversation(userID1, userID2);
-        return ResponseEntity.ok(conversationId); // Returns null if no conversation exists
+            @RequestParam("userID1") String userID1Str,
+            @RequestParam("userID2") String userID2Str) {
+
+        try {
+            Integer userID1 = Integer.valueOf(userID1Str);
+            Integer userID2 = Integer.valueOf(userID2Str);
+            Long conversationId = conversationService.getExistingConversation(userID1, userID2);
+            return ResponseEntity.ok(conversationId);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
     @GetMapping

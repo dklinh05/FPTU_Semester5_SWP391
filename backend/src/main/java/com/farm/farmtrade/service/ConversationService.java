@@ -41,10 +41,6 @@ public class ConversationService {
         this.userService = userService;
     }
 
-    public List<ConversationParticipants> getConversationMembers(Long conversationId) {
-        return conversationParticipantsRepository.findByConversationId(conversationId);
-    }
-
     @Transactional
     public JoinCommunityChatResponseDTO joinCommunityChat(Double latitude, Double longitude, Integer userId) {
 

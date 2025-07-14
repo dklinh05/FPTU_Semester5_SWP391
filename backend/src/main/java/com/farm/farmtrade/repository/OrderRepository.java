@@ -43,4 +43,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             "WHERE MONTH(o.orderDate) = :month AND YEAR(o.orderDate) = :year AND o.supplier.userID = :supplierId")
     Long getOrderCountByMonthAndSupplier(@Param("month") int month, @Param("year") int year, @Param("supplierId") Long supplierId);
 
+    Page<Order> findByShipperUserIDAndStatus(Integer shipperId, String status, Pageable pageable);
+
+    Page<Order> findByShipperUserID(Integer shipperId, Pageable pageable);
 }

@@ -168,4 +168,16 @@ public class OrderController {
         return ResponseEntity.ok(orderService.assignNearestShipper(orderId));
     }
 
+    @GetMapping("/shipper/{shipperId}/orders")
+    public ResponseEntity<Page<OrderResponse>> getOrdersByShipper(
+            @PathVariable Integer shipperId,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "orderDate,desc") String sortBy
+    ) {
+        Page<OrderResponse> orders = orderService.getOrdersByShipperId(shipperId, status, page, size, sortBy);
+        return ResponseEntity.ok(orders);
+    }
+
 }

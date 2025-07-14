@@ -88,6 +88,22 @@ export const renderOrdersBySupplierId = async (id, status, page, pageSize) => {
   }
 };
 
+export const renderOrdersByShipperId = async (id, status, page, pageSize) => {
+  try {
+    const response = await request.get(`/orders/shipper/${id}/orders`, {
+      params: {
+        status: status || null, // hoặc undefined nếu không filter
+        page: page, // trang đầu tiên
+        size: pageSize || 5, // số phần tử mỗi trang
+        sortBy: "orderDate,desc", // sắp xếp
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
 export const cancelOrder = async (id) => {
   try {
     const response = await request.put(`/orders/cancel/${id}`);
@@ -97,13 +113,23 @@ export const cancelOrder = async (id) => {
   }
 };
 
-export const updateStatusOrder = async (orderId, newStatus, supplierId) => {
+export const updateStatusOrder = async (orderId, newStatus, supplierId, shipperId) => {
   try {
     const response = await request.put(`/orders/update-status`, {
       orderId,
       newStatus,
       supplierId,
+      shipperId
     });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const assignShipper = async (orderId) => {
+  try {
+    const response = await request.put(`/orders/assign-shipper/${orderId}`,);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

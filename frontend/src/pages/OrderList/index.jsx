@@ -5,10 +5,10 @@ import { useUser } from "../../context/UserContext";
 import {
   renderOrdersBySupplierId,
   updateStatusOrder,
+  assignShipper,
 } from "../../services/orderService";
-import {formatDate} from "../../utils/formatDate"
+import { formatDate } from "../../utils/formatDate";
 import PaginationTab from "../../components/PaginationTab/PaginationTab";
-
 
 const OrderList = () => {
   const { userId } = useUser();
@@ -40,9 +40,15 @@ const OrderList = () => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const response = await updateStatusOrder(orderId, newStatus, userId);
+      const response = await updateStatusOrder(orderId, newStatus, userId, null);
       toast.success(response);
       await getOrders();
+
+      if (newStatus === "WAITING") {
+        const response = await assignShipper(orderId);
+        toast.success(response);
+      }
+      
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);
     }
@@ -129,7 +135,7 @@ const OrderList = () => {
                   <th scope="col" className="py-3">
                     Customer Name
                   </th>
-               
+
                   <th scope="col" className="py-3">
                     Amount
                   </th>
@@ -150,7 +156,7 @@ const OrderList = () => {
                     <td>{order.orderID}</td>
                     <td>{order.customerName}</td>
                     <td>{order.totalAmount}</td>
-                   <td>{formatDate(order.orderDate)}</td>
+                    <td>{formatDate(order.orderDate)}</td>
                     <td>
                       <span
                         className={`status-badge ${
@@ -158,7 +164,7 @@ const OrderList = () => {
                             ? "status-success"
                             : order.status === "Cancel"
                             ? "status-danger"
-                            : order.status === "Processing"
+                            : order.status === "Waiting"
                             ? "status-info"
                             : "status-warning"
                         }`}
@@ -183,10 +189,10 @@ const OrderList = () => {
                           <button
                             className="btn btn-outline-success btn-sm"
                             onClick={() =>
-                              handleStatusChange(order.orderID, "DELIVERED")
+                              handleStatusChange(order.orderID, "WAITING")
                             }
                           >
-                            Mark as Delivered
+                            Mark as Wait for delivering
                           </button>
                         )}
                       </div>
@@ -228,11 +234,11 @@ const OrderList = () => {
 
           {/* Pagination */}
           <PaginationTab
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={totalItems}
-              setCurrentPage={setCurrentPage}
-            />
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            setCurrentPage={setCurrentPage}
+          />
         </div>
       </div>
     </div>

@@ -1,7 +1,11 @@
 package com.farm.farmtrade.controller;
 
+import com.farm.farmtrade.dto.request.chatRequest.CreateCommunityChatRequestDTO;
+import com.farm.farmtrade.dto.request.chatRequest.JoinCommunityChatRequestDTO;
 import com.farm.farmtrade.dto.request.chatRequest.MessageRequestDTO;
 import com.farm.farmtrade.dto.response.chatResponse.ConversationResponseDTO;
+import com.farm.farmtrade.dto.response.chatResponse.CreateCommunityChatResponseDTO;
+import com.farm.farmtrade.dto.response.chatResponse.JoinCommunityChatResponseDTO;
 import com.farm.farmtrade.dto.response.chatResponse.MessageResponseDTO;
 import com.farm.farmtrade.entity.Conversation;
 
@@ -20,6 +24,16 @@ public class ConversationController {
     public ConversationController(ConversationService conversationService) {
         this.conversationService = conversationService;
     }
+    @PostMapping("/join-community")
+    public JoinCommunityChatResponseDTO joinCommunity(@RequestBody JoinCommunityChatRequestDTO request) {
+        return conversationService.joinCommunityChat(request.getLatitude(), request.getLongitude(), request.getUserId());
+    }
+
+    @PostMapping("/create-community")
+    public CreateCommunityChatResponseDTO createCommunity(@RequestBody CreateCommunityChatRequestDTO request) {
+        return conversationService.createCommunityChat(request.getLatitude(), request.getLongitude());
+    }
+
     @GetMapping("/existing")
     public ResponseEntity<Long> checkExistingConversation(
             @RequestParam("userID1") String userID1Str,

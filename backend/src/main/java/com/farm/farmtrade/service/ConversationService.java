@@ -2,8 +2,9 @@ package com.farm.farmtrade.service;
 
 import com.farm.farmtrade.dto.request.chatRequest.MessageRequestDTO;
 import com.farm.farmtrade.dto.response.chatResponse.ConversationResponseDTO;
+import com.farm.farmtrade.dto.response.chatResponse.CreateCommunityChatResponseDTO;
+import com.farm.farmtrade.dto.response.chatResponse.JoinCommunityChatResponseDTO;
 import com.farm.farmtrade.dto.response.chatResponse.MessageResponseDTO;
-import com.farm.farmtrade.dto.response.chatResponse.SupplierDTO;
 import com.farm.farmtrade.entity.Conversation;
 import com.farm.farmtrade.entity.ConversationParticipants;
 import com.farm.farmtrade.entity.Message;
@@ -11,12 +12,12 @@ import com.farm.farmtrade.repository.ConversationParticipantsRepository;
 import com.farm.farmtrade.repository.ConversationRepository;
 import com.farm.farmtrade.repository.MessageRepository;
 import com.farm.farmtrade.repository.UserRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
-
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,8 @@ public class ConversationService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     private final UserService userService;
-
+    @PersistenceContext
+    private EntityManager entityManager;
     public ConversationService(ConversationRepository conversationRepository,
                                ConversationParticipantsRepository conversationParticipantsRepository, // Sử dụng lại
                                MessageRepository messageRepository,
@@ -39,45 +41,123 @@ public class ConversationService {
         this.userService = userService;
     }
 
-    public Conversation createOrUpdateGroupConversation(String district, List<Integer> userIds, double lat, double lng) {
-        // Tìm nhóm chat hiện có cho khu vực
-        Conversation existingConversation = conversationRepository.findByName(district);
+    @Transactional
+    public JoinCommunityChatResponseDTO joinCommunityChat(Double latitude, Double longitude, Integer userId) {
 
-        if (existingConversation == null) {
-            existingConversation = new Conversation();
-            existingConversation.setName(district);
-            existingConversation.setGroup(true);
-            existingConversation.setCreatedAt(LocalDateTime.now());
-            existingConversation = conversationRepository.save(existingConversation);
+        // 1. Xác định tên phường từ tọa độ
+        String district = getDistrictFromCoordinates(latitude, longitude);
+
+        List<String> validDistricts = List.of(
+                "Sơn Trà", "Ngũ Hành Sơn", "Thanh Khê",
+                "Liên Chiểu", "Cẩm Lệ", "Hòa Vang", "Hải Châu"
+        );
+
+        if (!validDistricts.contains(district)) {
+            return new JoinCommunityChatResponseDTO(false, "Không có nhóm chat cho khu vực này.", null, district);
         }
 
-        // Lấy danh sách SUPPLIER trong khu vực
-        List<SupplierDTO> suppliersInDistrict = userService.getSuppliersByLocation(lat, lng);
+        // 2. Tìm nhóm chat có tên "Cộng đồng <district>"
+        String groupName = "Cộng đồng " + district;
+        Conversation conversation = conversationRepository.findByName(groupName);
 
-        // Trích xuất userId từ SupplierDTO
-        List<Integer> supplierIds = suppliersInDistrict.stream()
-                .map(SupplierDTO::getUserId)
-                .collect(Collectors.toList());
-
-        // Kết hợp với userIds được truyền vào
-        List<Integer> allUserIds = new ArrayList<>(userIds);
-        allUserIds.addAll(supplierIds);
-
-        // Thêm người dùng vào nhóm chat nếu chưa tồn tại
-        for (Integer userId : allUserIds) {
-            boolean exists = conversationParticipantsRepository.existsByConversationAndUserId(existingConversation, userId);
-            if (!exists) {
-                ConversationParticipants participant = new ConversationParticipants();
-                participant.setConversation(existingConversation);
-                participant.setUserId(userId);
-                participant.setRole(ConversationParticipants.ParticipantRole.Member);
-                conversationParticipantsRepository.save(participant);
-            }
+        if (conversation == null) {
+            return new JoinCommunityChatResponseDTO(false, "Nhóm chat cho khu vực này chưa tồn tại.", null, district);
         }
 
-        return existingConversation;
+        // 3. Kiểm tra xem user đã trong nhóm chưa
+        String checkSql = "SELECT COUNT(*) FROM ConversationParticipants WHERE ConversationID = ? AND UserID = ?";
+        Long count = (Long) entityManager.createNativeQuery(checkSql)
+                .setParameter(1, conversation.getConversationId())
+                .setParameter(2, userId)
+                .getSingleResult();
+
+        if (count != null && count > 0) {
+            return new JoinCommunityChatResponseDTO(true, "Bạn đã nằm trong nhóm chat '" + district + "'.", conversation.getConversationId(), district);
+        }
+
+        // 4. Thêm người dùng vào nhóm
+        ConversationParticipants participant = new ConversationParticipants();
+        participant.setUserId(userId);
+        participant.setRole(ConversationParticipants.ParticipantRole.Member);
+        participant.setConversation(conversation);
+        participant.setJoinedAt(LocalDateTime.now());
+
+        entityManager.persist(participant);
+
+        return new JoinCommunityChatResponseDTO(true, "Bạn đã tham gia nhóm chat '" + district + "' thành công.", conversation.getConversationId(), district);
     }
 
+    @Transactional
+    public CreateCommunityChatResponseDTO createCommunityChat(Double latitude, Double longitude) {
+
+        // 1. Xác định tên phường từ tọa độ (mock hoặc dùng Google Maps API)
+        String district = getDistrictFromCoordinates(latitude, longitude);
+
+        List<String> validDistricts = List.of(
+                "Sơn Trà", "Ngũ Hành Sơn", "Thanh Khê",
+                "Liên Chiểu", "Cẩm Lệ", "Hòa Vang", "Hải Châu"
+        );
+
+        if (!validDistricts.contains(district)) {
+            return new CreateCommunityChatResponseDTO(false, "Phường không hợp lệ.", null, 0);
+        }
+
+        // 2. Tạo nhóm chat
+        Conversation conversation = new Conversation();
+        conversation.setName("Cộng đồng " + district);
+        conversation.setGroup(true);
+        conversation.setCreatedAt(LocalDateTime.now());
+        conversation = conversationRepository.save(conversation);
+
+        // 3. Tìm các Supplier gần vị trí này (bán kính 5km)
+        String sqlFindSuppliers = "SELECT UserID FROM Users WHERE Role = 'SUPPLIER' AND " +
+                "(6371 * acos(cos(radians(:lat)) * cos(radians(lat)) * " +
+                "cos(radians(lng) - radians(:lng)) + sin(radians(:lat)) * " +
+                "sin(radians(lat)))) <= 5";
+
+        @SuppressWarnings("unchecked")
+        List<Integer> supplierIDs = entityManager.createNativeQuery(sqlFindSuppliers)
+                .setParameter("lat", latitude)
+                .setParameter("lng", longitude)
+                .getResultList();
+
+        // 4. Thêm từng supplier vào nhóm chat
+        int count = 0;
+        for (Integer userId : supplierIDs) {
+            ConversationParticipants participant = new ConversationParticipants();
+            participant.setUserId(userId);
+            participant.setRole(ConversationParticipants.ParticipantRole.Member);
+            participant.setConversation(conversation); // tự động set conversationId
+            participant.setJoinedAt(LocalDateTime.now());
+
+            entityManager.persist(participant);
+            count++;
+        }
+
+        return new CreateCommunityChatResponseDTO(true,
+                "Nhóm cộng đồng '" + district + "' đã được tạo thành công.",
+                conversation.getConversationId(), count);
+    }
+
+
+    private String getDistrictFromCoordinates(Double latitude, Double longitude) {
+        if (latitude >= 16.04 && latitude <= 16.08 && longitude >= 108.20 && longitude <= 108.25) {
+            return "Sơn Trà";
+        } else if (latitude >= 15.99 && latitude <= 16.03 && longitude >= 108.22 && longitude <= 108.25) {
+            return "Ngũ Hành Sơn";
+        } else if (latitude >= 16.03 && latitude <= 16.06 && longitude >= 108.17 && longitude <= 108.19) {
+            return "Thanh Khê";
+        } else if (latitude >= 15.97 && latitude <= 16.00 && longitude >= 108.16 && longitude <= 108.18) {
+            return "Liên Chiểu";
+        } else if (latitude >= 15.99 && latitude <= 16.01 && longitude >= 108.18 && longitude <= 108.20) {
+            return "Cẩm Lệ";
+        } else if (latitude >= 15.91 && latitude <= 15.94 && longitude >= 108.18 && longitude <= 108.21) {
+            return "Hòa Vang";
+        } else if (latitude >= 16.05 && latitude <= 16.07 && longitude >= 108.16 && longitude <= 108.18) {
+            return "Hải Châu";
+        }
+        return "Sơn Trà"; // Mặc định
+    }
     public Long getExistingConversation(Integer userID1, Integer userID2) {
         List<Long> results = conversationRepository.findConversationIdByUserIDs(userID1, userID2);
         return results.isEmpty() ? null : results.get(0);

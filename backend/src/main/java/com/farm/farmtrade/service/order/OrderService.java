@@ -289,13 +289,22 @@ public class OrderService {
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new IllegalArgumentException("Order not found with ID: " + request.getOrderId()));
 
-        if (!order.getSupplier().getUserID().equals(request.getSupplierId())) {
+        boolean isSupplierAuthorized = request.getSupplierId() != null
+                && order.getSupplier() != null
+                && order.getSupplier().getUserID().equals(request.getSupplierId());
+
+        boolean isShipperAuthorized = request.getShipperId() != null
+                && order.getShipper() != null
+                && order.getShipper().getUserID().equals(request.getShipperId());
+
+        if (!isSupplierAuthorized && !isShipperAuthorized) {
             throw new SecurityException("You are not authorized to update this order.");
         }
 
         order.setStatus(request.getNewStatus());
         orderRepository.save(order);
     }
+
 
 
     public Map<String, Object> getTodayMetricsForSupplier(Long supplierId) {
@@ -399,6 +408,35 @@ public class OrderService {
                 .build();
     }
 
+    public Page<OrderResponse> getOrdersByShipperId(Integer shipperId, String status, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("orderDate")));
+
+        if (sortBy != null && !sortBy.isEmpty()) {
+            String[] sortParts = sortBy.split(",");
+            Sort.Direction direction = sortParts.length > 1 && sortParts[1].equalsIgnoreCase("asc")
+                    ? Sort.Direction.ASC
+                    : Sort.Direction.DESC;
+            pageable = PageRequest.of(page, size, Sort.by(new Sort.Order(direction, sortParts[0])));
+        }
+
+        Page<Order> ordersPage;
+        if (status != null && !status.isEmpty()) {
+            ordersPage = orderRepository.findByShipperUserIDAndStatus(shipperId, status, pageable);
+        } else {
+            ordersPage = orderRepository.findByShipperUserID(shipperId, pageable);
+        }
+
+        return ordersPage.map(order -> OrderResponse.builder()
+                .orderID(order.getOrderID())
+                .buyerId(order.getBuyer() != null ? order.getBuyer().getUserID() : null)
+                .supplierId(order.getSupplier() != null ? order.getSupplier().getUserID() : null)
+                .orderDate(order.getOrderDate())
+                .status(order.getStatus())
+                .totalAmount(order.getTotalAmount())
+                .orderGroupId(order.getOrderGroup() != null ? order.getOrderGroup().getOrderGroupID() : null)
+                .customerName(order.getBuyer() != null ? order.getBuyer().getFullName() : null)
+                .build());
+    }
 
 
 }

@@ -9,6 +9,7 @@ import com.farm.farmtrade.dto.response.chatResponse.JoinCommunityChatResponseDTO
 import com.farm.farmtrade.dto.response.chatResponse.MessageResponseDTO;
 import com.farm.farmtrade.entity.Conversation;
 
+import com.farm.farmtrade.entity.ConversationParticipants;
 import com.farm.farmtrade.service.ConversationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,12 @@ import java.util.List;
 @RequestMapping("/conversations")
 public class ConversationController {
     private final ConversationService conversationService;
+
+    @GetMapping("/{conversationId}/members")
+    public ResponseEntity<List<ConversationParticipants>> getConversationMembers(@PathVariable Long conversationId) {
+        List<ConversationParticipants> members = conversationService.getConversationMembers(conversationId);
+        return ResponseEntity.ok(members);
+    }
 
     public ConversationController(ConversationService conversationService) {
         this.conversationService = conversationService;

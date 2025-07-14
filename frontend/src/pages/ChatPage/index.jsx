@@ -109,7 +109,7 @@ const ChatPage = () => {
       setAvatars((prev) => ({
         ...prev,
         [userId]: {
-          avatarUrl: user.avatar || "https://via.placeholder.com/48 ",
+          avatarUrl: user.avatar ||  "/img/fruite-item-1.jpg",
           businessName: user.businessName || null,
           role: user.role || null,
           userId: userId

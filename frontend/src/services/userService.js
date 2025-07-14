@@ -16,7 +16,7 @@ export const getUserById = async (userId) => {
     console.log("getUserById: userId =", userId);
     const res = await request.get(`/users/${userId}`);
     console.log("getUserById: response =", res.data);
-    return res.data; // Trả về user object với avatarUrl nếu có
+    return res.data;
   } catch (error) {
     console.error("getUserById error:", error.response?.data || error.message);
     throw new Error(`Lỗi khi lấy thông tin người dùng: ${error.message}`);

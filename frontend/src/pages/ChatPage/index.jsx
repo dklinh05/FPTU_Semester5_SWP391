@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { request } from "../../utils/httpRequest";
-import { getUserById } from "../../services/userService"; // Service lấy thông tin người dùng
+import { getUserById } from "../../services/userService";
 import styles from "./ChatPage.module.scss";
 
 const ChatPage = () => {
@@ -18,12 +18,12 @@ const ChatPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [avatars, setAvatars] = useState({});
+  const [members, setMembers] = useState([]);
+  const [showMembersModal, setShowMembersModal] = useState(false);
 
-  // Hàm format thời gian sentAt (hỗ trợ nhiều kiểu dữ liệu)
   const formatSentAt = (sentAt) => {
     if (!sentAt) return "Không có thời gian";
 
-    // Nếu là chuỗi → parse thành Date
     if (typeof sentAt === "string") {
       const date = new Date(sentAt);
       if (!isNaN(date.getTime())) {
@@ -31,10 +31,9 @@ const ChatPage = () => {
       }
     }
 
-    // Nếu là mảng số → giả định là [year, month, day, hour, minute]
     if (Array.isArray(sentAt) && sentAt.length >= 5) {
       const [year, month, day, hour, minute] = sentAt;
-      const date = new Date(year, month - 1, day, hour, minute); // tháng bắt đầu từ 0
+      const date = new Date(year, month - 1, day, hour, minute);
       if (!isNaN(date.getTime())) {
         return date.toLocaleTimeString("vi-VN");
       }
@@ -43,7 +42,6 @@ const ChatPage = () => {
     return "Thời gian không hợp lệ";
   };
 
-  // Lấy danh sách cuộc trò chuyện của người dùng
   useEffect(() => {
     const fetchConversations = async () => {
       if (!currentUserId) return;
@@ -54,20 +52,16 @@ const ChatPage = () => {
         });
 
         const conversationsWithUsers = response.data || [];
-
-        // Lấy tất cả userId để tải avatar, kể cả chính bạn
         const userIdsToFetch = [];
         conversationsWithUsers.forEach((conv) => {
           conv.userIds?.forEach((uid) => {
-            if (!avatars[uid]) {
+            if (!avatars[uid] && !conv.group) {
               userIdsToFetch.push(uid);
             }
           });
         });
 
-        // Tải avatar cho từng user chưa có
         await Promise.all(userIdsToFetch.map((id) => fetchAvatar(id)));
-
         setConversations(conversationsWithUsers);
       } catch (err) {
         setError("Không thể tải danh sách cuộc trò chuyện");
@@ -79,7 +73,6 @@ const ChatPage = () => {
     fetchConversations();
   }, [currentUserId]);
 
-  // Lấy tin nhắn trong cuộc trò chuyện đang chọn
   useEffect(() => {
     const fetchMessages = async () => {
       if (!conversationId || isNaN(Number(conversationId))) {
@@ -92,7 +85,6 @@ const ChatPage = () => {
         setMessages(response.data);
       } catch (err) {
         setError(`Không thể tải tin nhắn: ${err.message}`);
-        console.error("Lỗi khi tải tin nhắn:", err);
       } finally {
         setLoading(false);
       }
@@ -101,7 +93,6 @@ const ChatPage = () => {
     fetchMessages();
   }, [conversationId]);
 
-  // Hàm tải avatar người dùng
   const fetchAvatar = async (userId) => {
     if (!userId || avatars[userId]) return;
     try {
@@ -109,26 +100,41 @@ const ChatPage = () => {
       setAvatars((prev) => ({
         ...prev,
         [userId]: {
-          avatarUrl: user.avatar ||  "/img/fruite-item-1.jpg",
+          avatarUrl: user.avatar || "/img/fruite-item-1.jpg",
           businessName: user.businessName || null,
           role: user.role || null,
-          userId: userId
-        }
+          userId: userId,
+        },
       }));
     } catch (err) {
       setAvatars((prev) => ({
         ...prev,
         [userId]: {
-          avatarUrl: "https://via.placeholder.com/48 ",
+          avatarUrl: "https://via.placeholder.com/48",
           businessName: null,
           role: null,
-          userId: userId
-        }
+          userId: userId,
+        },
       }));
     }
   };
 
-  // Gửi tin nhắn
+  const fetchMembers = async () => {
+    if (!conversationId) return;
+    try {
+      const response = await request.get(`/conversations/${conversationId}/members`);
+      const membersData = response.data || [];
+      setMembers(membersData);
+
+      const userIdsToFetch = membersData
+        .filter((member) => !avatars[member.userId])
+        .map((member) => member.userId);
+      await Promise.all(userIdsToFetch.map((id) => fetchAvatar(id)));
+    } catch (err) {
+      setError("Không thể tải danh sách thành viên");
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!content.trim() || !conversationId) return;
 
@@ -152,32 +158,37 @@ const ChatPage = () => {
     }
   };
 
-  // Chọn cuộc trò chuyện
   const handleConversationSelect = (id) => {
     navigate(`/chat/${id}`);
+    setShowMembersModal(false);
   };
 
-  // Trả về tên cuộc trò chuyện hiện tại
-  const getCurrentConversationName = () => {
-    const selectedConv = conversations.find(
-      (c) => c.conversationId.toString() === conversationId
-    );
-    if (!selectedConv) return "Chưa chọn cuộc trò chuyện";
+  const handleViewMembers = () => {
+    fetchMembers();
+    setShowMembersModal(true);
+  };
 
-    // Nếu là nhóm chat → trả về tên nhóm
-    if (selectedConv.isGroup && selectedConv.name) {
-      return selectedConv.name;
+  const currentConversation = useMemo(() => {
+    return conversations.find((conv) => conv.conversationId?.toString() === conversationId);
+  }, [conversationId, conversations]);
+
+  const currentConversationName = useMemo(() => {
+    if (!conversationId) return "Chọn cuộc trò chuyện";
+
+    const currentConv = conversations.find(
+      (conv) => conv.conversationId?.toString() === conversationId
+    );
+
+    if (!currentConv) return "Không tìm thấy cuộc trò chuyện";
+
+    if (currentConv.group) {
+      return currentConv.name || "Nhóm chưa đặt tên";
     }
 
-    // Nếu là chat cá nhân → tìm người còn lại
-    const otherUserIds = selectedConv.userIds?.filter((uid) => uid !== currentUserId);
-    const otherUserId = otherUserIds?.[0];
-
-    // Lấy BusinessName của người kia (nếu có)
-    const businessName = avatars[otherUserId]?.businessName;
-
-    return businessName || `Người dùng #${otherUserId}`;
-  };
+    const otherUserId = currentConv.userIds?.find((uid) => uid !== currentUserId);
+    const user = avatars[otherUserId];
+    return user?.businessName || `Người dùng #${otherUserId}`;
+  }, [conversationId, conversations, avatars, currentUserId]);
 
   if (!currentUserId) {
     return (
@@ -189,9 +200,7 @@ const ChatPage = () => {
 
   return (
     <div className={styles.chatContainerWrapper}>
-      {/* Sidebar - Danh sách cuộc trò chuyện */}
       <div className={styles.sidebar}>
-        {/* Header */}
         <div className={styles["sidebar-header"]}>
           <div className={styles["lg-logo"]}>
             <a href="http://localhost:5173/">
@@ -200,7 +209,6 @@ const ChatPage = () => {
           </div>
         </div>
 
-        {/* Tìm kiếm */}
         <div className={styles.chatSearchBox}>
           <div className="input-group">
             <input type="text" className="form-control" placeholder="Tìm kiếm..." />
@@ -210,7 +218,6 @@ const ChatPage = () => {
           </div>
         </div>
 
-        {/* Danh sách người dùng */}
         <div className={styles.usersContainer}>
           <ul className={styles.users}>
             {loading && <p className={styles.loading}>Đang tải...</p>}
@@ -218,28 +225,33 @@ const ChatPage = () => {
               <p className={styles.noChat}>Vui lòng chọn một cuộc trò chuyện.</p>
             )}
             {conversations.map((conv) => {
-              const otherUserIds = conv.userIds?.filter((uid) => uid !== currentUserId);
-              const otherUserId = otherUserIds?.[0];
-              const user = avatars[otherUserId];
+              let displayName;
+              let displayAvatar;
+
+              if (conv.group) {
+                displayName = conv.name || "Nhóm chưa đặt tên";
+                displayAvatar = "/img/fruite-item-1.jpg";
+              } else {
+                const otherUserId = conv.userIds?.find((uid) => uid !== currentUserId);
+                const user = avatars[otherUserId];
+                displayName = user?.businessName || `Người dùng #${otherUserId}`;
+                displayAvatar = user?.avatarUrl || "https://via.placeholder.com/48";
+              }
 
               return (
                 <li
                   key={conv.conversationId}
-                  className={`${styles.person} ${conversationId === conv.conversationId.toString()
-                      ? styles.activeUser
-                      : ""
-                    }`}
+                  className={`${styles.person} ${
+                    conversationId === conv.conversationId.toString() ? styles.activeUser : ""
+                  }`}
                   onClick={() => handleConversationSelect(conv.conversationId)}
                 >
                   <div className={styles.user}>
-                    <img
-                      src={user?.avatarUrl || "https://via.placeholder.com/48 "}
-                      alt="User Avatar"
-                    />
+                    <img src={displayAvatar} alt="Conversation Avatar" />
                     <div className={`${styles.status} ${styles.online}`}></div>
                   </div>
                   <p className={styles.nameTime}>
-                    {user?.businessName || `Người dùng #${otherUserId}`}
+                    {displayName}
                     <span className={styles.time}>
                       {new Date(conv.createdAt).toLocaleTimeString("vi-VN")}
                     </span>
@@ -251,13 +263,16 @@ const ChatPage = () => {
         </div>
       </div>
 
-      {/* Main Content - Nội dung cuộc trò chuyện */}
       <div className={styles.chatArea}>
         <div className={styles.selectedUser}>
-          <span className={styles.name}>{getCurrentConversationName()}</span>
+          <span className={styles.name}>{currentConversationName}</span>
+          {currentConversation?.group && (
+            <button className={styles.viewMembersButton} onClick={handleViewMembers}>
+              Xem Thành Viên
+            </button>
+          )}
         </div>
 
-        {/* Khung tin nhắn */}
         <div className={styles.messageContainer}>
           {messages.length === 0 && !loading && (
             <p className={styles.emptyMessage}>Chưa có tin nhắn nào.</p>
@@ -265,7 +280,7 @@ const ChatPage = () => {
 
           {messages.map((msg) => {
             const isMine = msg.senderId === currentUserId;
-            const avatar = avatars[msg.senderId]?.avatarUrl || "https://via.placeholder.com/48 ";
+            const avatar = avatars[msg.senderId]?.avatarUrl || "https://via.placeholder.com/48";
 
             return (
               <div
@@ -294,26 +309,55 @@ const ChatPage = () => {
           })}
         </div>
 
-        {/* Form nhập tin nhắn */}
-       <div className={styles.chatForm}>
-  <div className={styles.inputWithButton}>
-    <textarea
-      rows="1"
-      placeholder="Nhập tin nhắn..."
-      className="form-control"
-      value={content}
-      onChange={(e) => setContent(e.target.value)}
-    />
-    <button
-      onClick={handleSendMessage}
-      disabled={loading || !content.trim()}
-      className={styles.sendButton}
-    >
-      <i className="fas fa-paper-plane"></i>
-    </button>
-  </div>
-</div>
+        <div className={styles.chatForm}>
+          <div className={styles.inputWithButton}>
+            <textarea
+              rows="1"
+              placeholder="Nhập tin nhắn..."
+              className="form-control"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+            />
+            <button
+              onClick={handleSendMessage}
+              disabled={loading || !content.trim()}
+              className={styles.sendButton}
+            >
+              <i className="fas fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
       </div>
+
+      {showMembersModal && (
+        <div className={styles.membersModal}>
+          <div className={styles.membersModalContent}>
+            <h2>Danh sách thành viên</h2>
+            <button
+              className={styles.closeModalButton}
+              onClick={() => setShowMembersModal(false)}
+            >
+              Đóng
+            </button>
+            <ul className={styles.membersList}>
+              {members.map((member) => (
+                <li key={member.userId} className={styles.memberItem}>
+                  <img
+                    src={avatars[member.userId]?.avatarUrl || "https://via.placeholder.com/48"}
+                    alt="Member Avatar"
+                    className={styles.memberAvatar}
+                  />
+                  <div className={styles.memberInfo}>
+                    <span>{avatars[member.userId]?.businessName || `Người dùng #${member.userId}`}</span>
+                    <span>UserID: {member.userId}</span>
+                    <span>Vai trò: {avatars[member.userId]?.role || member.role || "Thành viên"}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

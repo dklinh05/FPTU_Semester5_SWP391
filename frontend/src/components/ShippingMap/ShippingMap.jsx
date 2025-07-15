@@ -8,7 +8,7 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 
-// Fix icon marker mặc định không hiển thị
+// Fix icon mặc định
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -19,21 +19,30 @@ L.Icon.Default.mergeOptions({
     "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
 });
 
-// Khi người dùng click bản đồ
-function LocationPicker({ setMarker, setShippingAddress }) {
+function LocationPicker({ setMarker, setShippingAddress, setIsInDaNang }) {
   useMapEvents({
     click(e) {
       const { lat, lng } = e.latlng;
-      setMarker({ lat, lng });
 
-      // Reverse geocoding để lấy địa chỉ từ tọa độ
       fetch(
         `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
       )
         .then((res) => res.json())
         .then((data) => {
           const address = data.display_name;
-          setShippingAddress({ address, lat, lng }); // ✅ Gửi cả 3
+          const city =
+            data?.address?.city ||
+            data?.address?.town ||
+            data?.address?.state;
+
+          if (city?.toLowerCase().includes("đà nẵng")) {
+            setMarker({ lat, lng });
+            setShippingAddress({ address, lat, lng });
+            setIsInDaNang(true);
+          } else {
+            alert("Vị trí không thuộc thành phố Đà Nẵng.");
+            setIsInDaNang(false);
+          }
         })
         .catch((err) => {
           console.error("Lỗi reverse geocoding:", err);
@@ -43,7 +52,6 @@ function LocationPicker({ setMarker, setShippingAddress }) {
   return null;
 }
 
-// Tự động di chuyển bản đồ đến marker
 function MoveMapToMarker({ marker }) {
   const map = useMap();
   useEffect(() => {
@@ -54,10 +62,13 @@ function MoveMapToMarker({ marker }) {
   return null;
 }
 
-export default function ShippingMap({ shippingAddress, setShippingAddress }) {
+export default function ShippingMap({
+  shippingAddress,
+  setShippingAddress,
+  setIsInDaNang,
+}) {
   const [marker, setMarker] = useState(null);
 
-  // Khi người dùng nhập địa chỉ thủ công
   useEffect(() => {
     const addressText =
       typeof shippingAddress === "string"
@@ -66,7 +77,6 @@ export default function ShippingMap({ shippingAddress, setShippingAddress }) {
 
     if (addressText && addressText.length > 5) {
       const encoded = encodeURIComponent(addressText);
-
       fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&viewbox=107.96,16.16,108.31,15.91&bounded=1`
       )
@@ -76,24 +86,35 @@ export default function ShippingMap({ shippingAddress, setShippingAddress }) {
             const lat = parseFloat(data[0].lat);
             const lon = parseFloat(data[0].lon);
 
-            const alreadySame =
-              shippingAddress?.lat === lat && shippingAddress?.lng === lon;
+            fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`
+            )
+              .then((res) => res.json())
+              .then((reverseData) => {
+                const city =
+                  reverseData?.address?.city ||
+                  reverseData?.address?.town ||
+                  reverseData?.address?.state;
 
-            if (!alreadySame) {
-              setMarker({ lat, lng: lon });
-              setShippingAddress({
-                address: addressText,
-                lat,
-                lng: lon,
+                if (city?.toLowerCase().includes("đà nẵng")) {
+                  setMarker({ lat, lng: lon });
+                  setShippingAddress({
+                    address: addressText,
+                    lat,
+                    lng: lon,
+                  });
+                  setIsInDaNang(true);
+                } else {
+                  setIsInDaNang(false);
+                }
               });
-            }
+          } else {
+            setIsInDaNang(false);
           }
         })
-        .catch((err) => {
-          console.error("Lỗi forward geocoding:", err);
-        });
+        .catch(() => setIsInDaNang(false));
     }
-  }, [shippingAddress?.address]); // ✅ chỉ lắng nghe khi address thay đổi
+  }, [shippingAddress?.address]);
 
   const centerDaNang = [16.0471, 108.2068];
 
@@ -113,6 +134,7 @@ export default function ShippingMap({ shippingAddress, setShippingAddress }) {
         <LocationPicker
           setMarker={setMarker}
           setShippingAddress={setShippingAddress}
+          setIsInDaNang={setIsInDaNang}
         />
         {marker && (
           <>

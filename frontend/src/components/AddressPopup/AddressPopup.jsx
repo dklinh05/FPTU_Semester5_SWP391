@@ -3,12 +3,19 @@ import ShippingMap from "../ShippingMap/ShippingMap";
 
 function AddressPopup({ isOpen, onClose, shippingAddress, setShippingAddress }) {
   const [localAddress, setLocalAddress] = useState(shippingAddress);
+  const [isInDaNang, setIsInDaNang] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setLocalAddress(shippingAddress);
+      setIsInDaNang(false);
     }
   }, [isOpen, shippingAddress]);
+
+  const canSave =
+    localAddress?.lat !== undefined &&
+    localAddress?.lng !== undefined &&
+    isInDaNang;
 
   if (!isOpen) return null;
 
@@ -27,13 +34,14 @@ function AddressPopup({ isOpen, onClose, shippingAddress, setShippingAddress }) 
         <ShippingMap
           shippingAddress={localAddress}
           setShippingAddress={setLocalAddress}
+          setIsInDaNang={setIsInDaNang}
         />
 
         <textarea
           className="form-control mt-3 w-full border rounded p-2"
           rows="3"
           required
-          value={localAddress.address}
+          value={localAddress?.address || ""}
           onChange={(e) =>
             setLocalAddress((prev) => ({
               ...prev,
@@ -42,12 +50,25 @@ function AddressPopup({ isOpen, onClose, shippingAddress, setShippingAddress }) 
           }
         ></textarea>
 
+        {!canSave && (
+          <p className="text-sm text-red-600 mt-2">
+            ⚠️ Vui lòng chọn hoặc nhập địa chỉ hợp lệ trong Đà Nẵng.
+          </p>
+        )}
+
         <button
-          className="btn btn-primary mt-3"
+          className={`btn btn-primary mt-3 ${
+            !canSave ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           onClick={() => {
-            setShippingAddress(localAddress);
-            onClose();
+            if (canSave) {
+              setShippingAddress(localAddress);
+              onClose();
+            } else {
+              alert("Địa chỉ không hợp lệ hoặc không nằm trong Đà Nẵng.");
+            }
           }}
+          disabled={!canSave}
         >
           Lưu địa chỉ
         </button>

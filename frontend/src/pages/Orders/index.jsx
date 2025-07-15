@@ -27,23 +27,41 @@ function Orders() {
 
   const fetchOrders = async () => {
     try {
-      const fetchedOrders = await renderOrderByBuyerId(userId, status);
-      setOrders(fetchedOrders);
+      let fetchedOrders = [];
+      if (location.pathname === "/orders/rate") {
+        fetchedOrders = await renderOrderByBuyerId(userId, "completed");
+      } else {
+        fetchedOrders = await renderOrderByBuyerId(userId, status);
+      }
 
       const itemsMap = {};
       const reviewedMap = {};
+      const ordersToSet = [];
 
       for (const order of fetchedOrders) {
         const items = await renderOrderItemsByOrderId(order.orderID);
         itemsMap[order.orderID] = items;
 
-        // Kiểm tra từng item đã đánh giá hay chưa
+        let hasReviewableItem = false;
+
         for (const item of items) {
           const reviewed = await checkIfReviewed(item.productId, order.orderID);
           reviewedMap[`${order.orderID}_${item.productId}`] = reviewed;
+
+          if (!reviewed) {
+            hasReviewableItem = true;
+          }
+        }
+        if (location.pathname === "/orders/rate") {
+          if (order.status === "COMPLETED" && (hasReviewableItem || true)) {
+            ordersToSet.push(order);
+          }
+        } else {
+          ordersToSet.push(order);
         }
       }
 
+      setOrders(ordersToSet);
       setOrderItemsMap(itemsMap);
       setReviewedItems(reviewedMap);
     } catch (error) {
@@ -155,27 +173,45 @@ function Orders() {
 
                   {order.status === "COMPLETED" && (
                       reviewedItems[`${order.orderID}_${item.productId}`] ? (
-                          <div className="mt-2 d-flex gap-2">
-                            <Button
-                                size="sm"
-                                variant="outline-warning"
-                                onClick={() => handleFeedback(order.orderID, {
-                                  productId: item.productId,
-                                  productName: item.productName,
-                                  productImage: item.productImage,
-                                  isEdit: true
-                                })}
-                            >
-                              Chỉnh sửa đánh giá
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline-danger"
-                                onClick={() => handleDeleteReview(order.orderID, item.productId)}
-                            >
-                              Xóa đánh giá
-                            </Button>
-                          </div>
+                          location.pathname === "/orders" ? (
+                              <div className="mt-2">
+                                <Button
+                                    size="sm"
+                                    variant="outline-info"
+                                    onClick={() => handleFeedback(order.orderID, {
+                                      productId: item.productId,
+                                      productName: item.productName,
+                                      productImage: item.productImage,
+                                      isEdit: true,
+                                      isViewOnly: true // Flag chỉ để xem
+                                    })}
+                                >
+                                  Xem đánh giá
+                                </Button>
+                              </div>
+                          ) : (
+                              <div className="mt-2 d-flex gap-2">
+                                <Button
+                                    size="sm"
+                                    variant="outline-warning"
+                                    onClick={() => handleFeedback(order.orderID, {
+                                      productId: item.productId,
+                                      productName: item.productName,
+                                      productImage: item.productImage,
+                                      isEdit: true
+                                    })}
+                                >
+                                  Chỉnh sửa đánh giá
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline-danger"
+                                    onClick={() => handleDeleteReview(order.orderID, item.productId)}
+                                >
+                                  Xóa đánh giá
+                                </Button>
+                              </div>
+                          )
                       ) : (
                           <Button
                               size="sm"

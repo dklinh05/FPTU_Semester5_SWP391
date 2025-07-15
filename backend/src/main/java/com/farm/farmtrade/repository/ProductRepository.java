@@ -16,7 +16,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product>  findBySupplierUserIDAndStatus(Integer supplierId, String status, Pageable pageable);
     // Tìm tất cả sản phẩm theo status (không phân trang)
     List<Product> findAllByStatus(String status);
-
+    List<Product> findBySupplier_UserID(Integer supplierId);
     // Tìm sản phẩm theo status có phân trang
     Page<Product> findPageByStatus(String status, Pageable pageable);
 

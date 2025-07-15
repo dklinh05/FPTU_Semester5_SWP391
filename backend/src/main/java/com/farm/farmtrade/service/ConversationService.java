@@ -5,13 +5,8 @@ import com.farm.farmtrade.dto.response.chatResponse.ConversationResponseDTO;
 import com.farm.farmtrade.dto.response.chatResponse.CreateCommunityChatResponseDTO;
 import com.farm.farmtrade.dto.response.chatResponse.JoinCommunityChatResponseDTO;
 import com.farm.farmtrade.dto.response.chatResponse.MessageResponseDTO;
-import com.farm.farmtrade.entity.Conversation;
-import com.farm.farmtrade.entity.ConversationParticipants;
-import com.farm.farmtrade.entity.Message;
-import com.farm.farmtrade.repository.ConversationParticipantsRepository;
-import com.farm.farmtrade.repository.ConversationRepository;
-import com.farm.farmtrade.repository.MessageRepository;
-import com.farm.farmtrade.repository.UserRepository;
+import com.farm.farmtrade.entity.*;
+import com.farm.farmtrade.repository.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
@@ -27,18 +22,39 @@ public class ConversationService {
     private final ConversationParticipantsRepository conversationParticipantsRepository; // Sử dụng lại
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
     private final UserService userService;
     @PersistenceContext
     private EntityManager entityManager;
     public ConversationService(ConversationRepository conversationRepository,
                                ConversationParticipantsRepository conversationParticipantsRepository, // Sử dụng lại
                                MessageRepository messageRepository,
-                               UserRepository userRepository, UserService userService) {
+                               UserRepository userRepository, ProductRepository productRepository, UserService userService) {
         this.conversationRepository = conversationRepository;
         this.conversationParticipantsRepository = conversationParticipantsRepository; // Sử dụng lại
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
+        this.productRepository = productRepository;
         this.userService = userService;
+    }
+    @Transactional
+    public void sendProductMessage(Long conversationId, Integer senderId, Integer productId) {
+        User user = userRepository.findByUserID(senderId.intValue());
+        if (user == null || !"SUPPLIER".equals(user.getRole())) {
+            throw new IllegalArgumentException("Only users with SUPPLIER role can send products");
+        }
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        if (!product.getSupplier().getUserID().equals(senderId.intValue())) {
+            throw new IllegalArgumentException("SupplierID does not match senderId");
+        }
+        Message message = new Message();
+        message.setConversationId(conversationId);
+        message.setSenderId(senderId);
+        message.setContent("PRODUCT:" + productId);
+        message.setSentAt(LocalDateTime.now());
+        message.setRead(false);
+        messageRepository.save(message);
     }
 
     public List<ConversationParticipants> getConversationMembers(Long conversationId) {

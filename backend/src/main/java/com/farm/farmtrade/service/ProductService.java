@@ -96,6 +96,9 @@ public class ProductService {
     public void deleteProduct(Integer id) {
         productRepository.deleteById(id);
     }
+    public List<Product> getProductsBySupplierId(Integer supplierId) {
+        return productRepository.findBySupplier_UserID(supplierId);
+    }
 
     public Page<Product> getProductsBySupplierId(Integer supplierId, Pageable pageable) {
         return productRepository.findBySupplierUserID(supplierId, pageable);

@@ -10,7 +10,9 @@ import com.farm.farmtrade.dto.response.chatResponse.MessageResponseDTO;
 import com.farm.farmtrade.entity.Conversation;
 
 import com.farm.farmtrade.entity.ConversationParticipants;
+import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.service.ConversationService;
+import com.farm.farmtrade.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +23,7 @@ import java.util.List;
 @RequestMapping("/conversations")
 public class ConversationController {
     private final ConversationService conversationService;
+    private final ProductService productService;
 
     @GetMapping("/{conversationId}/members")
     public ResponseEntity<List<ConversationParticipants>> getConversationMembers(@PathVariable Long conversationId) {
@@ -28,8 +31,9 @@ public class ConversationController {
         return ResponseEntity.ok(members);
     }
 
-    public ConversationController(ConversationService conversationService) {
+    public ConversationController(ConversationService conversationService, ProductService productService) {
         this.conversationService = conversationService;
+        this.productService = productService;
     }
     @PostMapping("/join-community")
     public JoinCommunityChatResponseDTO joinCommunity(@RequestBody JoinCommunityChatRequestDTO request) {
@@ -62,7 +66,7 @@ public class ConversationController {
     }
 
     @PostMapping
-    public ResponseEntity<ConversationResponseDTO> createConversation(@Valid @RequestBody ConversationRequest request) {
+    public ResponseEntity<ConversationResponseDTO> createConversation(@Valid @RequestBody ProductMessageRequest.ConversationRequest request) {
         Conversation conversation = conversationService.createConversation(
                 request.getUserIDs(),
                 request.isGroup(),
@@ -83,19 +87,74 @@ public class ConversationController {
     public List<MessageResponseDTO> getMessagesByConversation(@PathVariable Long conversationId) {
         return conversationService.getMessagesByConversation(conversationId);
     }
+
+    @GetMapping("/products/supplier/{supplierId}")
+    public ResponseEntity<List<Product>> getProductsBySupplierId(@PathVariable Integer supplierId) {
+        List<Product> products = productService.getProductsBySupplierId(supplierId);
+        return ResponseEntity.ok(products);
+    }
+
+    @PostMapping("/{conversationId}/product-message")
+    public ResponseEntity<?> sendProductMessage(
+            @PathVariable Long conversationId,
+            @RequestBody ProductMessageRequest request) {
+        try {
+            conversationService.sendProductMessage(conversationId, request.getSenderId(), request.getProductId());
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        }
+    }
 }
+class ProductMessageRequest {
+    private Integer senderId;
+    private Integer productId;
 
-class ConversationRequest {
-    private List<Integer> userIDs;
-    private boolean isGroup;
-    private String name;
+    public Integer getSenderId() {
+        return senderId;
+    }
 
-    // Getters and setters
-    public List<Integer> getUserIDs() { return userIDs; }
-    public void setUserIDs(List<Integer> userIDs) { this.userIDs = userIDs; }
-    public boolean isGroup() { return isGroup; }
-    public void setGroup(boolean isGroup) { this.isGroup = isGroup; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setSenderId(Integer senderId) {
+        this.senderId = senderId;
+    }
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
+    class ConversationRequest {
+        private List<Integer> userIDs;
+        private boolean isGroup;
+        private String name;
+
+        // Getters and setters
+        public List<Integer> getUserIDs() {
+            return userIDs;
+        }
+
+        public void setUserIDs(List<Integer> userIDs) {
+            this.userIDs = userIDs;
+        }
+
+        public boolean isGroup() {
+            return isGroup;
+        }
+
+        public void setGroup(boolean isGroup) {
+            this.isGroup = isGroup;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 }
 

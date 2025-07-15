@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { request } from "../../utils/httpRequest";
 import { getUserById } from "../../services/userService";
@@ -10,7 +10,14 @@ const ChatPage = () => {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
-  const currentUserId = token ? jwtDecode(token).userId : null;
+  const decodedToken = token ? jwtDecode(token) : {};
+  const currentUserId = decodedToken.userId || null;
+  const currentUserRole = decodedToken.scope && decodedToken.scope.includes("SUPPLIER") ? "SUPPLIER" : null;
+
+  console.log("Debug - Token:", token);
+  console.log("Debug - Decoded token:", decodedToken);
+  console.log("Debug - Current user ID:", currentUserId);
+  console.log("Debug - Current user role:", currentUserRole);
 
   const [conversations, setConversations] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -20,6 +27,9 @@ const ChatPage = () => {
   const [avatars, setAvatars] = useState({});
   const [members, setMembers] = useState([]);
   const [showMembersModal, setShowMembersModal] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [showProductsModal, setShowProductsModal] = useState(false);
+  const [productDetails, setProductDetails] = useState({});
 
   const formatSentAt = (sentAt) => {
     if (!sentAt) return "Không có thời gian";
@@ -42,6 +52,34 @@ const ChatPage = () => {
     return "Thời gian không hợp lệ";
   };
 
+  const fetchProductDetails = async (productId) => {
+    if (!productId || productDetails[productId]) return;
+    try {
+      const response = await request.get(`/products/${productId}`);
+      console.log("Debug - Product details for ID:", productId, response.data);
+      setProductDetails((prev) => ({
+        ...prev,
+        [productId]: {
+          name: response.data.name || "Sản phẩm không xác định",
+          imageURL: response.data.imageURL || "/img/fruite-item-1.jpg",
+          price: response.data.price || 0,
+          category: response.data.category || "Không xác định",
+        },
+      }));
+    } catch (err) {
+      console.error("Debug - Error fetching product details for ID:", productId, err);
+      setProductDetails((prev) => ({
+        ...prev,
+        [productId]: {
+          name: "Sản phẩm không xác định",
+          imageURL: "/img/fruite-item-1.jpg",
+          price: 0,
+          category: "Không xác định",
+        },
+      }));
+    }
+  };
+
   useEffect(() => {
     const fetchConversations = async () => {
       if (!currentUserId) return;
@@ -50,10 +88,12 @@ const ChatPage = () => {
         const response = await request.get("/conversations", {
           params: { userId: currentUserId },
         });
-
+        console.log("Debug - Conversations API response:", response.data);
         const conversationsWithUsers = response.data || [];
+        setConversations(conversationsWithUsers);
         const userIdsToFetch = [];
         conversationsWithUsers.forEach((conv) => {
+          console.log("Debug - Conversation:", conv.conversationId, "Group:", conv.group);
           conv.userIds?.forEach((uid) => {
             if (!avatars[uid] && !conv.group) {
               userIdsToFetch.push(uid);
@@ -62,8 +102,8 @@ const ChatPage = () => {
         });
 
         await Promise.all(userIdsToFetch.map((id) => fetchAvatar(id)));
-        setConversations(conversationsWithUsers);
       } catch (err) {
+        console.error("Debug - Error fetching conversations:", err);
         setError("Không thể tải danh sách cuộc trò chuyện");
       } finally {
         setLoading(false);
@@ -76,14 +116,22 @@ const ChatPage = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       if (!conversationId || isNaN(Number(conversationId))) {
+        console.error("Debug - Invalid conversationId:", conversationId);
         setError("ID cuộc trò chuyện không hợp lệ");
         return;
       }
       setLoading(true);
       try {
         const response = await request.get(`/conversations/${conversationId}/messages`);
+        console.log("Debug - Messages API response:", response.data);
         setMessages(response.data);
+
+        const productIds = response.data
+          .filter((msg) => msg.content.startsWith("PRODUCT:"))
+          .map((msg) => msg.content.replace("PRODUCT:", ""));
+        await Promise.all(productIds.map((id) => fetchProductDetails(id)));
       } catch (err) {
+        console.error("Debug - Error fetching messages:", err);
         setError(`Không thể tải tin nhắn: ${err.message}`);
       } finally {
         setLoading(false);
@@ -97,6 +145,7 @@ const ChatPage = () => {
     if (!userId || avatars[userId]) return;
     try {
       const user = await getUserById(userId);
+      console.log("Debug - Fetched user avatar for userId:", userId, user);
       setAvatars((prev) => ({
         ...prev,
         [userId]: {
@@ -107,6 +156,7 @@ const ChatPage = () => {
         },
       }));
     } catch (err) {
+      console.error("Debug - Error fetching avatar for userId:", userId, err);
       setAvatars((prev) => ({
         ...prev,
         [userId]: {
@@ -123,6 +173,7 @@ const ChatPage = () => {
     if (!conversationId) return;
     try {
       const response = await request.get(`/conversations/${conversationId}/members`);
+      console.log("Debug - Members API response:", response.data);
       const membersData = response.data || [];
       setMembers(membersData);
 
@@ -131,7 +182,21 @@ const ChatPage = () => {
         .map((member) => member.userId);
       await Promise.all(userIdsToFetch.map((id) => fetchAvatar(id)));
     } catch (err) {
+      console.error("Debug - Error fetching members:", err);
       setError("Không thể tải danh sách thành viên");
+    }
+  };
+
+  const fetchProducts = async () => {
+    if (!currentUserId) return;
+    try {
+      const response = await request.get(`/conversations/products/supplier/${currentUserId}`);
+      console.log("Debug - Products API response:", response.data);
+      setProducts(response.data || []);
+      setShowProductsModal(true);
+    } catch (err) {
+      console.error("Debug - Error fetching products:", err);
+      setError("Không thể tải danh sách sản phẩm");
     }
   };
 
@@ -147,29 +212,60 @@ const ChatPage = () => {
         userId: currentUserId,
         content,
       });
-
+      console.log("Debug - Message sent successfully");
       setContent("");
       const msgResponse = await request.get(`/conversations/${conversationId}/messages`);
       setMessages(msgResponse.data);
     } catch (err) {
+      console.error("Debug - Error sending message:", err);
       setError("Không thể gửi tin nhắn");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSendProduct = async (productId) => {
+    if (!conversationId || !productId) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      console.log("Debug - Sending product with ID:", productId);
+      await request.post(`/conversations/${conversationId}/product-message`, {
+        senderId: currentUserId,
+        productId,
+      });
+      console.log("Debug - Product message sent successfully");
+      setShowProductsModal(false);
+      const msgResponse = await request.get(`/conversations/${conversationId}/messages`);
+      setMessages(msgResponse.data);
+      await fetchProductDetails(productId);
+    } catch (err) {
+      console.error("Debug - Error sending product:", err);
+      setError(err.response?.data || "Không thể gửi sản phẩm");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleConversationSelect = (id) => {
+    console.log("Debug - Selecting conversation:", id);
     navigate(`/chat/${id}`);
     setShowMembersModal(false);
+    setShowProductsModal(false);
   };
 
   const handleViewMembers = () => {
+    console.log("Debug - Viewing members for conversation:", conversationId);
     fetchMembers();
     setShowMembersModal(true);
   };
 
   const currentConversation = useMemo(() => {
-    return conversations.find((conv) => conv.conversationId?.toString() === conversationId);
+    const conv = conversations.find((conv) => conv.conversationId?.toString() === conversationId);
+    console.log("Debug - Current conversation:", conv);
+    return conv;
   }, [conversationId, conversations]);
 
   const currentConversationName = useMemo(() => {
@@ -190,7 +286,14 @@ const ChatPage = () => {
     return user?.businessName || `Người dùng #${otherUserId}`;
   }, [conversationId, conversations, avatars, currentUserId]);
 
+  console.log("Debug - Should show send product button:", {
+    isGroup: currentConversation?.group,
+    isSupplier: currentUserRole === "SUPPLIER",
+    showButton: currentConversation?.group && currentUserRole === "SUPPLIER",
+  });
+
   if (!currentUserId) {
+    console.log("Debug - No user ID, showing login prompt");
     return (
       <div className={styles.loginPrompt}>
         Vui lòng đăng nhập để xem cuộc trò chuyện.
@@ -253,7 +356,7 @@ const ChatPage = () => {
                   <p className={styles.nameTime}>
                     {displayName}
                     <span className={styles.time}>
-                      {new Date(conv.createdAt).toLocaleTimeString("vi-VN")}
+                      {formatSentAt(conv.createdAt)}
                     </span>
                   </p>
                 </li>
@@ -281,6 +384,9 @@ const ChatPage = () => {
           {messages.map((msg) => {
             const isMine = msg.senderId === currentUserId;
             const avatar = avatars[msg.senderId]?.avatarUrl || "https://via.placeholder.com/48";
+            const isProductMessage = msg.content.startsWith("PRODUCT:");
+            const productId = isProductMessage ? msg.content.replace("PRODUCT:", "") : null;
+            const product = productId ? productDetails[productId] : null;
 
             return (
               <div
@@ -293,7 +399,26 @@ const ChatPage = () => {
                   </div>
                 )}
 
-                <div className={styles.chatText}>{msg.content}</div>
+                {isProductMessage ? (
+                  <Link to={`/product/${productId}`} className={styles.productMessage}>
+                    <img
+                      src={product?.imageURL || "/img/fruite-item-1.jpg"}
+                      alt="Product"
+                      className={styles.productMessageImage}
+                    />
+                    <div className={styles.productInfo}>
+                      <p className={styles.productName}>{product?.name || "Sản phẩm không xác định"}</p>
+                      <p className={styles.productPrice}>
+                        Giá: {product?.price ? `${product.price.toLocaleString("vi-VN")} VNĐ` : "Không xác định"}
+                      </p>
+                      <p className={styles.productCategory}>
+                        Danh mục: {product?.category || "Không xác định"}
+                      </p>
+                    </div>
+                  </Link>
+                ) : (
+                  <div className={styles.chatText}>{msg.content}</div>
+                )}
 
                 {isMine && (
                   <div className={styles.chatAvatar}>
@@ -325,6 +450,15 @@ const ChatPage = () => {
             >
               <i className="fas fa-paper-plane"></i>
             </button>
+            {currentConversation?.group && currentUserRole === "SUPPLIER" && (
+              <button
+                onClick={fetchProducts}
+                className={styles.sendProductButton}
+                disabled={loading}
+              >
+                Gửi Sản Phẩm
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -351,6 +485,42 @@ const ChatPage = () => {
                     <span>{avatars[member.userId]?.businessName || `Người dùng #${member.userId}`}</span>
                     <span>UserID: {member.userId}</span>
                     <span>Vai trò: {avatars[member.userId]?.role || member.role || "Thành viên"}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {showProductsModal && (
+        <div className={styles.productsModal}>
+          <div className={styles.productsModalContent}>
+            <h2>Danh sách sản phẩm</h2>
+            <button
+              className={styles.closeModalButton}
+              onClick={() => setShowProductsModal(false)}
+            >
+              Đóng
+            </button>
+            <ul className={styles.productsList}>
+              {products.map((product) => (
+                <li key={product.productID} className={styles.productItem}>
+                  <img
+                    src={product.imageURL || "/img/fruite-item-1.jpg"}
+                    alt="Product Image"
+                    className={styles.productImage}
+                  />
+                  <div className={styles.productInfo}>
+                    <span>{product.name || "Sản phẩm không xác định"}</span>
+                    <span>Giá: {product.price ? `${product.price.toLocaleString("vi-VN")} VNĐ` : "Không xác định"}</span>
+                    <span>Danh mục: {product.category || "Không xác định"}</span>
+                    <button
+                      onClick={() => handleSendProduct(product.productID)}
+                      className={styles.sendProductButton}
+                    >
+                      Gửi
+                    </button>
                   </div>
                 </li>
               ))}

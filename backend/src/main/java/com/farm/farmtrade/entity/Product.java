@@ -19,7 +19,6 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "SupplierID")
     private User supplier;
-
     private String name;
     private String category;
     private String description;
@@ -32,6 +31,6 @@ public class Product {
     private Integer sales;
     @Column(name = "status", nullable = false)
     private String status;
+    private Double rating;
 
 }
-

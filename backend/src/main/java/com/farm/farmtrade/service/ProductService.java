@@ -2,7 +2,6 @@ package com.farm.farmtrade.service;
 
 
 import com.farm.farmtrade.dto.request.productRequest.ProductCreateRequest;
-import com.farm.farmtrade.entity.OrderItem;
 import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.repository.*;
@@ -12,13 +11,11 @@ import org.springframework.data.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,10 +44,6 @@ public class ProductService {
 //    public Page<Product> getAllActiveProductsPaged(int page, int size) {
 //        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 //        return productRepository.findAllByStatus("active", pageable);
-//    }
-
-//    public List<Product> searchProducts(String keyword) {
-//        return productRepository.findProductsByName(keyword);
 //    }
 
     public List<Product> searchProducts(String keyword) {
@@ -126,7 +119,7 @@ public class ProductService {
 
     }
 
-    public Page<Product> getFilteredProducts(String keyword, String category, Double lat, Double lng, Pageable pageable) {
+    public Page<Product> getFilteredProducts(String keyword, String category, Double lat, Double lng,Double rating, String latest, Pageable pageable) {
         List<Product> allProducts = productRepository.findAllByStatus("active");
 
         // Lọc theo từ khóa nếu có
@@ -149,6 +142,17 @@ public class ProductService {
                 double productLng = p.getSupplier().getLng();
                 return haversineDistance(lat, lng, productLat, productLng);
             }));
+        }
+        if (rating != null) {
+            allProducts = allProducts.stream()
+                    .filter(p -> p.getRating() != null && p.getRating() >= rating)
+                    .collect(Collectors.toList());
+        }
+
+        if ("new_arrival".equalsIgnoreCase(latest)) {
+            allProducts = allProducts.stream()
+                    .filter(p -> p.getCreatedAt() != null && p.getCreatedAt().isAfter(LocalDateTime.now().minusDays(30)))
+                    .collect(Collectors.toList());
         }
 
         // Tạo Page thủ công

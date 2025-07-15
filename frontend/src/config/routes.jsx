@@ -16,7 +16,7 @@ const routes = {
   product: '/product/:id',
   customerManagement: '/customer',
   dashboard: '/dashboard',
-   dashboardSupplier: '/dashboard-supplier',
+  dashboardSupplier: '/dashboard-supplier',
   addProduct: '/addproduct',
   listProduct: '/listproduct',
   orderList: '/orderlist',
@@ -38,7 +38,7 @@ const routes = {
   orderDetailCustomer: '/order-information/:id',
   orderShipper: '/order-manage-shipping',
   chat : '/chat/:conversationId',
-
+  ordersRate: '/orders/rate',
 };
 
 export default routes;

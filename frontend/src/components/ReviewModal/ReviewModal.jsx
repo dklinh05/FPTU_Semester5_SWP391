@@ -10,20 +10,29 @@ import styles from "./ReviewModal.module.scss";
 
 const starTooltips = ["Tệ", "Không hài lòng", "Bình thường", "Tốt", "Xuất sắc"];
 
-const renderStars = (value, setValue, hoveredIndex, setHoveredIndex, type) =>
+const renderStars = (
+    value,
+    setValue,
+    hoveredIndex,
+    setHoveredIndex,
+    type,
+    readOnly = false
+) =>
     Array.from({ length: 5 }, (_, i) => (
         <span
             key={i}
             className={`${styles.star} ${i < value ? styles.active : ""}`}
             onClick={() => {
-                setValue(i + 1);
-                setHoveredIndex(i);
-                setTimeout(() => setHoveredIndex(null), 2000);
+                if (!readOnly) {
+                    setValue(i + 1);
+                    setHoveredIndex(i);
+                    setTimeout(() => setHoveredIndex(null), 2000);
+                }
             }}
-            style={{ position: "relative", cursor: "pointer" }}
+            style={{ position: "relative", cursor: readOnly ? "default" : "pointer" }}
         >
       ★
-            {hoveredIndex === i && (
+            {hoveredIndex === i && !readOnly && (
                 <div className={styles.tooltip}>{starTooltips[i]}</div>
             )}
     </span>
@@ -41,8 +50,8 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
     const [hoveredService, setHoveredService] = useState(null);
     const [hoveredDelivery, setHoveredDelivery] = useState(null);
     const maxImages = 5;
+    const isViewOnly = product?.isViewOnly;
 
-    // Load review cũ nếu là edit
     useEffect(() => {
         const loadReviewData = async () => {
             if (product?.isEdit) {
@@ -63,7 +72,6 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
         if (show) {
             loadReviewData();
         } else {
-
             setProductQuality(0);
             setSellerService(0);
             setDeliverySpeed(0);
@@ -116,15 +124,26 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
         <Modal show={show} onHide={onHide} centered size="lg">
             <Modal.Header closeButton>
                 <Modal.Title>
-                    {product.isEdit ? "Chỉnh sửa đánh giá" : "Đánh giá sản phẩm"}:{" "}
-                    {product.productName}
+                    {isViewOnly
+                        ? "Xem đánh giá"
+                        : product.isEdit
+                            ? "Chỉnh sửa đánh giá"
+                            : "Đánh giá sản phẩm"}
+                    : {product.productName}
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <div className={styles.reviewForm}>
                     <div className={styles.section}>
                         <label>Chất lượng sản phẩm</label>
-                        {renderStars(productQuality, setProductQuality, hoveredQuality, setHoveredQuality)}
+                        {renderStars(
+                            productQuality,
+                            setProductQuality,
+                            hoveredQuality,
+                            setHoveredQuality,
+                            "productQuality",
+                            isViewOnly
+                        )}
                     </div>
 
                     <div className={styles.section}>
@@ -135,6 +154,7 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
                                     <img src={url} alt="uploaded" className={styles.previewImg} />
                                 </div>
                             ))}
+
                             {images.map((img, idx) => (
                                 <div className={styles.imageBox} key={`new-${idx}`}>
                                     <img
@@ -142,24 +162,32 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
                                         alt="preview"
                                         className={styles.previewImg}
                                     />
-                                    <span className={styles.removeBtn} onClick={() => removeImage(idx)}>
+                                    <span
+                                        className={styles.removeBtn}
+                                        onClick={() => !isViewOnly && removeImage(idx)}
+                                        style={{ display: isViewOnly ? "none" : "inline" }}
+                                    >
                     <X size={14} />
                   </span>
                                 </div>
                             ))}
-                            {images.length + oldImages.length < maxImages && (
-                                <label className={styles.uploadBox}>
-                                    <Camera />
-                                    <span>{images.length + oldImages.length}/{maxImages}</span>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        multiple
-                                        hidden
-                                        onChange={handleImageChange}
-                                    />
-                                </label>
-                            )}
+
+                            {!isViewOnly &&
+                                images.length + oldImages.length < maxImages && (
+                                    <label className={styles.uploadBox}>
+                                        <Camera />
+                                        <span>
+                      {images.length + oldImages.length}/{maxImages}
+                    </span>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            multiple
+                                            hidden
+                                            onChange={handleImageChange}
+                                        />
+                                    </label>
+                                )}
                         </div>
                     </div>
 
@@ -170,27 +198,44 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
                             rows={3}
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
+                            disabled={isViewOnly}
                         />
                     </Form.Group>
 
                     <div className={styles.section}>
                         <label>Dịch vụ người bán</label>
-                        {renderStars(sellerService, setSellerService, hoveredService, setHoveredService)}
+                        {renderStars(
+                            sellerService,
+                            setSellerService,
+                            hoveredService,
+                            setHoveredService,
+                            "sellerService",
+                            isViewOnly
+                        )}
                     </div>
 
                     <div className={styles.section}>
                         <label>Tốc độ giao hàng</label>
-                        {renderStars(deliverySpeed, setDeliverySpeed, hoveredDelivery, setHoveredDelivery)}
+                        {renderStars(
+                            deliverySpeed,
+                            setDeliverySpeed,
+                            hoveredDelivery,
+                            setHoveredDelivery,
+                            "deliverySpeed",
+                            isViewOnly
+                        )}
                     </div>
                 </div>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={onHide}>
-                    Hủy
+                    {isViewOnly ? "Đóng" : "Hủy"}
                 </Button>
-                <Button variant="primary" onClick={handleSubmit}>
-                    {product.isEdit ? "Cập nhật đánh giá" : "Gửi đánh giá"}
-                </Button>
+                {!isViewOnly && (
+                    <Button variant="primary" onClick={handleSubmit}>
+                        {product.isEdit ? "Cập nhật đánh giá" : "Gửi đánh giá"}
+                    </Button>
+                )}
             </Modal.Footer>
         </Modal>
     );

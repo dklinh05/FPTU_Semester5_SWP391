@@ -160,8 +160,8 @@ const publicRoutes = [
 
   { path: config.routes.acceptUpdateRole, component: AcceptUpdateRole, layout: AdminLayout },
   { path: config.routes.chat, component: ChatPage, layout: null },
-  { path: "/chat", component: ChatPage, layout: null }
-
+  { path: "/chat", component: ChatPage, layout: null },
+  { path: config.routes.ordersRate, component: Orders, layout: OrdersLayout }
 ];
 
 const privateRoutes = [];

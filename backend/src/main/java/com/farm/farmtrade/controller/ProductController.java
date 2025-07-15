@@ -90,6 +90,8 @@ public class ProductController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) Double lat,
             @RequestParam(required = false) Double lng,
+            @RequestParam(required = false) Double rating,
+            @RequestParam(required = false) String latest,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -100,8 +102,7 @@ public class ProductController {
                 size,
                 sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
         );
-
-        Page<Product> products = productService.getFilteredProducts(keyword, category, lat, lng, pageable);
+        Page<Product> products = productService.getFilteredProducts(keyword, category, lat, lng, rating, latest, pageable);
         return ResponseEntity.ok(products);
     }
 

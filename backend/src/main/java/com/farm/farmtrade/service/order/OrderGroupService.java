@@ -7,10 +7,12 @@ import com.farm.farmtrade.dto.response.orderResponse.OrderGroupResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderResponse;
 import com.farm.farmtrade.entity.*;
 import com.farm.farmtrade.repository.*;
+import com.farm.farmtrade.service.notification.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -33,6 +35,8 @@ public class OrderGroupService {
     UserVoucherRepository userVoucherRepository;
     VoucherRepository voucherRepository;
     CartItemRepository cartItemRepository;
+    @Autowired
+    NotificationService notificationService;
     @Transactional
     public OrderGroupResponse createOrderGroup(OrderGroupRequest request) {
         User buyer = userRepository.findById(request.getBuyerId())
@@ -97,21 +101,28 @@ public class OrderGroupService {
                         .build();
                 orderItemRepository.save(item);
 
-                // Update stock
                 if (product.getStockQuantity() < itemReq.getQuantity()) {
                     throw new IllegalArgumentException("Not enough stock for product ID: " + product.getProductID());
                 }
+
                 product.setStockQuantity(product.getStockQuantity() - itemReq.getQuantity());
-                // Update sales
                 product.setSales(product.getSales() + itemReq.getQuantity());
                 productRepository.save(product);
 
                 orderTotal = orderTotal.add(price.multiply(BigDecimal.valueOf(itemReq.getQuantity())));
             }
+
             order.setTotalAmount(orderTotal);
             orderRepository.save(order);
             groupTotal = groupTotal.add(orderTotal);
-            // Xoá cart item theo buyerId và productId
+
+            // ✅ Gửi thông báo cho supplier
+            String title = "Bạn có đơn hàng mới";
+            String message = String.format("Bạn vừa nhận được đơn hàng #%d từ %s.",
+                    order.getOrderID(), buyer.getFullName());
+            notificationService.createNotification(supplier.getUserID(), title, message, "NEW_ORDER");
+
+            // ✅ Xóa cart item tương ứng
             List<OrderItem> orderItems = orderItemRepository.findByOrderOrderID(order.getOrderID());
             for (OrderItem item : orderItems) {
                 cartItemRepository.deleteByBuyerUserIDAndProductProductID(
@@ -121,7 +132,6 @@ public class OrderGroupService {
             }
         }
 
-        // Apply discount
         BigDecimal discount = BigDecimal.ZERO;
         if (voucher != null && userVoucher != null) {
             discount = applyVoucherDiscount(voucher, userVoucher, groupTotal);
@@ -131,9 +141,10 @@ public class OrderGroupService {
         orderGroup.setDiscountAmount(discount);
         orderGroup.setFinalAmount(groupTotal.subtract(discount));
         orderGroupRepository.save(orderGroup);
-        OrderGroupResponse orderGroupResponse = toOrderGroupResponse(orderGroup);
-        return orderGroupResponse;
+
+        return toOrderGroupResponse(orderGroup);
     }
+
 
     public List<OrderGroupResponse> getAllOrderGroups() {
         List<OrderGroup> orderGroups = orderGroupRepository.findAll();

@@ -60,6 +60,9 @@ useEffect(() => {
               <p>
                 {/* <strong>Payment Method:</strong> {order.method} */}
               </p>
+              <p>
+                <strong>Address:</strong>{order.address}
+              </p>
             </div>
             <div className="col-md-6">
               <p>

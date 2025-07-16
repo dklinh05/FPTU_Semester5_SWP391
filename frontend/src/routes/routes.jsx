@@ -72,13 +72,55 @@ const publicRoutes = [
   { path: config.routes.checkout, component: Checkout, layout: null },
   { path: config.routes.requestProduct, component: RequestProduct, layout: AdminLayout,},
   { path: config.routes.orders, component: Orders, layout: OrdersLayout },
-  { path: config.routes.orderDetail, component: OrderDetail, layout: SupplierLayout,},
-  { path: config.routes.orderDetailCustomer, component: OrderDetailCustomer, layout: OrdersLayout,},
-  { path: config.routes.ordersPending, component: OrdersNotPayment, layout: OrdersLayout,},
-  { path: config.routes.shipperList, component: ShipperList, layout: AdminLayout,},
-  { path: config.routes.customerList, component: CustomerList, layout: AdminLayout,},
-  { path: config.routes.supplierList, component: SupplierList, layout: AdminLayout,},
-  { path: config.routes.productSearch, component: ProductSearch, layout: SearchResultLayout,},
+
+{
+  path: "/supplier/order-detail/:id",
+  component: OrderDetail,
+  layout: SupplierLayout,
+},
+{
+  path: "/shipper/order-detail/:id",
+  component: OrderDetail,
+  layout: ShipperLayout,
+},
+// {
+//   path: "/user/order-detail/:id",
+//   component: OrderDetail,
+//   layout: UserLayout,
+// },
+
+  
+  {
+    path: config.routes.orderDetailCustomer,
+    component: OrderDetailCustomer,
+    layout: OrdersLayout,
+  },
+  {
+    path: config.routes.ordersPending,
+    component: OrdersNotPayment,
+    layout: OrdersLayout,
+  },
+  {
+    path: config.routes.shipperList,
+    component: ShipperList,
+    layout: AdminLayout,
+  },
+  {
+    path: config.routes.customerList,
+    component: CustomerList,
+    layout: AdminLayout,
+  },
+  {
+    path: config.routes.supplierList,
+    component: SupplierList,
+    layout: AdminLayout,
+  },
+  {
+    path: config.routes.productSearch,
+    component: ProductSearch,
+    layout: SearchResultLayout,
+  },
+
   { path: config.routes.redeemVoucher, component: RedeemVoucher, layout: null },
   { path: config.routes.acceptUpdateRole, component: AcceptUpdateRole, layout: AdminLayout },
   { path: config.routes.chat, component: ChatPage, layout: null },

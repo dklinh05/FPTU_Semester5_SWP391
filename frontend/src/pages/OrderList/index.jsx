@@ -210,7 +210,7 @@ const OrderList = () => {
                           <li>
                             <a
                               className="dropdown-item py-2"
-                              href={`/order-detail/${order.orderID}`}
+                              href={`/supplier/order-detail/${order.orderID}`}
                             >
                               View
                             </a>

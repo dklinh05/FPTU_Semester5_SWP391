@@ -23,9 +23,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
@@ -49,30 +47,111 @@ public class OrderService {
     VoucherRepository voucherRepository;
 
     //tạo đơn hàng mới
+//    @Transactional
+//    public Order createOrder(OrderCreationRequest request) {
+//        User buyer = userRepository.findById(request.getBuyerId())
+//                .orElseThrow(() -> new IllegalArgumentException("Buyer not found with ID: " + request.getBuyerId()));
+//
+////        UserVoucher userVoucher = null;
+////        Voucher voucher = null;
+////        if (request.getUserVoucherId() != null) {
+////            userVoucher = userVoucherRepository.findById(request.getUserVoucherId())
+////                    .orElseThrow(() -> new IllegalArgumentException("UserVoucher not found with ID: " + request.getUserVoucherId()));
+////            if (userVoucher.getIsUsed()) {
+////                throw new IllegalArgumentException("Voucher has already been used");
+////            }
+////            if (!userVoucher.getUser().getUserID().equals(request.getBuyerId())) {
+////                throw new IllegalArgumentException("This voucher does not belong to the buyer");
+////            }
+////            voucher = userVoucher.getVoucher();
+////            if (voucher.getExpirationDate() != null && voucher.getExpirationDate().isBefore(LocalDateTime.now())) {
+////                throw new IllegalArgumentException("Voucher has expired");
+////            }
+////            if (voucher.getMaxUsage() != null && voucher.getMaxUsage() == 0) {
+////                throw new IllegalArgumentException("This voucher has reached its maximum number of uses");
+////            }
+////        }
+//
+//        Order order = Order.builder()
+//                .buyer(buyer)
+//                .orderDate(LocalDateTime.now())
+//                .status(request.getStatus())
+//                .totalAmount(BigDecimal.ZERO)
+//                .build();
+//
+//        order = orderRepository.save(order); // tạo order trước để có ID
+//
+//        BigDecimal totalAmount = BigDecimal.ZERO;
+//
+//        for (OrderItemRequest itemReq : request.getItems()) {
+//            Product product = productRepository.findById(itemReq.getProductId())
+//                    .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + itemReq.getProductId()));
+//
+//            int orderedQuantity = itemReq.getQuantity();
+//
+//            // Kiểm tra tồn kho
+//            if (product.getStockQuantity() == null || product.getStockQuantity() < orderedQuantity) {
+//                throw new IllegalArgumentException("Not enough stock for product: " + product.getName());
+//            }
+//
+//            BigDecimal unitPrice = product.getPrice();
+//
+//            // Tạo OrderItem
+//            OrderItem item = OrderItem.builder()
+//                    .order(order)
+//                    .product(product)
+//                    .quantity(orderedQuantity)
+//                    .price(unitPrice)
+//                    .build();
+//            orderItemRepository.save(item);
+//
+//            // Trừ tồn kho
+//            product.setStockQuantity(product.getStockQuantity() - orderedQuantity);
+//            productRepository.save(product);
+//
+//            // Cộng tổng tiền
+//            totalAmount = totalAmount.add(unitPrice.multiply(BigDecimal.valueOf(orderedQuantity)));
+//        }
+//
+////        // Áp dụng giảm giá nếu có
+////        BigDecimal discountAmount = BigDecimal.ZERO;
+////        if (voucher != null) {
+////            // Check min order
+////            if (voucher.getMinOrderAmount() != null && totalAmount.compareTo(voucher.getMinOrderAmount()) < 0) {
+////                throw new IllegalArgumentException("Order amount does not meet the minimum for this voucher");
+////            }
+////
+////            if ("PERCENT".equalsIgnoreCase(voucher.getDiscountType())) {
+////                discountAmount = totalAmount.multiply(voucher.getDiscountValue())
+////                        .divide(BigDecimal.valueOf(100));
+////            } else if ("AMOUNT".equalsIgnoreCase(voucher.getDiscountType())) {
+////                discountAmount = voucher.getDiscountValue();
+////            }
+////
+////            // Không để giảm vượt tổng tiền
+////            if (discountAmount.compareTo(totalAmount) > 0) {
+////                discountAmount = totalAmount;
+////            }
+////
+////            // Đánh dấu đã dùng
+////            userVoucher.setIsUsed(true);
+////            userVoucherRepository.save(userVoucher);
+////            // Giảm MaxUsage trong bảng Voucher (nếu đang > 0)
+////            if (voucher.getMaxUsage() != null && voucher.getMaxUsage() > 0) {
+////                voucher.setMaxUsage(voucher.getMaxUsage() - 1);
+////                voucherRepository.save(voucher);
+////            }
+////        }
+//
+//        // Lưu lại các giá trị
+////        order.setDiscountAmount(discountAmount);
+//        order.setTotalAmount(totalAmount);
+//        return orderRepository.save(order);
+//    }
     @Transactional
     public Order createOrder(OrderCreationRequest request) {
         User buyer = userRepository.findById(request.getBuyerId())
                 .orElseThrow(() -> new IllegalArgumentException("Buyer not found with ID: " + request.getBuyerId()));
-
-//        UserVoucher userVoucher = null;
-//        Voucher voucher = null;
-//        if (request.getUserVoucherId() != null) {
-//            userVoucher = userVoucherRepository.findById(request.getUserVoucherId())
-//                    .orElseThrow(() -> new IllegalArgumentException("UserVoucher not found with ID: " + request.getUserVoucherId()));
-//            if (userVoucher.getIsUsed()) {
-//                throw new IllegalArgumentException("Voucher has already been used");
-//            }
-//            if (!userVoucher.getUser().getUserID().equals(request.getBuyerId())) {
-//                throw new IllegalArgumentException("This voucher does not belong to the buyer");
-//            }
-//            voucher = userVoucher.getVoucher();
-//            if (voucher.getExpirationDate() != null && voucher.getExpirationDate().isBefore(LocalDateTime.now())) {
-//                throw new IllegalArgumentException("Voucher has expired");
-//            }
-//            if (voucher.getMaxUsage() != null && voucher.getMaxUsage() == 0) {
-//                throw new IllegalArgumentException("This voucher has reached its maximum number of uses");
-//            }
-//        }
 
         Order order = Order.builder()
                 .buyer(buyer)
@@ -84,6 +163,7 @@ public class OrderService {
         order = orderRepository.save(order); // tạo order trước để có ID
 
         BigDecimal totalAmount = BigDecimal.ZERO;
+        Set<User> notifiedSuppliers = new HashSet<>(); // để tránh gửi trùng
 
         for (OrderItemRequest itemReq : request.getItems()) {
             Product product = productRepository.findById(itemReq.getProductId())
@@ -113,40 +193,20 @@ public class OrderService {
 
             // Cộng tổng tiền
             totalAmount = totalAmount.add(unitPrice.multiply(BigDecimal.valueOf(orderedQuantity)));
+
+            // ✅ Gửi thông báo cho supplier
+            User supplier = product.getSupplier();
+            if (supplier != null && !notifiedSuppliers.contains(supplier)) {
+                String title = "Bạn có đơn hàng mới";
+                String message = String.format("Bạn vừa nhận được đơn hàng #%d từ %s.",
+                        order.getOrderID(), buyer.getFullName());
+
+                notificationService.createNotification(supplier.getUserID(), title, message, "NEW_ORDER");
+                notifiedSuppliers.add(supplier);
+            }
         }
 
-//        // Áp dụng giảm giá nếu có
-//        BigDecimal discountAmount = BigDecimal.ZERO;
-//        if (voucher != null) {
-//            // Check min order
-//            if (voucher.getMinOrderAmount() != null && totalAmount.compareTo(voucher.getMinOrderAmount()) < 0) {
-//                throw new IllegalArgumentException("Order amount does not meet the minimum for this voucher");
-//            }
-//
-//            if ("PERCENT".equalsIgnoreCase(voucher.getDiscountType())) {
-//                discountAmount = totalAmount.multiply(voucher.getDiscountValue())
-//                        .divide(BigDecimal.valueOf(100));
-//            } else if ("AMOUNT".equalsIgnoreCase(voucher.getDiscountType())) {
-//                discountAmount = voucher.getDiscountValue();
-//            }
-//
-//            // Không để giảm vượt tổng tiền
-//            if (discountAmount.compareTo(totalAmount) > 0) {
-//                discountAmount = totalAmount;
-//            }
-//
-//            // Đánh dấu đã dùng
-//            userVoucher.setIsUsed(true);
-//            userVoucherRepository.save(userVoucher);
-//            // Giảm MaxUsage trong bảng Voucher (nếu đang > 0)
-//            if (voucher.getMaxUsage() != null && voucher.getMaxUsage() > 0) {
-//                voucher.setMaxUsage(voucher.getMaxUsage() - 1);
-//                voucherRepository.save(voucher);
-//            }
-//        }
-
-        // Lưu lại các giá trị
-//        order.setDiscountAmount(discountAmount);
+        // Cập nhật tổng tiền (chưa tính giảm giá voucher)
         order.setTotalAmount(totalAmount);
         return orderRepository.save(order);
     }
@@ -171,6 +231,7 @@ public class OrderService {
                 .totalAmount(order.getTotalAmount())
                 .orderGroupId(order.getOrderGroup() != null ? order.getOrderGroup().getOrderGroupID() : null)
                 .customerName(order.getBuyer() != null ? order.getBuyer().getFullName() : null)
+                .address(order.getAddress())
                 .build();
     }
 
@@ -211,7 +272,8 @@ public class OrderService {
                         order.getStatus(),
                         order.getTotalAmount(),
                         order.getOrderGroup().getOrderGroupID(),
-                        order.getBuyer().getFullName()
+                        order.getBuyer().getFullName(),
+                        order.getAddress()
                 ))
                 .collect(Collectors.toList());
     }
@@ -367,7 +429,7 @@ public class OrderService {
         return ((current - previous) / previous) * 100;
     }
 
-    public OrderResponse  assignNearestShipper(Integer orderId) {
+    public OrderResponse assignNearestShipper(Integer orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
 
@@ -403,15 +465,22 @@ public class OrderService {
             throw new IllegalStateException("No valid shipper with location found");
         }
 
+        // Gán shipper cho đơn hàng
         order.setShipper(nearestShipper);
         orderRepository.save(order);
 
+        // ✅ Gửi thông báo cho shipper
+        String title = "Bạn được giao đơn hàng mới";
+        String message = String.format("Đơn hàng #%d đã được giao cho bạn để vận chuyển.", order.getOrderID());
+        notificationService.createNotification(nearestShipper.getUserID(), title, message, "ORDER_ASSIGNED");
+
+        // Trả về kết quả
         return OrderResponse.builder()
                 .orderID(order.getOrderID())
-                .shipperId(order.getShipper() != null ? order.getShipper().getUserID() : null)
+                .shipperId(nearestShipper.getUserID())
                 .buyerId(order.getBuyer() != null ? order.getBuyer().getUserID() : null)
-                .supplierId(order.getSupplier() != null ? order.getSupplier().getUserID() : null)
-                .supplierName(order.getSupplier() != null ? order.getSupplier().getFullName() : null)
+                .supplierId(supplier.getUserID())
+                .supplierName(supplier.getFullName())
                 .orderDate(order.getOrderDate())
                 .status("DELIVERING")
                 .totalAmount(order.getTotalAmount())
@@ -419,6 +488,7 @@ public class OrderService {
                 .customerName(order.getBuyer() != null ? order.getBuyer().getFullName() : null)
                 .build();
     }
+
 
     public Page<OrderResponse> getOrdersByShipperId(Integer shipperId, String status, int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("orderDate")));

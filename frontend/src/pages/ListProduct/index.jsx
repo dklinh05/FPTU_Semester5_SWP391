@@ -3,9 +3,12 @@ import { Link, useLocation } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import {
   renderProductBySupplierId,
-  deleteProduct,
+  deleteProduct, updateProduct,
 } from "../../services/productService";
 import PaginationTab from "../../components/PaginationTab/PaginationTab";
+import EditProductModal from "/src/components/EditProductModal/EditProductModal"
+import {toast} from "react-toastify";
+import PopupModal from "../../components/PopupModal/PopupModal";
 
 
 const ListProduct = () => {
@@ -22,6 +25,10 @@ const ListProduct = () => {
   const pageSize = 10; // số dòng mỗi trang
   const [totalItems, setTotalItems] = useState(0); // tổng số đơn hàng
   const [totalPages, setTotalPages] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
 
   const getProducts = async () => {
     try {
@@ -58,11 +65,38 @@ const ListProduct = () => {
     setSelectedItems(updated);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Bạn có chắc chắn muốn xóa các sản phẩm đã chọn?")) {
-      const response = await deleteProduct(id);
-      // alert("Xóa thành công!", response.content);
+  const handleDeleteConfirmed = async () => {
+    try {
+      await deleteProduct(productToDelete.productID);
+      toast.success("Xóa sản phẩm thành công!");
+      await getProducts();
+    } catch (error) {
+      toast.error("Lỗi khi xóa sản phẩm!");
+    } finally {
+      setShowDeleteModal(false);
+      setProductToDelete(null);
     }
+  };
+
+  const handleEdit = (product) => {
+    setSelectedProduct(product);
+    setShowEditModal(true);
+  };
+
+  const handleProductUpdate = async (updatedProduct) => {
+    try {
+      await updateProduct(updatedProduct.productID, updatedProduct);
+      setShowEditModal(false);
+      toast.success("Cập nhật sản phẩm thành công!");
+      await getProducts();
+    } catch (error) {
+      toast.error("Lỗi khi cập nhật sản phẩm: " + error);
+    }
+  };
+
+  const confirmDelete = (product) => {
+    setProductToDelete(product);
+    setShowDeleteModal(true);
   };
 
   return (
@@ -239,21 +273,44 @@ const ListProduct = () => {
                           </span>
                         </td>
                         <td>
-                          <a href="#" className="btn btn-sm me-1">
+                          <button
+                              className="btn btn-sm me-1"
+                              onClick={() => handleEdit(product)}
+                          >
                             <i className="fa-solid fa-edit"></i>
-                          </a>
-                          <btn
-                            className="btn btn-sm"
-                            onClick={() => handleDelete(product.productID)}
+                          </button>
+                          <button
+                              className="btn btn-sm"
+                              onClick={() => confirmDelete(product)}
                           >
                             <i className="fa-solid fa-trash"></i>
-                          </btn>
+                          </button>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
+
+              {showEditModal && selectedProduct && (
+                  <EditProductModal
+                      product={selectedProduct}
+                      onClose={() => setShowEditModal(false)}
+                      onSave={handleProductUpdate}
+                  />
+              )}
+
+              {showDeleteModal && productToDelete && (
+                  <PopupModal
+                      show={showDeleteModal}
+                      onClose={() => setShowDeleteModal(false)}
+                      onConfirm={handleDeleteConfirmed}
+                      title="Xác nhận xoá"
+                      body={`Bạn có chắc chắn muốn xoá sản phẩm "${productToDelete.name}"?`}
+                      confirmText="Xoá"
+                      cancelText="Huỷ"
+                  />
+              )}
 
               {/* Pagination */}
               <PaginationTab

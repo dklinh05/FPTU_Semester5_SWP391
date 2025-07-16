@@ -2,6 +2,7 @@ package com.farm.farmtrade.service;
 
 
 import com.farm.farmtrade.dto.request.productRequest.ProductCreateRequest;
+import com.farm.farmtrade.dto.request.productRequest.ProductUpdateRequest;
 import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.repository.*;
@@ -225,6 +226,25 @@ public class ProductService {
 
     public Page<Product> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable);
+    }
+
+    public Product updateProduct(Integer id, ProductUpdateRequest request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        product.setName(request.getName());
+        product.setDescription(request.getDescription());
+        product.setPrice(request.getPrice());
+        product.setStockQuantity(request.getStockQuantity());
+        product.setCategory(request.getCategory());
+        product.setOrigin(request.getOrigin());
+        product.setUnit(request.getUnit());
+
+        if (request.getImage() != null && !request.getImage().isEmpty()) {
+            product = fileStorageService.uploadProductImage(String.valueOf(id), request.getImage());
+        }
+
+        return productRepository.save(product);
     }
 
 }

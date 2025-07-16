@@ -72,29 +72,6 @@ const Dashboard = () => {
   return (
     <div className="container-fluid mt-4">
       <h2 className="mb-4">Bảng điều khiển quản trị</h2>
-
-      {/* Thống kê tổng quan */}
-      <div className="row mb-4">
-        <CardDashboard
-          title="Tổng số đơn hàng"
-          count={stats.totalOrders}
-          icon="fa-shopping-cart"
-          color="primary"
-        />
-        <CardDashboard
-          title="Tổng số người dùng"
-          count={stats.totalUsers}
-          icon="fa-users"
-          color="success"
-        />
-        <CardDashboard
-          title="Tổng số sản phẩm"
-          count={stats.totalProducts}
-          icon="fa-box"
-          color="info"
-        />
-      </div>
-
       <div className="row">
         {/* Top sản phẩm bán chạy */}
         <div className="col-md-6 mb-4">
@@ -103,13 +80,13 @@ const Dashboard = () => {
               <h5 className="card-title fw-bold">Top 5 sản phẩm bán chạy nhất</h5>
               <ul className="list-group list-group-flush">
                 {topProducts && topProducts.length > 0 ? (
-                  topProducts.map((product, index) => (
-                    <li key={index} className="list-group-item">
-                      <strong>{product.name}</strong> - {product.sales} đơn
-                    </li>
-                  ))
+                    topProducts.map((product, index) => (
+                        <li key={index} className="list-group-item">
+                          <strong>{product.name}</strong> - {product.sales} đơn
+                        </li>
+                    ))
                 ) : (
-                  <li className="list-group-item text-center text-muted">Không có dữ liệu</li>
+                    <li className="list-group-item text-center text-muted">Không có dữ liệu</li>
                 )}
               </ul>
             </div>
@@ -123,19 +100,24 @@ const Dashboard = () => {
               <h5 className="card-title fw-bold">Số lượng người dùng theo vai trò</h5>
               <ul className="list-group list-group-flush">
                 {usersByRole && usersByRole.length > 0 ? (
-                  usersByRole.map((roleItem, index) => (
-                    <li key={index} className="list-group-item">
-                      <strong>{roleItem.role}</strong>: {roleItem.count} người
-                    </li>
-                  ))
+                    usersByRole.map((roleItem, index) => (
+                        <li key={index} className="list-group-item">
+                          <strong>{roleItem.role}</strong>: {roleItem.count} người
+                        </li>
+                    ))
                 ) : (
-                  <li className="list-group-item text-center text-muted">Không có dữ liệu</li>
+                    <li className="list-group-item text-center text-muted">Không có dữ liệu</li>
                 )}
               </ul>
             </div>
           </div>
         </div>
       </div>
+      {/* Thống kê tổng quan */}
+      <div className="row mb-4">
+        <CardDashboard/>
+
+    </div>
     </div>
   );
 };

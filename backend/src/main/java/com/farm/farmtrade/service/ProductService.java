@@ -223,4 +223,8 @@ public class ProductService {
         return productRepository.findPageBySupplierUserIDAndStatus(sellerId, "Active", pageable);
     }
 
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
 }

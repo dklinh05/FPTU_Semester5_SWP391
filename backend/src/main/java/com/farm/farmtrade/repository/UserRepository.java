@@ -1,5 +1,6 @@
 package com.farm.farmtrade.repository;
 
+import com.farm.farmtrade.dto.response.adminDashboardResponse.UserByRoleDTO;
 import com.farm.farmtrade.dto.response.chatResponse.SupplierDTO;
 import com.farm.farmtrade.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,10 +16,15 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
     boolean existsByUsername(String username);
+
     User findByUserID(Integer userId);
+
     Optional<User> findByUsername(String username);
+
     Optional<User> findByEmail(String email);
+
     List<User> findByRole(String role);
+
     // Kiểm tra xem email đã tồn tại chưa
     Boolean existsByEmail(String email);
     // Dùng Native Query để tính khoảng cách địa lý
@@ -32,7 +38,8 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
 
     // 🔍 Native Query để tìm SUPPLIER trong bán kính 5km
     @Query(value = """
-        SELECT u.UserID AS userId, u.FullName AS fullName
+
+            SELECT u.UserID AS userId, u.FullName AS fullName
         FROM Users u
         WHERE u.Role = 'SUPPLIER'
           AND (
@@ -48,4 +55,7 @@ public interface UserRepository extends JpaRepository<User, Integer>, JpaSpecifi
             @Param("userLng") double userLng,
             @Param("radius") int radiusInMeters
     );
-}
+
+    @Query(value = "SELECT Role AS role, COUNT(*) AS count FROM Users GROUP BY Role", nativeQuery = true)
+    List<UserByRoleDTO> countUsersByRole();
+    }

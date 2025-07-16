@@ -60,47 +60,13 @@ const SidebarAdmin = () => {
               }`}
             >
               <li>
-                <a href="/addproduct" className={styles["submenu-link"]}>
-                  Add
-                </a>
-              </li>
-              <li>
-                <a href="/listproduct" className={styles["submenu-link"]}>
+                <a href="/admin/listproduct" className={styles["submenu-link"]}>
                   List
                 </a>
               </li>
               <li>
                 <a href="/requestproduct" className={styles["submenu-link"]}>
                   Request Product
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          {/* Order */}
-          <li>
-            <a
-              href="#"
-              className={`${styles["sidebar-link"]} ${styles["submenu-parent"]} text-black`}
-              onClick={(e) => {
-                e.preventDefault();
-                toggleSubmenu(3);
-              }}
-            >
-              <i className="fa-solid fa-bucket"></i>
-              <p>
-                Order{" "}
-                <i className={`fa-solid fa-angle-down ${styles["right-icon"]}`}></i>
-              </p>
-            </a>
-            <ul
-              className={`${styles["sidebar-submenu"]} ${
-                activeSubmenu === 3 ? styles.open : ""
-              }`}
-            >
-              <li>
-                <a href="/orderlist" className={styles["submenu-link"]}>
-                  List
                 </a>
               </li>
             </ul>
@@ -148,60 +114,6 @@ const SidebarAdmin = () => {
                 </a>
               </li>
             </ul>
-          </li>
-
-          {/* Page */}
-          <li>
-            <a
-              href="#"
-              className={`${styles["sidebar-link"]} ${styles["submenu-parent"]} text-black`}
-              onClick={(e) => {
-                e.preventDefault();
-                toggleSubmenu(4);
-              }}
-            >
-              <i className="fa-solid fa-pager"></i>
-              <p>
-                Page{" "}
-                <i className={`fa-solid fa-angle-down ${styles["right-icon"]}`}></i>
-              </p>
-            </a>
-            <ul
-              className={`${styles["sidebar-submenu"]} ${
-                activeSubmenu === 4 ? styles.open : ""
-              }`}
-            >
-              <li>
-                <a href="/login" className={styles["submenu-link"]}>
-                  Login
-                </a>
-              </li>
-              <li>
-                <a href="signup.html" className={styles["submenu-link"]}>
-                  Signup
-                </a>
-              </li>
-              <li>
-                <a href="404.html" className={styles["submenu-link"]}>
-                  404
-                </a>
-              </li>
-            </ul>
-          </li>
-
-          <li className={styles["sidebar-label"]}>Other</li>
-
-          <li>
-            <a href="#" className={`${styles["sidebar-link"]} text-black`}>
-              <i className="fa-regular fa-message"></i>
-              <p>Message</p>
-            </a>
-          </li>
-          <li>
-            <a href="#" className={`${styles["sidebar-link"]} text-black`}>
-              <i className="fa-solid fa-phone"></i>
-              <p>Help & Support</p>
-            </a>
           </li>
         </ul>
       </div>

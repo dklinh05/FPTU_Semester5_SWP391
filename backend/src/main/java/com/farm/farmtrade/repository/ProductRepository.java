@@ -1,5 +1,6 @@
 package com.farm.farmtrade.repository;
 
+import com.farm.farmtrade.dto.response.adminDashboardResponse.TopProductDTO;
 import com.farm.farmtrade.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -31,4 +32,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     Page<Product> findPageBySupplierUserIDAndStatus(Integer sellerId, String status, Pageable pageable);
 
+
+    @Query(value = "SELECT p.Name AS name, p.Sales AS sales FROM Products p ORDER BY p.Sales DESC LIMIT 5", nativeQuery = true)
+    List<TopProductDTO> findTop5Products();
 }

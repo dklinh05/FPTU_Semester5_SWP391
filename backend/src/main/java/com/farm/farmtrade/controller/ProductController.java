@@ -162,5 +162,20 @@ public class ProductController {
         Page<Product> products = productService.getBestSellerProductsByShop(sellerId, pageable);
         return ResponseEntity.ok(products);
     }
+    @GetMapping("/admin")
+    public ResponseEntity<Page<Product>> getAllProductsForAdmin(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir
+    ) {
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
+        );
+        Page<Product> products = productService.getAllProducts(pageable);
+        return ResponseEntity.ok(products);
+    }
 
 }

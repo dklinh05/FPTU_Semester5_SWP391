@@ -8,6 +8,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import { useCart } from "../../context/CartContext";
 import { searchProducts } from "../../services/productService";
+import NotificationDropdown from "../NotificationDropdown";
 
 const cx = classNames.bind(styles);
 
@@ -180,17 +181,25 @@ function Header() {
             {showSuggestions &&
               suggestions.length === 0 &&
               searchTerm.length >= 2 && (
-                <div className={cx(styles.noResults)}>Không tìm thấy sản phẩm</div>
+                <div className={cx(styles.noResults)}>
+                  Không tìm thấy sản phẩm
+                </div>
               )}
           </form>
 
           <div className="d-flex align-items-center justify-content-end">
             {!user ? (
               <div className="d-flex align-items-center">
-                <a href="/login" className="text-dark me-3 text-decoration-none">
+                <a
+                  href="/login"
+                  className="text-dark me-3 text-decoration-none"
+                >
                   Login
                 </a>
-                <a href="/register" className="text-primary text-decoration-none">
+                <a
+                  href="/register"
+                  className="text-primary text-decoration-none"
+                >
                   Register
                 </a>
               </div>
@@ -212,6 +221,7 @@ function Header() {
                     </span>
                   )}
                 </a>
+                <NotificationDropdown />
 
                 <li className="dropdown list-unstyled m-0 p-0">
                   <a
@@ -232,42 +242,45 @@ function Header() {
                       <i className="fas fa-user fa-2x"></i>
                     )}
                   </a>
-       <ul
-  className="dropdown-menu"
-  aria-labelledby="navbarDropdownMenuLink"
-  style={{ transform: 'translateX(-40%)' }}
->
-  <li>
-    <a className="dropdown-item py-2" href="/profile">
-      <i className="fa-solid fa-user me-2 text-success"></i>
-      Profile
-    </a>
-  </li>
-  <li>
-    <a className="dropdown-item py-2" href="/orders/pending">
-      <i className="fa-solid fa-orcid me-2 text-info"></i>
-      My Purchase
-    </a>
-  </li>
-  <li>
-    <a className="dropdown-item py-2" href="/chat">
-      <i className="fa fa-comments me-2 text-primary"></i>
-      My Chat
-    </a>
-  </li>
-  <li>
-    <a className="dropdown-item py-2" href="/redeem-voucher">
-      <i className="fa-solid fa-ticket me-2 text-info"></i>
-      Redeem Voucher
-    </a>
-  </li>
-  <li>
-    <div className="dropdown-item py-2" onClick={handleLogout}>
-      <i className="fa-solid fa-right-from-bracket me-2 text-danger"></i>
-      Logout
-    </div>
-  </li>
-</ul>
+                  <ul
+                    className="dropdown-menu"
+                    aria-labelledby="navbarDropdownMenuLink"
+                    style={{ transform: "translateX(-40%)" }}
+                  >
+                    <li>
+                      <a className="dropdown-item py-2" href="/profile">
+                        <i className="fa-solid fa-user me-2 text-success"></i>
+                        Profile
+                      </a>
+                    </li>
+                    <li>
+                      <a className="dropdown-item py-2" href="/orders/pending">
+                        <i className="fa-solid fa-orcid me-2 text-info"></i>
+                        My Purchase
+                      </a>
+                    </li>
+                    <li>
+                      <a className="dropdown-item py-2" href="/chat">
+                        <i className="fa fa-comments me-2 text-primary"></i>
+                        My Chat
+                      </a>
+                    </li>
+                    <li>
+                      <a className="dropdown-item py-2" href="/redeem-voucher">
+                        <i className="fa-solid fa-ticket me-2 text-info"></i>
+                        Redeem Voucher
+                      </a>
+                    </li>
+                    <li>
+                      <div
+                        className="dropdown-item py-2"
+                        onClick={handleLogout}
+                      >
+                        <i className="fa-solid fa-right-from-bracket me-2 text-danger"></i>
+                        Logout
+                      </div>
+                    </li>
+                  </ul>
                 </li>
               </>
             )}

@@ -8,6 +8,7 @@ import com.farm.farmtrade.dto.response.orderResponse.OrderResponse;
 import com.farm.farmtrade.entity.*;
 import com.farm.farmtrade.repository.*;
 import com.farm.farmtrade.service.ProductService;
+import com.farm.farmtrade.service.notification.NotificationService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,8 @@ public class OrderService {
     OrderItemRepository orderItemRepository;
     @Autowired
     ProductService productService;
+    @Autowired
+    NotificationService notificationService;
     @Autowired
     VoucherRepository voucherRepository;
 
@@ -303,6 +306,15 @@ public class OrderService {
 
         order.setStatus(request.getNewStatus());
         orderRepository.save(order);
+        User customer = order.getBuyer(); // người đặt hàng
+
+        String role = isSupplierAuthorized ? "Nhà cung cấp" : "Shipper";
+        String status = request.getNewStatus(); // enum to string
+
+        String title = "Cập nhật đơn hàng #" + order.getOrderID();
+        String message = String.format("%s đã cập nhật trạng thái đơn hàng của bạn thành '%s'.", role, status);
+
+        notificationService.createNotification(customer.getUserID(), title, message, "ORDER_UPDATE");
     }
 
 

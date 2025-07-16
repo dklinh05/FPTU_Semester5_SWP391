@@ -80,36 +80,6 @@ const ChatPage = () => {
     }
   };
 
-  const fetchAvatar = async (userId) => {
-    if (!userId || avatars[userId]) return;
-    try {
-      const user = await getUserById(userId);
-      console.log("Debug - Fetched user avatar for userId:", userId, user);
-      setAvatars((prev) => ({
-        ...prev,
-        [userId]: {
-          avatarUrl: user.avatar || "/img/fruite-item-1.jpg",
-          businessName: user.businessName || null,
-          fullName: user.fullName || "Người dùng không xác định",
-          role: user.role || null,
-          userId: userId,
-        },
-      }));
-    } catch (err) {
-      console.error("Debug - Error fetching avatar for userId:", userId, err);
-      setAvatars((prev) => ({
-        ...prev,
-        [userId]: {
-          avatarUrl: "https://via.placeholder.com/48",
-          businessName: null,
-          fullName: "Người dùng không xác định",
-          role: null,
-          userId: userId,
-        },
-      }));
-    }
-  };
-
   useEffect(() => {
     const fetchConversations = async () => {
       if (!currentUserId) return;
@@ -170,6 +140,34 @@ const ChatPage = () => {
 
     fetchMessages();
   }, [conversationId]);
+
+  const fetchAvatar = async (userId) => {
+    if (!userId || avatars[userId]) return;
+    try {
+      const user = await getUserById(userId);
+      console.log("Debug - Fetched user avatar for userId:", userId, user);
+      setAvatars((prev) => ({
+        ...prev,
+        [userId]: {
+          avatarUrl: user.avatar || "/img/fruite-item-1.jpg",
+          businessName: user.businessName || null,
+          role: user.role || null,
+          userId: userId,
+        },
+      }));
+    } catch (err) {
+      console.error("Debug - Error fetching avatar for userId:", userId, err);
+      setAvatars((prev) => ({
+        ...prev,
+        [userId]: {
+          avatarUrl: "https://via.placeholder.com/48",
+          businessName: null,
+          role: null,
+          userId: userId,
+        },
+      }));
+    }
+  };
 
   const fetchMembers = async () => {
     if (!conversationId) return;
@@ -285,7 +283,7 @@ const ChatPage = () => {
 
     const otherUserId = currentConv.userIds?.find((uid) => uid !== currentUserId);
     const user = avatars[otherUserId];
-    return user?.businessName || user?.fullName || "Người dùng không xác định";
+    return user?.businessName || `Người dùng #${otherUserId}`;
   }, [conversationId, conversations, avatars, currentUserId]);
 
   console.log("Debug - Should show send product button:", {
@@ -339,7 +337,7 @@ const ChatPage = () => {
               } else {
                 const otherUserId = conv.userIds?.find((uid) => uid !== currentUserId);
                 const user = avatars[otherUserId];
-                displayName = user?.businessName || user?.fullName || "Người dùng không xác định";
+                displayName = user?.businessName || `Người dùng #${otherUserId}`;
                 displayAvatar = user?.avatarUrl || "https://via.placeholder.com/48";
               }
 
@@ -484,7 +482,7 @@ const ChatPage = () => {
                     className={styles.memberAvatar}
                   />
                   <div className={styles.memberInfo}>
-                    <span>{avatars[member.userId]?.businessName || avatars[member.userId]?.fullName || "Người dùng không xác định"}</span>
+                    <span>{avatars[member.userId]?.businessName || `Người dùng #${member.userId}`}</span>
                     <span>UserID: {member.userId}</span>
                     <span>Vai trò: {avatars[member.userId]?.role || member.role || "Thành viên"}</span>
                   </div>

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import styles from "./ShipperList.module.scss"; // Vẫn dùng module như trước
+import styles from "./ShipperList.module.scss"; // Đổi tên file SCSS tương ứng
 import { request } from "../../utils/httpRequest";
 import { blockUser, unblockUser } from "../../services/userService";
+import * as XLSX from 'xlsx'; // Thư viện export Excel
 
 const ShipperList = () => {
   const [users, setUsers] = useState([]);
@@ -10,7 +11,7 @@ const ShipperList = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchShippers = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -34,11 +35,10 @@ const ShipperList = () => {
       }
     };
 
-    fetchUsers();
+    fetchShippers();
   }, []);
 
-  // Hàm lọc người dùng theo từ khóa tìm kiếm
-  const filteredUsers = users.filter(user =>
+  const filteredShippers = users.filter(user =>
     user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -46,7 +46,6 @@ const ShipperList = () => {
     user.userID?.toString().includes(searchTerm)
   );
 
-  // Xử lý khóa/mở khóa người dùng
   const handleBlockOrUnblockUser = async (userId, isBlocking) => {
     try {
       const isConfirmed = window.confirm(
@@ -62,7 +61,6 @@ const ShipperList = () => {
         await unblockUser(userId);
       }
 
-      // Cập nhật trạng thái trực tiếp trong state
       setUsers(prevUsers =>
         prevUsers.map(user =>
           user.userID === userId
@@ -77,6 +75,27 @@ const ShipperList = () => {
     }
   };
 
+  // Hàm xuất dữ liệu ra file Excel
+  const handleExport = () => {
+    const worksheetData = filteredShippers.map(user => ({
+      ID: user.userID,
+      Username: user.username || "-",
+      "Full Name": user.fullName || "-",
+      Email: user.email || "-",
+      Phone: user.phone || "-",
+      "Join Date": user.createdAt
+        ? new Date(user.createdAt).toLocaleString()
+        : "-",
+      Status: user.isLocked ? "Blocked" : user.isActive ? "Active" : "Inactive"
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Shippers');
+
+    XLSX.writeFile(workbook, 'Shipper_List.xlsx');
+  };
+
   if (loading) return <p>Đang tải dữ liệu...</p>;
   if (error) return <p className="text-danger">{error}</p>;
 
@@ -87,10 +106,13 @@ const ShipperList = () => {
         <div className={`${styles["card-service-section"]} px-0 px-md-0 px-lg-3`}>
           <div className="container-fluid">
             <div className={`d-flex justify-content-between align-items-center ${styles['bg-teal']} py-3`}>
-              {/* Import Button */}
+              {/* Export Button */}
               <div className="d-flex gap-2">
-                <button className="btn btn-light d-flex align-items-center gap-2">
-                  <i className="fa-solid fa-cloud-arrow-up"></i> Import
+                <button
+                  className="btn btn-light d-flex align-items-center gap-2"
+                  onClick={handleExport}
+                >
+                  <i className="fa-solid fa-cloud-arrow-down"></i> Export
                 </button>
               </div>
 
@@ -131,8 +153,8 @@ const ShipperList = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredUsers.length > 0 ? (
-                        filteredUsers.map((user) => (
+                      {filteredShippers.length > 0 ? (
+                        filteredShippers.map((user) => (
                           <tr key={user.userID}>
                             <td>{user.userID ? `#${user.userID}` : "-"}</td>
                             <td>{user.username || "-"}</td>

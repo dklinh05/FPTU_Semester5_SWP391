@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import styles from "./CustomerList.module.scss"; // Vẫn dùng module như trước
+import styles from "./CustomerList.module.scss";
 import { request } from "../../utils/httpRequest";
 import { blockUser, unblockUser } from "../../services/userService";
+import * as XLSX from 'xlsx'; // Thư viện export Excel
 
 const CustomerList = () => {
   const [users, setUsers] = useState([]);
@@ -22,9 +23,7 @@ const CustomerList = () => {
         const response = await request.get("/users");
         const data = response.data;
 
-        // Lọc ra chỉ những người có role là CUSTOMER
         const customers = data.filter(user => user.role === "CUSTOMER");
-
         setUsers(customers);
       } catch (err) {
         console.error(err);
@@ -37,7 +36,6 @@ const CustomerList = () => {
     fetchUsers();
   }, []);
 
-  // Hàm lọc người dùng theo từ khóa tìm kiếm
   const filteredUsers = users.filter(user =>
     user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -46,7 +44,6 @@ const CustomerList = () => {
     user.userID?.toString().includes(searchTerm)
   );
 
-  // Xử lý khóa/mở khóa người dùng
   const handleBlockOrUnblockUser = async (userId, isBlocking) => {
     try {
       const isConfirmed = window.confirm(
@@ -62,7 +59,6 @@ const CustomerList = () => {
         await unblockUser(userId);
       }
 
-      // Cập nhật trạng thái trực tiếp trong state
       setUsers(prevUsers =>
         prevUsers.map(user =>
           user.userID === userId
@@ -77,6 +73,27 @@ const CustomerList = () => {
     }
   };
 
+  // Hàm xuất dữ liệu ra file Excel
+  const handleExport = () => {
+    const worksheetData = filteredUsers.map(user => ({
+      ID: user.userID,
+      Username: user.username || "-",
+      "Full Name": user.fullName || "-",
+      Email: user.email || "-",
+      Phone: user.phone || "-",
+      "Join Date": user.createdAt
+        ? new Date(user.createdAt).toLocaleString()
+        : "-",
+      Status: user.isLocked ? "Blocked" : user.isActive ? "Active" : "Inactive"
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Customers');
+
+    XLSX.writeFile(workbook, 'Customer_List.xlsx');
+  };
+
   if (loading) return <p>Đang tải dữ liệu...</p>;
   if (error) return <p className="text-danger">{error}</p>;
 
@@ -87,10 +104,13 @@ const CustomerList = () => {
         <div className={`${styles["card-service-section"]} px-0 px-md-0 px-lg-3`}>
           <div className="container-fluid">
             <div className={`d-flex justify-content-between align-items-center ${styles['bg-teal']} py-3`}>
-              {/* Import Button */}
+              {/* Export Button */}
               <div className="d-flex gap-2">
-                <button className="btn btn-light d-flex align-items-center gap-2">
-                  <i className="fa-solid fa-cloud-arrow-up"></i> Import
+                <button
+                  className="btn btn-light d-flex align-items-center gap-2"
+                  onClick={handleExport}
+                >
+                  <i className="fa-solid fa-cloud-arrow-down"></i> Export
                 </button>
               </div>
 

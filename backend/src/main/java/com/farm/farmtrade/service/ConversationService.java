@@ -7,6 +7,7 @@ import com.farm.farmtrade.dto.response.chatResponse.JoinCommunityChatResponseDTO
 import com.farm.farmtrade.dto.response.chatResponse.MessageResponseDTO;
 import com.farm.farmtrade.entity.*;
 import com.farm.farmtrade.repository.*;
+import com.farm.farmtrade.service.geoLocation.GeocodingService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class ConversationService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final UserService userService;
+    GeocodingService geo = new GeocodingService();
     @PersistenceContext
     private EntityManager entityManager;
     public ConversationService(ConversationRepository conversationRepository,
@@ -65,8 +67,8 @@ public class ConversationService {
     public JoinCommunityChatResponseDTO joinCommunityChat(Double latitude, Double longitude, Integer userId) {
 
         // 1. Xác định tên phường từ tọa độ
-        String district = getDistrictFromCoordinates(latitude, longitude);
-
+        String district = geo.getDistrictFromCoordinates(latitude, longitude);
+        System.out.println("Quận: " + district);
         List<String> validDistricts = List.of(
                 "Sơn Trà", "Ngũ Hành Sơn", "Thanh Khê",
                 "Liên Chiểu", "Cẩm Lệ", "Hòa Vang", "Hải Châu"

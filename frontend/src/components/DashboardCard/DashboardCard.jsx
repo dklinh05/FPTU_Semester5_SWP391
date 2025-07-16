@@ -6,7 +6,7 @@ function DashboardCard({name, total, percentage, title}) {
           <div className="row">
             <div className="col-10">
               <h6 className="text-muted mb-2">{name}</h6>
-              <h3 className="fw-bold">{total}đ</h3>
+              <h3 className="fw-bold">{total}</h3>
               <div className="d-flex align-items-center">
                 <span className="status-badge status-success">
                   <i className="fa-solid fa-arrow-up"></i> {percentage}%

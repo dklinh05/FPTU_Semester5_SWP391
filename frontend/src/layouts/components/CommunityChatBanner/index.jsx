@@ -22,11 +22,14 @@ const CommunityChatBanner = () => {
   const fetchUserInfoFromDatabase = async (userId) => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`http://localhost:8080/farmtrade/users/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(
+        `http://localhost:8080/farmtrade/users/${userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const userData = response.data;
       if (userData.lat && userData.lng) {
@@ -50,7 +53,7 @@ const CommunityChatBanner = () => {
       lat = currentLocation.lat;
       lng = currentLocation.lng;
     }
-
+    console.log(lat, lng);
     // Bước 2: Nếu chưa có tọa độ, lấy từ database
     if (!lat || !lng) {
       if (!userID) {
@@ -67,7 +70,9 @@ const CommunityChatBanner = () => {
 
     // Bước 3: Kiểm tra xem đã có tọa độ chưa
     if (!lat || !lng) {
-      alert("Không tìm thấy tọa độ trong hệ thống. Vui lòng cập nhật vị trí của bạn.");
+      alert(
+        "Không tìm thấy tọa độ trong hệ thống. Vui lòng cập nhật vị trí của bạn."
+      );
       return;
     }
 

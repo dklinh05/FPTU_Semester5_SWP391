@@ -28,4 +28,5 @@ public class OrderResponse {
     BigDecimal totalAmount;
     Integer orderGroupId;
     String customerName;
+    String address;
 }

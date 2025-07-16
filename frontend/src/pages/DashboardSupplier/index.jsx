@@ -72,66 +72,7 @@ function DashboardSupplier() {
                             Best Selling Products
                           </h5>
                         </div>
-                        <div className="col-12 col-md d-flex justify-content-end flex-wrap gap-2">
-                          {/* Filter Dropdown */}
-                          <div className="dropdown">
-                            <a
-                              className="nav-link custom-bg-primary text-white rounded px-3 py-2"
-                              href="#"
-                              id="FilterMenuLink"
-                              role="button"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
-                            >
-                              Filter By <i className="fas fa-filter"></i>
-                            </a>
-                            <ul
-                              className="dropdown-menu"
-                              aria-labelledby="FilterMenuLink"
-                            >
-                              <li>
-                                <a className="dropdown-item py-2" href="#">
-                                  In Stock
-                                </a>
-                              </li>
-                              <li>
-                                <a className="dropdown-item py-2" href="#">
-                                  Out of Stock
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-
-                          {/* Sort Dropdown */}
-                          <div className="dropdown">
-                            <a
-                              className="nav-link custom-bg-primary text-white rounded px-3 py-2"
-                              href="#"
-                              id="SortMenuLink"
-                              role="button"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
-                            >
-                              Sort By: Relevance{" "}
-                              <i className="fa-solid fa-arrow-up-wide-short"></i>
-                            </a>
-                            <ul
-                              className="dropdown-menu"
-                              aria-labelledby="SortMenuLink"
-                            >
-                              <li>
-                                <a className="dropdown-item py-2" href="#">
-                                  Low to High
-                                </a>
-                              </li>
-                              <li>
-                                <a className="dropdown-item py-2" href="#">
-                                  High to Low
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
+                        
                       </div>
 
                       {/* Table */}

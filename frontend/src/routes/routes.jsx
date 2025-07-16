@@ -121,11 +121,23 @@ const publicRoutes = [
 
   { path: config.routes.orders, component: Orders, layout: OrdersLayout },
 
-  {
-    path: config.routes.orderDetail,
-    component: OrderDetail,
-    layout: SupplierLayout,
-  },
+{
+  path: "/supplier/order-detail/:id",
+  component: OrderDetail,
+  layout: SupplierLayout,
+},
+{
+  path: "/shipper/order-detail/:id",
+  component: OrderDetail,
+  layout: ShipperLayout,
+},
+// {
+//   path: "/user/order-detail/:id",
+//   component: OrderDetail,
+//   layout: UserLayout,
+// },
+
+  
   {
     path: config.routes.orderDetailCustomer,
     component: OrderDetailCustomer,

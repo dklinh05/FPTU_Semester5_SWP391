@@ -6,6 +6,8 @@ import {
 import styles from "./CardDashboard.module.scss";
 import PopupModal from "../PopupModal/PopupModal";
 
+
+
 function BestSellerTable() {
     const [products, setProducts] = useState([]);
     const [pageInfo, setPageInfo] = useState({ number: 0, totalPages: 1 });
@@ -167,3 +169,4 @@ function BestSellerTable() {
 }
 
 export default BestSellerTable;
+

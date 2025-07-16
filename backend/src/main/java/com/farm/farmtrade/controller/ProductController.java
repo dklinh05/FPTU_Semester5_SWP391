@@ -2,6 +2,7 @@ package com.farm.farmtrade.controller;
 
 
 import com.farm.farmtrade.dto.request.productRequest.ProductCreateRequest;
+import com.farm.farmtrade.dto.request.productRequest.ProductUpdateRequest;
 import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
@@ -107,9 +108,13 @@ public class ProductController {
     }
 
     // Update product
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Integer id, @RequestBody Product product) {
-        return ResponseEntity.ok(productService.updateProduct(id, product));
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable Integer id,
+            @ModelAttribute ProductUpdateRequest request
+    ) {
+        Product updatedProduct = productService.updateProduct(id, request);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     // Delete product

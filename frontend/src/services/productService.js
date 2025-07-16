@@ -116,3 +116,19 @@ export const renderAllProductsAdmin = async (page = 0, size = 10) => {
   });
   return response.data;
 };
+
+export const updateProduct = async (id, productData) => {
+  const formData = new FormData();
+  Object.entries(productData).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      formData.append(key, value);
+    }
+  });
+
+  try {
+    const response = await formRequest.put(`/products/${id}`, formData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

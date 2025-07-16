@@ -109,3 +109,10 @@ export const getBestSellersByShop = async (sellerId) => {
     return [];
   }
 };
+
+export const renderAllProductsAdmin = async (page = 0, size = 10) => {
+  const response = await request.get("/products/admin", {
+    params: { page, size },
+  });
+  return response.data;
+};

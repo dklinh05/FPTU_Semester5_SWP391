@@ -44,7 +44,6 @@ import OrderDetail from "../pages/OrderDetail/index.jsx";
 import OrderDetailCustomer from "../pages/OrderDetailCustomer/index.jsx";
 import OrderShipping from "../pages/OrderShipping/index.jsx";
 import ChatPage from "../pages/ChatPage/index.jsx";
-import AdminListProduct from "../pages/AdminListProduct/AdminListProduct";
 
 
 const publicRoutes = [
@@ -52,39 +51,117 @@ const publicRoutes = [
   { path: config.routes.profile, component: Profile, layout: ProfileLayout },
   { path: config.routes.login, component: Login, layout: null },
   { path: config.routes.register, component: Register, layout: null },
-  { path: config.routes.changePassword, component: ChangePassword, layout: ProfileLayout,},
-  { path: config.routes.forgotPassword, component: ForgotPassword, layout: null,},
-  { path: config.routes.completeGoogleProfile, component: CompleteGoogleProfile,},
+  {
+    path: config.routes.changePassword,
+    component: ChangePassword,
+    layout: ProfileLayout,
+  },
+  {
+    path: config.routes.forgotPassword,
+    component: ForgotPassword,
+    layout: null,
+  },
+  {
+    path: config.routes.completeGoogleProfile,
+    component: CompleteGoogleProfile,
+  },
   { path: config.routes.shop, component: Shop, layout: ShopLayout },
   { path: config.routes.cart, component: Cart, layout: CartLayout },
-  { path: config.routes.testimonial, component: Testimonial, layout: TestimonialLayout,},
+  {
+    path: config.routes.testimonial,
+    component: Testimonial,
+    layout: TestimonialLayout,
+  },
   { path: config.routes.contact, component: Contact, layout: ContactLayout },
   { path: config.routes.product, component: Product, layout: ProductLayout },
-  { path: config.routes.customerManagement, component: CustomerManagement, layout: AdminLayout,},
+  {
+    path: config.routes.customerManagement,
+    component: CustomerManagement,
+    layout: AdminLayout,
+  },
   { path: config.routes.dashboard, component: Dashboard, layout: AdminLayout },
-  { path: config.routes.dashboardSupplier, component: DashboardSupplier, layout: SupplierLayout,},
-  { path: config.routes.orderShipper, component: OrderShipping, layout: ShipperLayout,},
-  { path: config.routes.addProduct, component: AddProduct, layout: SupplierLayout,},
-  { path: config.routes.listProduct, component: ListProduct, layout: SupplierLayout,},
-  { path: config.routes.orderList, component: OrderList, layout: SupplierLayout,},
+  {
+    path: config.routes.dashboardSupplier,
+    component: DashboardSupplier,
+    layout: SupplierLayout,
+  },
+  {
+    path: config.routes.orderShipper,
+    component: OrderShipping,
+    layout: ShipperLayout,
+  },
+
+  {
+    path: config.routes.addProduct,
+    component: AddProduct,
+    layout: SupplierLayout,
+  },
+  {
+    path: config.routes.listProduct,
+    component: ListProduct,
+    layout: SupplierLayout,
+  },
+  {
+    path: config.routes.orderList,
+    component: OrderList,
+    layout: SupplierLayout,
+  },
   { path: config.routes.userList, component: UserList, layout: AdminLayout },
-  { path: config.routes.requestUpgradeRole, component: RequestUpgradeRole, layout: null,},
+  {
+    path: config.routes.requestUpgradeRole,
+    component: RequestUpgradeRole,
+    layout: null,
+  },
   { path: config.routes.checkout, component: Checkout, layout: null },
-  { path: config.routes.requestProduct, component: RequestProduct, layout: AdminLayout,},
+  {
+    path: config.routes.requestProduct,
+    component: RequestProduct,
+    layout: AdminLayout,
+  },
+
   { path: config.routes.orders, component: Orders, layout: OrdersLayout },
-  { path: config.routes.orderDetail, component: OrderDetail, layout: SupplierLayout,},
-  { path: config.routes.orderDetailCustomer, component: OrderDetailCustomer, layout: OrdersLayout,},
-  { path: config.routes.ordersPending, component: OrdersNotPayment, layout: OrdersLayout,},
-  { path: config.routes.shipperList, component: ShipperList, layout: AdminLayout,},
-  { path: config.routes.customerList, component: CustomerList, layout: AdminLayout,},
-  { path: config.routes.supplierList, component: SupplierList, layout: AdminLayout,},
-  { path: config.routes.productSearch, component: ProductSearch, layout: SearchResultLayout,},
+
+  {
+    path: config.routes.orderDetail,
+    component: OrderDetail,
+    layout: SupplierLayout,
+  },
+  {
+    path: config.routes.orderDetailCustomer,
+    component: OrderDetailCustomer,
+    layout: OrdersLayout,
+  },
+  {
+    path: config.routes.ordersPending,
+    component: OrdersNotPayment,
+    layout: OrdersLayout,
+  },
+  {
+    path: config.routes.shipperList,
+    component: ShipperList,
+    layout: AdminLayout,
+  },
+  {
+    path: config.routes.customerList,
+    component: CustomerList,
+    layout: AdminLayout,
+  },
+  {
+    path: config.routes.supplierList,
+    component: SupplierList,
+    layout: AdminLayout,
+  },
+  {
+    path: config.routes.productSearch,
+    component: ProductSearch,
+    layout: SearchResultLayout,
+  },
   { path: config.routes.redeemVoucher, component: RedeemVoucher, layout: null },
+
   { path: config.routes.acceptUpdateRole, component: AcceptUpdateRole, layout: AdminLayout },
   { path: config.routes.chat, component: ChatPage, layout: null },
   { path: "/chat", component: ChatPage, layout: null },
-  { path: config.routes.ordersRate, component: Orders, layout: OrdersLayout },
-  { path: config.routes.AdminListProduct, component: AdminListProduct, layout: AdminLayout },
+  { path: config.routes.ordersRate, component: Orders, layout: OrdersLayout }
 ];
 
 const privateRoutes = [];

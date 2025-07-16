@@ -16,7 +16,7 @@ const ListProduct = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const status = queryParams.get("status");
-  const isAdminPage = location.pathname.includes("/admin");
+
 
   const [currentPage, setCurrentPage] = useState(1); // trang đang xem (1-based)
   const pageSize = 10; // số dòng mỗi trang
@@ -25,9 +25,7 @@ const ListProduct = () => {
 
   const getProducts = async () => {
     try {
-      const response = isAdminPage
-          ? await renderAllProductsAdmin(currentPage - 1, pageSize) // gọi API khác cho Admin
-          : await renderProductBySupplierId(userId, status, null, currentPage - 1, pageSize); // Supplier
+      const response = await renderProductBySupplierId(userId,  status, null, currentPage-1, pageSize);
       setProducts(response.content);
       setTotalPages(response.totalPages);
       setTotalItems(response.totalElements);

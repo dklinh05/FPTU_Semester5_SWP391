@@ -39,7 +39,6 @@ const routes = {
   orderShipper: '/order-manage-shipping',
   chat : '/chat/:conversationId',
   ordersRate: '/orders/rate',
-  AdminListProduct: "/admin/listproduct",
 };
 
 export default routes;

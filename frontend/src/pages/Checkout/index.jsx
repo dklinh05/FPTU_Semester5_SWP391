@@ -7,7 +7,7 @@ import Header from "../../components/Header";
 import ShopBanner from "../../layouts/components/ShopBanner";
 import CheckoutItem from "../../layouts/components/CheckoutItem/CheckoutItem";
 import Footer from "../../components/Footer";
-import { addOrder } from "../../services/orderService";
+import { addOrder, calculateShip } from "../../services/orderService";
 import { createPayment } from "../../services/paymentService";
 import AddressPopup from "../../components/AddressPopup";
 
@@ -25,6 +25,7 @@ function Checkout() {
   });
 
   const [showAddressForm, setShowAddressForm] = useState(false);
+  const [fee, setFee] = useState(null);
 
   // Group cart items by supplier name
   const groupedBySupplier = chooseCartItems.reduce((groups, cart) => {
@@ -35,6 +36,36 @@ function Checkout() {
     groups[supplierId].push(cart);
     return groups;
   }, {});
+
+ const calculateShipFee = async () => {
+  let totalShippingFee = 0;
+
+  for (const supplierId in groupedBySupplier) {
+    try {
+      const res = await calculateShip(
+        shippingAddress.lat,
+        shippingAddress.lng,
+        supplierId
+      );
+
+      totalShippingFee += res.shippingFee;
+    } catch (error) {
+      console.error(`Shipping fee error for supplier ${supplierId}:`, error);
+    }
+  }
+
+  return totalShippingFee;
+};
+
+useEffect(() => {
+  const fetchShippingFee = async () => {
+    const total = await calculateShipFee();
+    setFee(total);
+  };
+
+  fetchShippingFee();
+}, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,6 +82,8 @@ function Checkout() {
           supplierId: parseInt(supplierId),
           status: "pending",
           address: shippingAddress.address,
+          lat: shippingAddress.lat,
+          lng: shippingAddress.lng,
           items: items.map((item) => ({
             productId: item.product.productID,
             quantity: item.quantity,
@@ -209,24 +242,24 @@ function Checkout() {
                   <div className="d-flex justify-content-between mb-2">
                     <span>Subtotal</span>
                     <span>
-                      $
                       {chooseCartItems.reduce(
                         (total, cart) =>
                           total + cart.quantity * cart.product.price,
                         0
                       )}
+                      đ
                     </span>
                   </div>
 
                   <div className="d-flex justify-content-between mb-2">
                     <span>Shipping Fee</span>
-                    <span>$3.00</span>
+                    <span>{fee}đ</span>
                   </div>
 
                   {chooseVoucher?.voucher?.discountValue ? (
                     <div className="d-flex justify-content-between mb-2 text-success">
                       <span>Voucher Discount</span>
-                      <span>- ${chooseVoucher.voucher.discountValue}</span>
+                      <span>- {chooseVoucher.voucher.discountValue}đ</span>
                     </div>
                   ) : (
                     <div className="d-flex justify-content-between mb-2 text-muted">
@@ -237,14 +270,14 @@ function Checkout() {
                   <div className="d-flex justify-content-between border-top pt-3 mt-3">
                     <strong>Total</strong>
                     <strong>
-                      $
                       {chooseCartItems.reduce(
                         (total, cart) =>
                           total + cart.quantity * cart.product.price,
                         0
                       ) +
-                        3 -
+                        30000 -
                         (chooseVoucher?.voucher?.discountValue ?? 0)}
+                      đ
                     </strong>
                   </div>
                 </div>

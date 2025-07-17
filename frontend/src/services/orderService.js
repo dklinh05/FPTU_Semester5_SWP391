@@ -40,14 +40,17 @@ export const renderOrderByBuyerId = async (id, status) => {
   }
 };
 
-export const analysisOrder= async (id, month, year) => {
+export const analysisOrder = async (id, month, year) => {
   try {
-    const response = await request.get(`/orders/suppliers/${id}/dashboard/monthly`, {
-      params: {
-       month: month,
-       year: year
-      },
-    });
+    const response = await request.get(
+      `/orders/suppliers/${id}/dashboard/monthly`,
+      {
+        params: {
+          month: month,
+          year: year,
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -113,13 +116,18 @@ export const cancelOrder = async (id) => {
   }
 };
 
-export const updateStatusOrder = async (orderId, newStatus, supplierId, shipperId) => {
+export const updateStatusOrder = async (
+  orderId,
+  newStatus,
+  supplierId,
+  shipperId
+) => {
   try {
     const response = await request.put(`/orders/update-status`, {
       orderId,
       newStatus,
       supplierId,
-      shipperId
+      shipperId,
     });
     return response.data;
   } catch (error) {
@@ -129,11 +137,22 @@ export const updateStatusOrder = async (orderId, newStatus, supplierId, shipperI
 
 export const assignShipper = async (orderId) => {
   try {
-    const response = await request.put(`/orders/assign-shipper/${orderId}`,);
+    const response = await request.put(`/orders/assign-shipper/${orderId}`);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
 
-
+export const calculateShip = async (latitude, longitude, supplierId) => {
+  try {
+    const response = await request.post("/orders/calculate-fee", {
+      latitude,
+      longitude,
+      supplierId,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};

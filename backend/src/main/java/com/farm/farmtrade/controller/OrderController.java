@@ -3,6 +3,8 @@ package com.farm.farmtrade.controller;
 import com.farm.farmtrade.dto.request.orderRequest.OrderGroupRequest;
 import com.farm.farmtrade.dto.request.orderRequest.OrderStatusUpdateRequest;
 import com.farm.farmtrade.dto.request.orderRequest.UpdateOrderStatusRequest;
+import com.farm.farmtrade.dto.request.shipping.ShippingFeeRequest;
+import com.farm.farmtrade.dto.response.ShippingFeeResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderGroupResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderItemResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderResponse;
@@ -180,4 +182,13 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
+    @PostMapping("/calculate-fee")
+    public ResponseEntity<ShippingFeeResponse> calculateShippingFee(@RequestBody ShippingFeeRequest request) {
+        ShippingFeeResponse response = orderGroupService.calculateFee(
+                request.getLatitude(),
+                request.getLongitude(),
+                request.getSupplierId()
+        );
+        return ResponseEntity.ok(response);
+    }
 }

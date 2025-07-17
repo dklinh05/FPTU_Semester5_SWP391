@@ -45,7 +45,7 @@ import OrderDetailCustomer from "../pages/OrderDetailCustomer/index.jsx";
 import OrderShipping from "../pages/OrderShipping/index.jsx";
 import ChatPage from "../pages/ChatPage/index.jsx";
 import AdminListProduct from "../pages/AdminListProduct/AdminListProduct";
-
+import SupplierProfile from "../pages/SupplierProfile/SupplierProfile";
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
@@ -127,6 +127,7 @@ const publicRoutes = [
   { path: "/chat", component: ChatPage, layout: null },
   { path: config.routes.ordersRate, component: Orders, layout: OrdersLayout },
   { path: config.routes.AdminListProduct, component: AdminListProduct, layout: AdminLayout },
+  { path: config.routes.SupplierProfile, component: SupplierProfile, layout: SupplierLayout },
 ];
 
 const privateRoutes = [];

@@ -1,5 +1,5 @@
 import SidebarAdmin from "../components/SideBarAdmin";
-import HeaderAdmin from "../components/HeaderAdmin";
+import HeaderAdmin from "../components/HeaderSupplier";
 
 function AdminLayout({ children }) {
   return (

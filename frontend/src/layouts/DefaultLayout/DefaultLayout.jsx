@@ -1,7 +1,6 @@
 import classNames from "classnames/bind";
 import styles from "./DefaultLayout.module.scss";
 import Header from "../../components/Header";
-import Spinner from "../../components/Spinner";
 import ModalSearch from "../components/ModalSearch";
 import Hero from "../components/Hero";
 import FeatureSection from "../components/FeatureSection";

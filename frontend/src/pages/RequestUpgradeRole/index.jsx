@@ -1,7 +1,5 @@
-// index.jsx
-
 import React, { useState } from 'react';
-import styles from './RequestUpgradeRole.module.scss'; // Import module CSS
+import styles from './RequestUpgradeRole.module.scss';
 import { submitRoleUpgradeRequest } from '../../services/userService';
 
 const RequestUpgradeRole = () => {

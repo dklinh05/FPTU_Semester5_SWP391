@@ -7,6 +7,7 @@ import {
     getReviewDetail,
 } from "../../services/feedbackService";
 import styles from "./ReviewModal.module.scss";
+import {toast} from "react-toastify";
 
 const starTooltips = ["Tệ", "Không hài lòng", "Bình thường", "Tốt", "Xuất sắc"];
 
@@ -106,17 +107,17 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
         try {
             if (product.isEdit && reviewId) {
                 await updateReview(reviewId, formData);
-                alert("Cập nhật đánh giá thành công!");
+                toast.success("Cập nhật đánh giá thành công!");
             } else {
                 formData.append("orderId", product.orderId);
                 await submitReview(product.productId, formData);
-                alert("Đánh giá thành công!");
+                toast.success("Đánh giá thành công!");
             }
             onHide();
             if (onSuccess) onSuccess();
         } catch (error) {
             console.error("Gửi đánh giá thất bại:", error);
-            alert("Đã xảy ra lỗi khi gửi đánh giá.");
+            toast.error("Đã xảy ra lỗi khi gửi đánh giá.");
         }
     };
 

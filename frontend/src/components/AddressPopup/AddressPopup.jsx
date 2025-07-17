@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ShippingMap from "../ShippingMap/ShippingMap";
+import {toast} from "react-toastify";
 
 function AddressPopup({ isOpen, onClose, shippingAddress, setShippingAddress }) {
   const [localAddress, setLocalAddress] = useState(shippingAddress);
@@ -65,7 +66,7 @@ function AddressPopup({ isOpen, onClose, shippingAddress, setShippingAddress }) 
               setShippingAddress(localAddress);
               onClose();
             } else {
-              alert("Địa chỉ không hợp lệ hoặc không nằm trong Đà Nẵng.");
+              toast.error("Địa chỉ không hợp lệ hoặc không nằm trong Đà Nẵng.");
             }
           }}
           disabled={!canSave}

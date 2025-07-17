@@ -7,6 +7,7 @@ import {
 } from "../../services/userService";
 import AddressPopup from "../../components/AddressPopup";
 import CertificationPreview from "../../components/PopupModal/CertificationPreview";
+import {toast} from "react-toastify";
 
 const ProfileSupplier = () => {
     const { user, userId, setUser } = useUser();
@@ -34,7 +35,7 @@ const ProfileSupplier = () => {
             setAvatarTimestamp(Date.now());
         } catch (err) {
             console.error("Lỗi upload avatar:", err);
-            alert("Upload avatar thất bại");
+            toast.error("Tải lên avatar thất bại");
         }
     };
 
@@ -47,16 +48,16 @@ const ProfileSupplier = () => {
     const handleSave = async (e) => {
         e.preventDefault();
         if (Object.keys(dirtyFields).length === 0) {
-            alert("Không có thay đổi nào!");
+            toast.success("Không có thay đổi nào!");
             return;
         }
         try {
             await updateUser(userId, dirtyFields);
-            alert("Cập nhật thành công!");
+            toast.success("Cập nhật thành công!");
             setDirtyFields({});
         } catch (error) {
             console.error("Lỗi khi lưu:", error);
-            alert("Cập nhật thất bại: " + error.message);
+            toast.error("Cập nhật thất bại: " + error.message);
         }
     };
 

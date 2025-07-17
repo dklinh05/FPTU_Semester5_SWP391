@@ -6,6 +6,7 @@ import {addProductToCart} from "../../services/cartItemService";
 import {getReviewsByProductId} from "../../services/feedbackService";
 import {getExistingConversation, createConversation} from "../../services/chatService";
 import "../../../src/components/SidebarDetail/SideBarDetail.module.scss";
+import {toast} from "react-toastify";
 
 function Product({product}) {
     const {userId} = useUser();
@@ -49,15 +50,14 @@ function Product({product}) {
         try {
             await addProductToCart(productData);
             setReload((prev) => !prev);
-            alert("Added to cart!");
+            toast.success("Sản phẩm đã được thêm vào giỏ hàng!");
         } catch (error) {
-            console.error("Error adding to cart:", error);
         }
     };
 const handleChatWithSupplier = async () => {
   console.log("handleChatWithSupplier: userId =", userId, "supplierId =", supplierId);
   if (!userId) {
-    alert("Vui lòng đăng nhập để chat với nhà cung cấp");
+    toast.error("Vui lòng đăng nhập để chat với nhà cung cấp");
     navigate("/login");
     return;
   }

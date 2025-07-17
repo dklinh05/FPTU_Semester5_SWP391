@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import styles from "./CustomerList.module.scss";
 import { request } from "../../utils/httpRequest";
 import { blockUser, unblockUser } from "../../services/userService";
-import * as XLSX from 'xlsx'; // Thư viện export Excel
+import * as XLSX from 'xlsx';
+import {toast} from "react-toastify";
 
 const CustomerList = () => {
   const [users, setUsers] = useState([]);
@@ -67,9 +68,9 @@ const CustomerList = () => {
         )
       );
 
-      alert(isBlocking ? "Khóa người dùng thành công!" : "Mở khóa người dùng thành công!");
+      toast.success(isBlocking ? "Khóa người dùng thành công!" : "Mở khóa người dùng thành công!");
     } catch (err) {
-      alert(err.message || "Đã xảy ra lỗi khi thực hiện hành động.");
+      toast.error(err.message || "Đã xảy ra lỗi khi thực hiện hành động.");
     }
   };
 

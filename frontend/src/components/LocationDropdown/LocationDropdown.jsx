@@ -2,11 +2,9 @@ import { useState } from "react";
 import { districtCoordinates } from "../../data/DistrictData";
 
 function LocationDropdown({
-  selectedDistrict,
   setSelectedDistrict,
   setCurrentPage,
   currentLocation,
-  selectedLocation,
   setSelectedLocation,
   currentDistrict,
 }) {

@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import { renderProductBySupplierId } from "../../services/productService";
+import { Link } from "react-router-dom";
 import CardItem from "../../components/CardItem/CardItem";
 
 function Shop({ products }) {

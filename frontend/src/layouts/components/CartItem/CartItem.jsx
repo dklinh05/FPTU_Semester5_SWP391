@@ -157,10 +157,23 @@ function CartItem({
         </td>
         <td>
           <button
-            className="btn btn-md rounded-circle bg-light border mt-4"
-            onClick={handleDeleteCartItem}
+              className="btn btn-md rounded-circle bg-light border mt-4"
+              onClick={() => {
+                setPopupConfig({
+                  title: "Xác nhận xoá sản phẩm",
+                  body: `Bạn có chắc chắn muốn xoá sản phẩm "${name}" khỏi giỏ hàng?`,
+                  confirmText: "Xoá",
+                  cancelText: "Huỷ",
+                  onClose: () => setShowPopup(false),
+                  onConfirm: () => {
+                    setShowPopup(false);
+                    handleDeleteCartItem();
+                  },
+                });
+                setShowPopup(true);
+              }}
           >
-            <i className="fa fa-times text-danger"></i>
+            <i className="fa fa-trash text-danger"></i>
           </button>
         </td>
       </tr>

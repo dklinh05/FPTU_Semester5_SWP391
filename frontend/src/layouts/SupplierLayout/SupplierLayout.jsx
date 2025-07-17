@@ -7,7 +7,7 @@ function SupplierLayout({children}) {
       <div id="main-wrapper" className="d-flex">
         <SidebarSupplier />
         <div className="content-wrapper">
-           {/*<HeaderSupplier/>*/}
+           <HeaderSupplier/>
           {children}
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./AddProduct.module.scss"; // Import CSS Module
+import styles from "./AddProduct.module.scss";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
@@ -55,8 +55,7 @@ function AddProduct() {
       toast.success("Thêm sản phẩm thành công! Yêu cầu duyệt sẽ được gửi đến admin.");
       navigate("/listproduct");
     } catch (error) {
-      console.error("Lỗi khi thêm sản phẩm:", error);
-      alert("Thêm sản phẩm thất bại.");
+      toast.error("Thêm sản phẩm thất bại.")
     }
   };
 

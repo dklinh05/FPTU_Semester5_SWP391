@@ -1,4 +1,4 @@
-function CheckoutItem({ quantity, img, name, price, id, onDeleted }) {
+function CheckoutItem({ quantity, img, name, price }) {
   return (
     <tr>
       <th></th>

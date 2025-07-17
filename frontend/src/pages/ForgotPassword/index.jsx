@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { sendOtpForgot, verifyOtp, resetPassword } from "../../services/authService";
 import { getUserById } from "../../services/userService"; // hàm gọi API lấy user
 import { useNavigate } from "react-router-dom";
+import {toast} from "react-toastify";
 
 function ForgotPassword() {
   const [step, setStep] = useState(1);
@@ -16,10 +17,10 @@ function ForgotPassword() {
     e.preventDefault();
     try {
       await sendOtpForgot(email);
-      alert("OTP đã được gửi đến email");
+      toast.success("OTP đã được gửi đến email");
       setStep(2);
     } catch (err) {
-      alert("Gửi OTP thất bại");
+      toast.error("Gửi OTP thất bại");
     }
   };
 
@@ -27,10 +28,10 @@ function ForgotPassword() {
     e.preventDefault();
     try {
       await verifyOtp(otp);
-      alert("Xác thực OTP thành công");
+      toast.success("Xác thực OTP thành công");
       setStep(3);
     } catch (err) {
-      alert("OTP không đúng");
+      toast.error("OTP không đúng");
     }
   };
 
@@ -39,10 +40,10 @@ function ForgotPassword() {
     console.log(otp)
     try {
       await resetPassword(otp, newPassword);
-      alert("Đổi mật khẩu thành công");
+      toast.success("Đổi mật khẩu thành công");
       navigate("/login");
     } catch (err) {
-      alert("Đổi mật khẩu thất bại");
+      toast.error("Đổi mật khẩu thất bại");
     }
   };
 

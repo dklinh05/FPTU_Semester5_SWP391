@@ -1,8 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import {
-  searchProducts,
-  renderProductByCategory,
-} from "../../services/productService";
+import {renderProductByCategory} from "../../services/productService";
 import { useLocation as useCustomLocation } from "../../context/LocationContext";
 import { useLocation as useRouterLocation, useNavigate, Link } from "react-router-dom";
 import styles from "./ProductSearch.module.scss";
@@ -12,7 +9,7 @@ import LocationDropdown from "../../components/LocationDropdown";
 
 const ProductSearch = () => {
   const location = useRouterLocation();
-  const navigate = useNavigate(); // ✅ Thêm dòng này
+  const navigate = useNavigate();
   const {
     currentLocation,
     selectedDistrict,

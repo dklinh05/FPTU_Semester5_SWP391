@@ -5,6 +5,7 @@ import { loginUser, getTokenFromCookie } from "../../services/authService";
 import styles from "./Login.module.scss";
 import { jwtDecode } from "jwt-decode";
 import { useUser } from "../../context/UserContext";
+import {toast} from "react-toastify";
 
 const cx = classNames.bind(styles);
 
@@ -27,9 +28,8 @@ const Login = () => {
 
     try {
       const user = await loginUser(formData);
-      // alert("Đăng nhập thành công!");
       if (!user) {
-        alert("Đăng nhập thất bại: ");
+        toast.error("Đăng nhập thất bại: ");
         return;
       }
      
@@ -40,7 +40,7 @@ const Login = () => {
       navigate("/");
     } catch (error) {
       console.log(error)
-      alert("Đăng nhập thất bại: ");
+      toast.error("Đăng nhập thất bại: ");
     }
   };
 

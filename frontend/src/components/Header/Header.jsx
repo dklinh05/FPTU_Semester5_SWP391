@@ -7,6 +7,7 @@ import { useUser } from "../../context/UserContext";
 import { useCart } from "../../context/CartContext";
 import { searchProducts } from "../../services/productService";
 import NotificationDropdown from "../NotificationDropdown";
+import {toast} from "react-toastify";
 
 const cx = classNames.bind(styles);
 
@@ -53,7 +54,7 @@ function Header() {
     e.preventDefault();
 
     if (!searchTerm.trim()) {
-      alert("Vui lòng nhập từ khóa tìm kiếm");
+      toast.error("Vui lòng nhập từ khóa tim kiếm");
       return;
     }
     navigate(`/products/search?keyword=${encodeURIComponent(searchTerm)}`);
@@ -63,7 +64,7 @@ function Header() {
   };
 
   const handleLogout = () => {
-    alert("Đăng xuất thành công!");
+    toast.success("Đăng xuất thành công!");
     localStorage.removeItem("token");
     Cookies.remove("accessToken");
     navigate("/");

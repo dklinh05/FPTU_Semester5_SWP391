@@ -3,6 +3,7 @@ import classNames from "classnames";
 import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../services/authService";
 import styles from "./Register.module.scss";
+import {toast} from "react-toastify";
 
 const cx = classNames.bind(styles);
 
@@ -59,17 +60,17 @@ const Register = () => {
     e.preventDefault();
 
     if (formData.passwordHash !== confirmPassword) {
-      alert("Mật khẩu xác nhận không khớp!");
+      toast.error("Mật khẩu xác nhận không khớp!");
       return;
     }
 
     try {
       const response = await registerUser(formData);
-      alert("Đăng ký thành công!");
+      toast.success("Đăng ký thành công!");
       console.log("Đăng ký thành công:", response);
       navigate("/login");
     } catch (error) {
-      alert("Đăng ký thất bại: " + error.message || error);
+      toast.error("Đăng ký thất bại: " + error.message || error);
       console.error("Lỗi:", error);
     }
   };

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "./SidebarSupplier.module.scss"; // Dùng CSS Module
+import styles from "./SidebarSupplier.module.scss";
 
 function SidebarSupplier() {
   const [activeSubmenu, setActiveSubmenu] = useState(null);

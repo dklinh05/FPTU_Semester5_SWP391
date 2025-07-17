@@ -10,6 +10,8 @@ import {
 import { addProductToCart } from "../../services/cartItemService";
 import ReviewModal from "../../components/ReviewModal/ReviewModal";
 import { checkIfReviewed, deleteReview, getReviewDetail } from "../../services/feedbackService";
+import {toast} from "react-toastify";
+import PopupModal from "../../components/PopupModal/index.js";
 
 function Orders() {
   const navigate = useNavigate();
@@ -24,6 +26,8 @@ function Orders() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewedItems, setReviewedItems] = useState({});
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [reviewToDelete, setReviewToDelete] = useState({ orderId: null, productId: null });
 
   const fetchOrders = async () => {
     try {
@@ -92,7 +96,7 @@ function Orders() {
       navigate("/cart", { state: { cartItems: chooseCartItems } });
     } catch (error) {
       console.error("Lỗi khi mua lại:", error);
-      alert("Có lỗi xảy ra khi mua lại. Vui lòng thử lại.");
+      toast.error("Có lỗi xảy ra khi mua lại. Vui lòng thử lại.");
     }
   };
 
@@ -116,7 +120,13 @@ function Orders() {
     }
   };
 
-  const handleDeleteReview = async (orderId, productId) => {
+  const confirmDeleteReview = (orderId, productId) => {
+    setReviewToDelete({ orderId, productId });
+    setShowConfirmModal(true);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    const { orderId, productId } = reviewToDelete;
     try {
       const review = await getReviewDetail(productId, orderId);
       const reviewId = review.reviewID;
@@ -125,11 +135,13 @@ function Orders() {
 
       const key = `${orderId}_${productId}`;
       setReviewedItems((prev) => ({ ...prev, [key]: false }));
-
-      alert("Xóa đánh giá thành công!");
+      toast.success("Xóa đánh giá thành công!");
     } catch (err) {
       console.error("Delete review failed:", err);
-      alert("Lỗi khi xóa đánh giá");
+      toast.error("Lỗi khi xóa đánh giá");
+    } finally {
+      setShowConfirmModal(false);
+      setReviewToDelete({ orderId: null, productId: null });
     }
   };
 
@@ -206,7 +218,7 @@ function Orders() {
                                 <Button
                                     size="sm"
                                     variant="outline-danger"
-                                    onClick={() => handleDeleteReview(order.orderID, item.productId)}
+                                    onClick={() => confirmDeleteReview(order.orderID, item.productId)}
                                 >
                                   Xóa đánh giá
                                 </Button>
@@ -274,6 +286,15 @@ function Orders() {
           onSuccess={handleReviewSuccess}
         />
       )}
+      <PopupModal
+          show={showConfirmModal}
+          onClose={() => setShowConfirmModal(false)}
+          onConfirm={handleDeleteConfirmed}
+          title="Xác nhận xóa đánh giá"
+          body="Bạn có chắc chắn muốn xóa đánh giá này không? Hành động này không thể hoàn tác."
+          confirmText="Xóa"
+          cancelText="Hủy"
+      />
     </div>
   );
 }

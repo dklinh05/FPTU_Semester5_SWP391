@@ -4,7 +4,8 @@ import {
   approveRoleUpgrade,
   rejectRoleUpgrade,
 } from '../../services/adminService';
-import './AcceptUpdateRole.scss'; // Import CSS styles
+import './AcceptUpdateRole.scss';
+import {toast} from "react-toastify";
 
 const AcceptUpgradeRole = () => {
   const [requests, setRequests] = useState([]);
@@ -38,10 +39,10 @@ const AcceptUpgradeRole = () => {
     try {
       setLoading(true);
       await approveRoleUpgrade(requestId, note);
-      alert('Phê duyệt thành công');
+      toast.success("Phê duyệt thành công")
       fetchPendingRequests();
     } catch (err) {
-      alert('Không thể phê duyệt: ' + (err.message || 'Lỗi không xác định'));
+      toast.error("Không thể phê duyệt: " + (err.message || "Lỗi không xác định"));
     } finally {
       setLoading(false);
     }
@@ -52,10 +53,10 @@ const AcceptUpgradeRole = () => {
     try {
       setLoading(true);
       await rejectRoleUpgrade(requestId, note);
-      alert('Từ chối thành công');
+      toast.success("Từ chối thành công!")
       fetchPendingRequests();
     } catch (err) {
-      alert('Không thể từ chối: ' + (err.message || 'Lỗi không xác định'));
+      toast.error("Không thể từ chối: " + (err.message || "Lỗi không xác định"));
     } finally {
       setLoading(false);
     }

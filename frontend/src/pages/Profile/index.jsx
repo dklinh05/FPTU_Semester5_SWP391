@@ -7,6 +7,7 @@ import {
   uploadAvatar,
 } from "../../services/userService";
 import AddressPopup from "../../components/AddressPopup";
+import {toast} from "react-toastify";
 
 const Profile = () => {
   const { user, userId, setUser } = useUser();
@@ -35,8 +36,7 @@ const Profile = () => {
       setUser(updatedUser); // Cập nhật context
       setAvatarTimestamp(Date.now()); // Làm mới hình ảnh
     } catch (err) {
-      console.error("Lỗi upload avatar:", err);
-      alert("Upload avatar thất bại");
+      toast.error("Tải lên avatar thất bại");
     }
   };
 
@@ -64,8 +64,7 @@ const Profile = () => {
       setUser(updatedUser);
       setEditField(null);
     } catch (err) {
-      console.error("Lỗi cập nhật thông tin:", err.message);
-      alert(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -97,16 +96,16 @@ const Profile = () => {
   const handleSave = async (e) => {
     e.preventDefault();
     if (Object.keys(dirtyFields).length === 0) {
-      alert("Không có thông tin nào được thay đổi!");
+      toast.success("Không có thông tin nào được thay đổi!");
       return;
     }
     try {
       await updateUser(user.userID, dirtyFields);
-      alert("Cập nhật thành công!");
+      toast.success("Cập nhật thành công!");
       setDirtyFields({});
     } catch (error) {
       console.error("Lỗi khi lưu:", error);
-      alert("Cập nhật thất bại: " + error.message); // <-- đây là nơi sinh ra lỗi
+      toast.error("Cập nhật thất bại: " + error.message); // <-- đây là nơi sinh ra lỗi
     } finally {
       setDirtyFields({});
     }

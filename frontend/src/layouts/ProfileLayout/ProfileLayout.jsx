@@ -1,8 +1,6 @@
 import React from "react";
 import Header from "../../components/Header";
-import Sidebar from "./Sidebar"; // Đảm bảo đúng đường dẫn đến Sidebar của bạn
-import Profile from "../../pages/Profile";
-import Spinner from "../../components/Spinner";
+import Sidebar from "./Sidebar";
 import Footer from "../../components/Footer";
 
 

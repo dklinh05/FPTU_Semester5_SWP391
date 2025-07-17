@@ -1,11 +1,10 @@
-// src/pages/Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import CardDashboard from "../../components/CardDashboard";
 import {
   fetchDashboardStats,
   getTopProducts,
   getUsersByRole,
-} from "../../services/dashboardService"; // Bỏ `getNewUsersLastWeek`
+} from "../../services/dashboardService";
 import { getTokenFromCookie } from "../../services/authService";
 
 const Dashboard = () => {

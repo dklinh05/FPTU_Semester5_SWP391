@@ -4,6 +4,7 @@ import { useLocation } from "../../../context/LocationContext";
 import { useUser } from "../../../context/UserContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import {toast} from "react-toastify";
 
 const CommunityChatBanner = () => {
   const { currentLocation } = useLocation(); // Lấy vị trí hiện tại
@@ -57,7 +58,7 @@ const CommunityChatBanner = () => {
     // Bước 2: Nếu chưa có tọa độ, lấy từ database
     if (!lat || !lng) {
       if (!userID) {
-        alert("Bạn cần đăng nhập để tham gia nhóm chat.");
+        toast.success("Bạn cần đăng nhập để tham gia nhóm chat.");
         return;
       }
 
@@ -70,8 +71,7 @@ const CommunityChatBanner = () => {
 
     // Bước 3: Kiểm tra xem đã có tọa độ chưa
     if (!lat || !lng) {
-      alert(
-        "Không tìm thấy tọa độ trong hệ thống. Vui lòng cập nhật vị trí của bạn."
+      toast.error("Không tìm thấy tọa độ trong hệ thống. Vui lòng cập nhật vị trí của bạn."
       );
       return;
     }
@@ -98,14 +98,14 @@ const CommunityChatBanner = () => {
       const conversationId = response.data.conversationId;
 
       if (conversationId) {
-        alert(response.data.message || "Tham gia nhóm thành công!");
+        toast.success(response.data.message || "Tham gia nhóm thành công!");
         navigate(`/chat/${conversationId}`);
       } else {
-        alert("Không tìm thấy ID cuộc hội thoại.");
+        toast.error("Không tìm thấy ID cuộc hội thoại.");
       }
     } catch (error) {
       console.error("Lỗi khi tham gia nhóm chat:", error);
-      alert(error.response?.data?.message || "Không thể tham gia nhóm chat.");
+      toast.error(error.response?.data?.message || "Không thể tham gia nhóm chat.");
     }
   };
 

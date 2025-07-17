@@ -44,7 +44,6 @@ function BestSellerTable() {
             await deleteProduct(selectedProduct.productID);
             fetchProducts(pageInfo.number);
         } catch (error) {
-            console.error("Lỗi khi xoá sản phẩm:", error);
         } finally {
             setShowModal(false);
         }

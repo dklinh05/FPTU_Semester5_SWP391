@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { sendOtp, verifyOtp, changePassword } from "../../services/authService";
 import { useUser } from "../../context/UserContext";
 import { useNavigate } from "react-router-dom";
-
+import {toast} from "react-toastify";
 function ChangePassword() {
   const { user,userId, setUser } = useUser();
   const [step, setStep] = useState(1);
@@ -15,10 +15,10 @@ function ChangePassword() {
     e.preventDefault();
     try {
       await sendOtp(userId);
-      alert("OTP đã được gửi đến email");
+      toast.success("OTP đã được gửi đến email");
       setStep(2);
     } catch (err) {
-      alert("Gửi OTP thất bại");
+      toast.error("Gửi OTP thất bại");
     }
   };
 
@@ -26,10 +26,10 @@ function ChangePassword() {
     e.preventDefault();
     try {
       await verifyOtp(otp);
-      alert("Xác thực OTP thành công");
+      toast.success("Xác thực OTP thành công");
       setStep(3);
     } catch (err) {
-      alert("OTP không đúng");
+      toast.error("OTP không đúng");
     }
   };
 
@@ -37,10 +37,10 @@ function ChangePassword() {
     e.preventDefault();
     try {
       await changePassword(userId, oldPassword, newPassword);
-      alert("Đổi mật khẩu thành công");
+      toast.success("Đổi mật khẩu thành công");
       navigate("/login");
     } catch (err) {
-      alert("Đổi mật khẩu thất bại");
+      toast.error("Đổi mật khẩu thất bại");
     }
   };
 

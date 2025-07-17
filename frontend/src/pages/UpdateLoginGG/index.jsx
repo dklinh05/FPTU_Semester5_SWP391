@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { updateUserExtra } from "../../services/userService"; // bạn cần tạo hàm này
+import { updateUserExtra } from "../../services/userService";
 import styles from "../Register/Register.module.scss";
 import classNames from "classnames";
+import {toast} from "react-toastify";
 
 const cx = classNames.bind(styles);
 
@@ -46,10 +47,10 @@ const CompleteGoogleProfile = () => {
         const userId = localStorage.getItem("user");
         try {
             await updateUserExtra(userId, formData);
-            alert("Hoàn tất hồ sơ thành công!");
+            toast.success("Hoàn tất hồ sơ thành công!");
             navigate("/profile");
         } catch (error) {
-            alert("Lỗi khi cập nhật hồ sơ: " + (error.message || error));
+            toast.error("Lỗi khi cập nhật hồ sơ: " + (error.message || error));
             console.error(error);
         }
     };

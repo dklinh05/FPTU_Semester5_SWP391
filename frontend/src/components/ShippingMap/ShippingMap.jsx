@@ -7,6 +7,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
+import {toast} from "react-toastify";
 
 // Fix icon mặc định
 delete L.Icon.Default.prototype._getIconUrl;
@@ -40,7 +41,7 @@ function LocationPicker({ setMarker, setShippingAddress, setIsInDaNang }) {
             setShippingAddress({ address, lat, lng });
             setIsInDaNang(true);
           } else {
-            alert("Vị trí không thuộc thành phố Đà Nẵng.");
+            toast.error("Vị trí không thuộc thành phố Đà Nẵng.");
             setIsInDaNang(false);
           }
         })

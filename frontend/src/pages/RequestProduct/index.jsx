@@ -1,10 +1,8 @@
-// RequestProduct.jsx
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import styles from "./RequestProduct.module.scss"; // Import CSS Module
+import styles from "./RequestProduct.module.scss";
 
 
 const RequestProduct = () => {
@@ -17,8 +15,7 @@ const RequestProduct = () => {
         const res = await axios.get("http://localhost:8080/farmtrade/products/pending");
         setProducts(res.data);
       } catch (err) {
-        console.error("Lỗi khi tải sản phẩm chờ duyệt", err);
-        alert("Không thể tải danh sách sản phẩm");
+        toast.error("Không thể tải danh sách sản phẩm");
       }
     };
 
@@ -40,10 +37,10 @@ const RequestProduct = () => {
       toast.success("Cập nhật trạng thái thành công");
     } catch (err) {
       if (err.response?.status === 401) {
-        alert("Bạn cần đăng nhập để duyệt/xóa sản phẩm");
+        toast.error("Bạn cần đăng nhập để duyệt/xóa sản phẩm");
         window.location.href = "/login"; // chuyển hướng đến trang đăng nhập
       } else {
-        alert(`Lỗi: ${err.message}`);
+        toast.error(`Lỗi: ${err.message}`);
       }
     }
   };

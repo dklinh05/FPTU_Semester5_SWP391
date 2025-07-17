@@ -3,13 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import {
   renderProductBySupplierId,
-  deleteProduct, updateProduct,
+  deleteProduct,
+  updateProduct,
 } from "../../services/productService";
 import PaginationTab from "../../components/PaginationTab/PaginationTab";
-import EditProductModal from "/src/components/EditProductModal/EditProductModal"
-import {toast} from "react-toastify";
+import EditProductModal from "/src/components/EditProductModal/EditProductModal";
+import { toast } from "react-toastify";
 import PopupModal from "../../components/PopupModal/PopupModal";
-
 
 const ListProduct = () => {
   const { userId } = useUser();
@@ -33,8 +33,14 @@ const ListProduct = () => {
   const getProducts = async () => {
     try {
       const response = isAdminPage
-          ? await renderAllProductsAdmin(currentPage - 1, pageSize) // gọi API khác cho Admin
-          : await renderProductBySupplierId(userId, status, null, currentPage - 1, pageSize); // Supplier
+        ? await renderAllProductsAdmin(currentPage - 1, pageSize) // gọi API khác cho Admin
+        : await renderProductBySupplierId(
+            userId,
+            status,
+            null,
+            currentPage - 1,
+            pageSize
+          ); // Supplier
       setProducts(response.content);
       setTotalPages(response.totalPages);
       setTotalItems(response.totalElements);
@@ -165,30 +171,35 @@ const ListProduct = () => {
                     >
                       Filter By <i className="fas fa-filter"></i>
                     </a>
-                    <ul className="dropdown-menu" aria-labelledby="FilterMenuLink">
-                  <li>
-                    <Link className="dropdown-item py-2" to={"/listproduct"}>
-                      All
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="dropdown-item py-2"
-                      to={"/listproduct?status=active"}
+                    <ul
+                      className="dropdown-menu"
+                      aria-labelledby="FilterMenuLink"
                     >
-                      Active
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="dropdown-item py-2"
-                      to={"/listproduct?status=Inactive"}
-                    >
-                      Inactive
-                    </Link>
-                  </li>
-                 
-                </ul>
+                      <li>
+                        <Link
+                          className="dropdown-item py-2"
+                          to={"/listproduct"}
+                        >
+                          All
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          className="dropdown-item py-2"
+                          to={"/listproduct?status=Active"}
+                        >
+                          Active
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          className="dropdown-item py-2"
+                          to={"/listproduct?status=Inactive"}
+                        >
+                          Inactive
+                        </Link>
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -274,14 +285,14 @@ const ListProduct = () => {
                         </td>
                         <td>
                           <button
-                              className="btn btn-sm me-1"
-                              onClick={() => handleEdit(product)}
+                            className="btn btn-sm me-1"
+                            onClick={() => handleEdit(product)}
                           >
                             <i className="fa-solid fa-edit"></i>
                           </button>
                           <button
-                              className="btn btn-sm"
-                              onClick={() => confirmDelete(product)}
+                            className="btn btn-sm"
+                            onClick={() => confirmDelete(product)}
                           >
                             <i className="fa-solid fa-trash"></i>
                           </button>
@@ -293,32 +304,32 @@ const ListProduct = () => {
               </div>
 
               {showEditModal && selectedProduct && (
-                  <EditProductModal
-                      product={selectedProduct}
-                      onClose={() => setShowEditModal(false)}
-                      onSave={handleProductUpdate}
-                  />
+                <EditProductModal
+                  product={selectedProduct}
+                  onClose={() => setShowEditModal(false)}
+                  onSave={handleProductUpdate}
+                />
               )}
 
               {showDeleteModal && productToDelete && (
-                  <PopupModal
-                      show={showDeleteModal}
-                      onClose={() => setShowDeleteModal(false)}
-                      onConfirm={handleDeleteConfirmed}
-                      title="Xác nhận xoá"
-                      body={`Bạn có chắc chắn muốn xoá sản phẩm "${productToDelete.name}"?`}
-                      confirmText="Xoá"
-                      cancelText="Huỷ"
-                  />
+                <PopupModal
+                  show={showDeleteModal}
+                  onClose={() => setShowDeleteModal(false)}
+                  onConfirm={handleDeleteConfirmed}
+                  title="Xác nhận xoá"
+                  body={`Bạn có chắc chắn muốn xoá sản phẩm "${productToDelete.name}"?`}
+                  confirmText="Xoá"
+                  cancelText="Huỷ"
+                />
               )}
 
               {/* Pagination */}
               <PaginationTab
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={totalItems}
-              setCurrentPage={setCurrentPage}
-            />
+                currentPage={currentPage}
+                totalPages={totalPages}
+                totalItems={totalItems}
+                setCurrentPage={setCurrentPage}
+              />
             </div>
           </div>
         </div>

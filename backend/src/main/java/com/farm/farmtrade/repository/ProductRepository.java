@@ -21,16 +21,17 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     // Tìm sản phẩm theo status có phân trang
     Page<Product> findPageByStatus(String status, Pageable pageable);
 
-    //    @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-//    List<Product> findProductsByName(@Param("keyword") String keyword);
     List<Product> findByNameContainingIgnoreCaseAndStatus(String keyword, String status);
-    List<Product> findByNameContainingIgnoreCase(String keyword);
 
     Page<Product> findPageByCategoryAndStatus(String category, String status,  Pageable pageable);
 
     Page<Product> findBySupplierUserID(Integer supplierId, Pageable pageable);
 
     Page<Product> findPageBySupplierUserIDAndStatus(Integer sellerId, String status, Pageable pageable);
+
+    Page<Product> findBySupplierUserIDAndStatusNot(Integer supplierId, String status, Pageable pageable);
+
+    List<Product> findByNameContainingIgnoreCaseAndStatusNot(String keyword, String status);
 
 
     @Query(value = "SELECT p.Name AS name, p.Sales AS sales FROM Products p ORDER BY p.Sales DESC LIMIT 5", nativeQuery = true)

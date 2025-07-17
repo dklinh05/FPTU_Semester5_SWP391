@@ -51,7 +51,7 @@ public class ProductService {
         if (keyword == null || keyword.trim().isEmpty()) {
             return new ArrayList<>();
         }
-        return productRepository.findByNameContainingIgnoreCase(keyword);
+        return productRepository.findByNameContainingIgnoreCaseAndStatusNot(keyword, "Hidden");
     }
 
     public Product addProduct(ProductCreateRequest request) {
@@ -102,6 +102,14 @@ public class ProductService {
     }
 
     public Page<Product> getProductsBySupplierId(Integer supplierId, Pageable pageable) {
+        return productRepository.findBySupplierUserIDAndStatusNot(supplierId, "Hidden", pageable);
+    }
+
+    public Page<Product> getProductsBySupplierIdAndStatus(Integer supplierId, String status, Pageable pageable) {
+        return productRepository.findBySupplierUserIDAndStatus(supplierId, status, pageable);
+    }
+
+    public Page<Product> getAllProductsBySupplierId(Integer supplierId, Pageable pageable) {
         return productRepository.findBySupplierUserID(supplierId, pageable);
     }
 
@@ -124,8 +132,10 @@ public class ProductService {
     }
 
     public Page<Product> getFilteredProducts(String keyword, String category, Double lat, Double lng,Double rating, String latest, Pageable pageable) {
-        List<Product> allProducts = productRepository.findAllByStatus("active");
-
+        List<Product> allProducts = productRepository.findAllByStatus("active")
+                .stream()
+                .filter(p -> !"Hidden".equalsIgnoreCase(p.getStatus()))
+                .collect(Collectors.toList());
         // Lọc theo từ khóa nếu có
         if (keyword != null && !keyword.isBlank()) {
             String lowerKeyword = keyword.toLowerCase();

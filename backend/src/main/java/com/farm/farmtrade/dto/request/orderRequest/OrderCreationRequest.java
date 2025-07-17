@@ -31,4 +31,6 @@ public class OrderCreationRequest {
     List<OrderItemRequest> items;
     @NotBlank(message = "Address cannot be blank")
     String address;
+    Double lat;
+    Double lng;
 }

@@ -3,6 +3,7 @@ package com.farm.farmtrade.service.order;
 import com.farm.farmtrade.dto.request.orderRequest.OrderCreationRequest;
 import com.farm.farmtrade.dto.request.orderRequest.OrderGroupRequest;
 import com.farm.farmtrade.dto.request.orderRequest.OrderItemRequest;
+import com.farm.farmtrade.dto.response.ShippingFeeResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderGroupResponse;
 import com.farm.farmtrade.dto.response.orderResponse.OrderResponse;
 import com.farm.farmtrade.entity.*;
@@ -37,6 +38,7 @@ public class OrderGroupService {
     CartItemRepository cartItemRepository;
     @Autowired
     NotificationService notificationService;
+
     @Transactional
     public OrderGroupResponse createOrderGroup(OrderGroupRequest request) {
         User buyer = userRepository.findById(request.getBuyerId())
@@ -84,6 +86,8 @@ public class OrderGroupService {
                     .totalAmount(BigDecimal.ZERO)
                     .orderGroup(orderGroup)
                     .address(orderReq.getAddress())
+                    .lat(orderReq.getLat())
+                    .lng(orderReq.getLng())
                     .build();
             order = orderRepository.save(order);
 
@@ -112,9 +116,18 @@ public class OrderGroupService {
                 orderTotal = orderTotal.add(price.multiply(BigDecimal.valueOf(itemReq.getQuantity())));
             }
 
-            order.setTotalAmount(orderTotal);
+            // ✅ Tính khoảng cách và phí ship
+            double distance = calculateDistance(
+                    orderReq.getLat(), orderReq.getLng(),
+                    supplier.getLat(), supplier.getLng()
+            );
+            BigDecimal shippingFee = calculateShippingFee(distance);
+
+
+            order.setTotalAmount(orderTotal.add(shippingFee)); // cộng tổng + ship
+
             orderRepository.save(order);
-            groupTotal = groupTotal.add(orderTotal);
+            groupTotal = groupTotal.add(orderTotal.add(shippingFee));
 
             // ✅ Gửi thông báo cho supplier
             String title = "Bạn có đơn hàng mới";
@@ -184,9 +197,10 @@ public class OrderGroupService {
                 .status(order.getStatus())
                 .orderDate(order.getOrderDate())
                 .totalAmount(order.getTotalAmount())
-                .orderGroupId(order.getOrderGroup()!= null ? order.getOrderGroup().getOrderGroupID() : null)
+                .orderGroupId(order.getOrderGroup() != null ? order.getOrderGroup().getOrderGroupID() : null)
                 .build();
     }
+
     private BigDecimal applyVoucherDiscount(Voucher voucher, UserVoucher userVoucher, BigDecimal groupTotal) {
         if (voucher == null) return BigDecimal.ZERO;
 
@@ -248,5 +262,45 @@ public class OrderGroupService {
         orderGroupRepository.save(orderGroup);
     }
 
+
+    public ShippingFeeResponse calculateFee(Double lat, Double lng, Long supplierId) {
+        User supplier = userRepository.findById(Math.toIntExact(supplierId))
+                .orElseThrow(() -> new IllegalArgumentException("Supplier not found with ID: " + supplierId));
+
+        if (supplier.getLat() == null || supplier.getLng() == null) {
+            throw new IllegalArgumentException("Supplier location not available.");
+        }
+
+        double distance = calculateDistance(lat, lng, supplier.getLat(), supplier.getLng());
+        BigDecimal fee = calculateShippingFee(distance);
+
+        return new ShippingFeeResponse(distance, fee);
+    }
+
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        final int EARTH_RADIUS = 6371; // km
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return EARTH_RADIUS * c;
+    }
+
+    private BigDecimal calculateShippingFee(double distance) {
+        if (distance < 3) {
+            return BigDecimal.ZERO;
+        } else if (distance < 5) {
+            return BigDecimal.valueOf(10000);
+        } else if (distance < 10) {
+            return BigDecimal.valueOf(20000);
+        } else {
+            return BigDecimal.valueOf(30000);
+        }
+    }
 
 }

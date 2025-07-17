@@ -37,5 +37,9 @@ public class Order {
     OrderGroup orderGroup;
 
     String address;
+    @Column(name = "Lat")
+    Double lat;
+    @Column(name = "Lng")
+    Double lng;
 }
 

@@ -1,5 +1,3 @@
-// src/components/Header/Header.jsx
-
 import React, { useEffect, useState } from "react";
 import classNames from "classnames/bind";
 import Cookies from "js-cookie";

@@ -59,20 +59,26 @@ export const renderProductById = async (id) => {
 };
 
 export const renderProductBySupplierId = async (
-  id,
-  sortBy,
-  sortDir,
-  page,
-  size
+    id,
+    status,
+    sortBy,
+    sortDir,
+    page,
+    size
 ) => {
   try {
+    const params = {
+      sortBy,
+      sortDir,
+      page,
+      size,
+    };
+    if (status !== null) {
+      params.status = status;
+    }
+
     const response = await request.get(`/products/supplier/${id}`, {
-      params: {
-        sortBy,
-        sortDir,
-        page,
-        size,
-      },
+      params,
     });
     return response.data;
   } catch (error) {
@@ -127,6 +133,17 @@ export const updateProduct = async (id, productData) => {
 
   try {
     const response = await formRequest.put(`/products/${id}`, formData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const updateProductStatus = async (id, status) => {
+  try {
+    const response = await request.put(`/products/${id}/status`, null, {
+      params: { status },
+    });
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;

@@ -131,6 +131,7 @@ public class ProductController {
     @GetMapping("/supplier/{supplierId}")
     public ResponseEntity<Page<Product>> getProductsBySupplier(
             @PathVariable Integer supplierId,
+            @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -141,9 +142,18 @@ public class ProductController {
                 size,
                 sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending()
         );
-        Page<Product> products = productService.getProductsBySupplierId(supplierId, pageable);
+
+        Page<Product> products;
+
+        if (status != null) {
+            products = productService.getProductsBySupplierIdAndStatus(supplierId, status, pageable);
+        } else {
+            products = productService.getAllProductsBySupplierId(supplierId, pageable);
+        }
+
         return ResponseEntity.ok(products);
     }
+
 
     @GetMapping("/pending")
     public ResponseEntity<List<Product>> getPendingProducts() {

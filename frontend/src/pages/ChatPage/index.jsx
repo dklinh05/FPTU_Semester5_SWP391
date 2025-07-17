@@ -139,6 +139,7 @@ const ChatPage = () => {
     };
 
     fetchMessages();
+    fetchMembers();
   }, [conversationId]);
 
   const fetchAvatar = async (userId) => {

@@ -106,9 +106,9 @@ const OrderList = () => {
                   <li>
                     <Link
                       className="dropdown-item py-2"
-                      to={"/orderlist?status=Processing"}
+                      to={"/orderlist?status=Waiting"}
                     >
-                      Processing
+                      Waiting
                     </Link>
                   </li>
                   <li>

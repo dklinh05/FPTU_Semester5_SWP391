@@ -109,17 +109,10 @@ function OrderShipping() {
                       className="dropdown-item py-2"
                       to={"/order-manage-shipping?status=Processing"}
                     >
-                      Processing
+                      Waiting
                     </Link>
                   </li>
-                  <li>
-                    <Link
-                      className="dropdown-item py-2"
-                      to={"/order-manage-shipping?status=Cancel"}
-                    >
-                      Cancel
-                    </Link>
-                  </li>
+                  
                 </ul>
               </div>
             </div>

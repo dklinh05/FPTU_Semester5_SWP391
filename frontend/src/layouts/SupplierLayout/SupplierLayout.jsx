@@ -1,4 +1,5 @@
 import SidebarSupplier from "../components/SidebarSupplier";
+import HeaderAdmin from "../components/HeaderSupplier/HeaderSupplier";
 
 function SupplierLayout({children}) {
   return (
@@ -6,7 +7,7 @@ function SupplierLayout({children}) {
       <div id="main-wrapper" className="d-flex">
         <SidebarSupplier />
         <div className="content-wrapper">
-          {/* <HeaderAdmin/> */}
+           <HeaderAdmin/>
           {children}
         </div>
       </div>

@@ -40,6 +40,7 @@ const routes = {
   chat : '/chat/:conversationId',
   ordersRate: '/orders/rate',
   AdminListProduct: "/admin/listproduct",
+  SupplierProfile: '/supplier/profile',
 };
 
 export default routes;

@@ -21,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -368,14 +369,31 @@ public class OrderService {
 
         order.setStatus(request.getNewStatus());
         orderRepository.save(order);
+        User supplier = order.getSupplier(); // người bán
+        // Nếu đơn hàng đã hoàn thành hoặc xác nhận -> cập nhật doanh thu
+        if ("COMPLETED".equalsIgnoreCase(request.getNewStatus()) || "CONFIRMED".equalsIgnoreCase(request.getNewStatus())) {
+            BigDecimal currentTotalRevenue = supplier.getTotalRevenue() != null ? BigDecimal.valueOf(supplier.getTotalRevenue()) : BigDecimal.ZERO;
+            BigDecimal newTotalRevenue = currentTotalRevenue.add(order.getTotalAmount());
+            supplier.setTotalRevenue(newTotalRevenue.longValue());
+            userRepository.save(supplier);
+        }
         User customer = order.getBuyer(); // người đặt hàng
+        // Nếu đơn hàng đã hoàn thành hoặc xác nhận -> cập nhật điểm thưởng và tổng chi tiêu
+        if ("COMPLETED".equalsIgnoreCase(request.getNewStatus()) || "CONFIRMED".equalsIgnoreCase(request.getNewStatus())) {
+            BigDecimal currentTotalSpend = customer.getTotalSpend() != null ? customer.getTotalSpend() : BigDecimal.ZERO;
+            BigDecimal newTotalSpend = currentTotalSpend.add(order.getTotalAmount());
+
+            customer.setTotalSpend(newTotalSpend);
+            customer.setRewardPoints(newTotalSpend.divide(BigDecimal.valueOf(1000), RoundingMode.FLOOR).intValue());
+
+            userRepository.save(customer);
+        }
 
         String role = isSupplierAuthorized ? "Nhà cung cấp" : "Shipper";
         String status = request.getNewStatus(); // enum to string
 
         String title = "Cập nhật đơn hàng #" + order.getOrderID();
         String message = String.format("%s đã cập nhật trạng thái đơn hàng của bạn thành '%s'.", role, status);
-
         notificationService.createNotification(customer.getUserID(), title, message, "ORDER_UPDATE");
     }
 

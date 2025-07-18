@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -38,7 +39,7 @@ public class User {
     // Buyer
     String address;
     Integer rewardPoints;
-    Long totalSpend;
+    BigDecimal totalSpend;
 
     // Supplier
     String businessName;

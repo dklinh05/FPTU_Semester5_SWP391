@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -71,7 +72,7 @@ public class UserService {
         user.setCreatedAt(LocalDateTime.now());
         user.setAddress(request.getAddress());
         user.setRewardPoints(0);
-        user.setTotalSpend(0L);
+        user.setTotalSpend(BigDecimal.ZERO);
         user.setRole(Role.CUSTOMER.name());
         user.setIsLocked(false);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);

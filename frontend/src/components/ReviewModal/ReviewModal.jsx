@@ -8,7 +8,7 @@ import {
 } from "../../services/feedbackService";
 import styles from "./ReviewModal.module.scss";
 import {toast} from "react-toastify";
-
+import { useUser } from "../../context/UserContext";
 const starTooltips = ["Tệ", "Không hài lòng", "Bình thường", "Tốt", "Xuất sắc"];
 
 const renderStars = (
@@ -38,7 +38,6 @@ const renderStars = (
             )}
     </span>
     ));
-
 function ReviewModal({ show, onHide, product, onSuccess }) {
     const [productQuality, setProductQuality] = useState(0);
     const [sellerService, setSellerService] = useState(0);
@@ -52,7 +51,7 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
     const [hoveredDelivery, setHoveredDelivery] = useState(null);
     const maxImages = 5;
     const isViewOnly = product?.isViewOnly;
-
+    const { setPoints } = useUser();
     useEffect(() => {
         const loadReviewData = async () => {
             if (product?.isEdit) {
@@ -110,9 +109,14 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
                 toast.success("Cập nhật đánh giá thành công!");
             } else {
                 formData.append("orderId", product.orderId);
-                await submitReview(product.productId, formData);
+                const response = await submitReview(product.productId, formData);
+
+                if (response?.newPoints !== undefined) {
+                    setPoints(response.newPoints);
+                }
                 toast.success("Đánh giá thành công!");
             }
+
             onHide();
             if (onSuccess) onSuccess();
         } catch (error) {

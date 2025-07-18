@@ -11,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ public class UserVoucherService {
      * Người dùng đổi voucher (nếu đủ điểm và chưa đổi trước đó)
      */
     @Transactional
-    public UserVoucher redeemVoucher(String userId, String voucherId) {
+    public Map<String, Object> redeemVoucher(String userId, String voucherId) {
         User user = userRepository.findById(Integer.valueOf(userId))
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
 
@@ -57,7 +59,14 @@ public class UserVoucherService {
                 .isUsed(false)
                 .build();
 
-        return userVoucherRepository.save(userVoucher);
+        userVoucherRepository.save(userVoucher);
+
+        // Tạo phản hồi gồm cả voucher và điểm mới
+        Map<String, Object> result = new HashMap<>();
+        result.put("userVoucher", userVoucher);
+        result.put("newPoints", user.getRewardPoints());
+
+        return result;
     }
 
 

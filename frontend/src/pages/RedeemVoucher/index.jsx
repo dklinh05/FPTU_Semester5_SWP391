@@ -8,9 +8,10 @@ import {
 import { useUser } from "../../context/UserContext";
 import Header from "../../components/Header";
 import ShopBanner from "../../layouts/components/ShopBanner";
+import confetti from "canvas-confetti";
 
 function RedeemVoucher() {
-  const { userId, points } = useUser();
+  const { userId, points,setPoints } = useUser();
   const [vouchers, setVouchers] = useState([]);
   const [ownedVouchers, setOwnedVouchers] = useState([]);
 
@@ -33,32 +34,41 @@ function RedeemVoucher() {
   };
 
   const handleRedeem = async (voucherId) => {
-  try {
-    const response = await redeemVoucher(userId, voucherId);
+    try {
+      const response = await redeemVoucher(userId, voucherId);
 
-    if (response) {
-      toast.success("Đổi voucher thành công!");
-      fetchData(); // Cập nhật lại danh sách nếu cần
-    } else {
-      toast.error("Đã có lỗi xảy ra.");
-    }
-  } catch (err) {
-    if (err.response) {
-      // Có phản hồi từ server (ví dụ lỗi 500, 400, v.v.)
-      if (err.response.status === 500) {
-        toast.error("Lỗi hệ thống. Vui lòng thử lại sau.");
+      if (response?.newPoints !== undefined) {
+        toast.success("Đổi voucher thành công và điểm đã được cập nhật!");
+
+        for (let i = 0; i < 3; i++) {
+          setTimeout(() => {
+            confetti({
+              particleCount: 70,
+              spread: 70 + i * 15,
+              origin: { y: 0.6 },
+              zIndex: 9999,
+            });
+          }, i * 300);
+        }
+        setPoints(response.newPoints);
+        fetchData();
       } else {
-        toast.error(err.response.data.message || "Đã có lỗi xảy ra.");
+        toast.error("Đã có lỗi xảy ra.");
       }
-    } else if (err.request) {
-      // Yêu cầu được gửi nhưng không có phản hồi
-      toast.error("Không nhận được phản hồi từ server.");
-    } else {
-      // Lỗi khác (ví dụ khi gọi hàm sai)
-      toast.error(err.message);
+    } catch (err) {
+      if (err.response) {
+        if (err.response.status === 500) {
+          toast.error("Lỗi hệ thống. Vui lòng thử lại sau.");
+        } else {
+          toast.error(err.response.data.message || "Đã có lỗi xảy ra.");
+        }
+      } else if (err.request) {
+        toast.error("Không nhận được phản hồi từ server.");
+      } else {
+        toast.error(err.message);
+      }
     }
-  }
-};
+  };
 
 
   return (

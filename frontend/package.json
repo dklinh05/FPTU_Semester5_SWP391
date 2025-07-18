@@ -16,6 +16,7 @@
     "antd": "^5.25.3",
     "axios": "^1.10.0",
     "bootstrap": "^5.3.6",
+    "canvas-confetti": "^1.9.3",
     "classnames": "^2.5.1",
     "jquery": "^3.7.1",
     "js-cookie": "^3.0.5",

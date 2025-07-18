@@ -50,6 +50,11 @@ public class UserService {
     @Autowired
     private EmailService emailService;
 
+    public User updateBusinessName(int userId, String businessName) {
+        User user = getUserById(userId);
+        user.setBusinessName(businessName);
+        return userRepository.save(user);
+    }
 
     public List<SupplierDTO> getSuppliersByLocation(double lat, double lng) {
         int radiusInMeters = 5000; // Bán kính 5km

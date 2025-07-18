@@ -47,6 +47,15 @@ const userId = parseInt(getUserIdFromToken(), 10); // ← Chắc chắn là số
     );
 };
 
+export const updateBusinessName = async (userId, businessName) => {
+    try {
+        const res = await request.put(`/users/${userId}/business-name`, { businessName });
+        return res.data;
+    } catch (error) {
+        console.error("Lỗi cập nhật BusinessName:", error);
+        throw new Error(`Cập nhật Business Name thất bại: ${error.message}`);
+    }
+};
 export const updateUser = async (userId, data) => {
   try {
     const response = await request.put(`/users/${userId}`, data);

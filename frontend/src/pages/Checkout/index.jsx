@@ -37,35 +37,34 @@ function Checkout() {
     return groups;
   }, {});
 
- const calculateShipFee = async () => {
-  let totalShippingFee = 0;
+  const calculateShipFee = async () => {
+    let totalShippingFee = 0;
 
-  for (const supplierId in groupedBySupplier) {
-    try {
-      const res = await calculateShip(
-        shippingAddress.lat,
-        shippingAddress.lng,
-        supplierId
-      );
+    for (const supplierId in groupedBySupplier) {
+      try {
+        const res = await calculateShip(
+          shippingAddress.lat,
+          shippingAddress.lng,
+          supplierId
+        );
 
-      totalShippingFee += res.shippingFee;
-    } catch (error) {
-      console.error(`Shipping fee error for supplier ${supplierId}:`, error);
+        totalShippingFee += res.shippingFee;
+      } catch (error) {
+        console.error(`Shipping fee error for supplier ${supplierId}:`, error);
+      }
     }
-  }
 
-  return totalShippingFee;
-};
-
-useEffect(() => {
-  const fetchShippingFee = async () => {
-    const total = await calculateShipFee();
-    setFee(total);
+    return totalShippingFee;
   };
 
-  fetchShippingFee();
-}, []);
+  useEffect(() => {
+    const fetchShippingFee = async () => {
+      const total = await calculateShipFee();
+      setFee(total);
+    };
 
+    fetchShippingFee();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -99,7 +98,7 @@ useEffect(() => {
 
       const response = await addOrder(orderGroupData);
       const groupId = response.orderGroupID;
-      const amount = response.totalAmount;
+      const amount = response.finalAmount;
 
       console.log("Đã tạo đơn hàng:", groupId, amount);
 
@@ -275,7 +274,7 @@ useEffect(() => {
                           total + cart.quantity * cart.product.price,
                         0
                       ) +
-                        30000 -
+                        fee -
                         (chooseVoucher?.voucher?.discountValue ?? 0)}
                       đ
                     </strong>

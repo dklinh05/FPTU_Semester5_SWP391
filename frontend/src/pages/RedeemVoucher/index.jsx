@@ -5,6 +5,7 @@ import {
   renderVoucher,
   renderVoucherByUserId,
 } from "../../services/voucherService";
+import { formatDate } from "../../utils/formatDate";
 import { useUser } from "../../context/UserContext";
 import Header from "../../components/Header";
 import ShopBanner from "../../layouts/components/ShopBanner";
@@ -87,7 +88,7 @@ function RedeemVoucher() {
                       <br />
                       Discount: <strong>{voucher.discountValue}₫</strong>
                       <br />
-                      Expiry: {voucher.expirationDate}
+                      Expiry: {formatDate(voucher.expirationDate)}
                       <br />
                       Exchange points: <strong>{voucher.requiredPoints}</strong>
                     </p>
@@ -120,7 +121,7 @@ function RedeemVoucher() {
                       <br />
                       Discount: <strong>{voucher.voucher.discountValue}₫</strong>
                       <br />
-                      Expiry: {voucher.voucher.expirationDate}
+                      Expiry: {formatDate(voucher.voucher.expirationDate)}
                     </p>
                     <span className="badge bg-success">Owned</span>
                   </div>

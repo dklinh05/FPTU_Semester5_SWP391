@@ -18,7 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -42,7 +44,15 @@ public class ProductReviewController {
                                           Principal principal) {
         String username = principal.getName();
         ProductReview review = reviewService.createReview(productId, request, username);
-        return ResponseEntity.ok(review);
+
+        User user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("review", review);
+        response.put("newPoints", user.getRewardPoints());
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/check-reviewed")

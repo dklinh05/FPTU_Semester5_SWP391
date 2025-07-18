@@ -74,8 +74,12 @@ public class ProductReviewService {
 
             List<String> imageUrls = fileStorageService.uploadReviewImages(images, savedReview.getReviewID());
             savedReview.setImage(String.join(";", imageUrls));
-            return productReviewRepository.save(savedReview);
+            productReviewRepository.save(savedReview);
         }
+
+        int current = buyer.getRewardPoints() != null ? buyer.getRewardPoints() : 0;
+        buyer.setRewardPoints(current + 200);
+        userRepo.save(buyer);
 
         return savedReview;
     }

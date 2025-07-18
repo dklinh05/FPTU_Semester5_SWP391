@@ -238,7 +238,7 @@ function Orders() {
                                   })
                               }
                           >
-                            Đánh giá
+                            Đánh giá + 200P
                           </Button>
                       )
                   )}

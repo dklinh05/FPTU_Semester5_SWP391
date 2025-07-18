@@ -19,7 +19,7 @@ function CartTotal({ carts, voucher }) {
 
   const shippingFee = 30000;
   const discount = voucher?.voucher?.discountValue ?? 0;
-  const total = subtotal + shippingFee - discount;
+  const total = subtotal  - discount;
 
   return (
     <div className="row g-4 justify-content-end">
@@ -34,12 +34,12 @@ function CartTotal({ carts, voucher }) {
               <h5 className="mb-0 me-4">Subtotal:</h5>
               <p className="mb-0">{subtotal} VND</p>
             </div>
-            <div className="d-flex justify-content-between">
+            {/* <div className="d-flex justify-content-between">
               <h5 className="mb-0 me-4">Shipping</h5>
               <div>
                 <p className="mb-0"> {shippingFee} VND</p>
               </div>
-            </div>
+            </div> */}
             <div className="d-flex justify-content-between">
               <h5 className="mb-0 me-4">Voucher</h5>
               <div>

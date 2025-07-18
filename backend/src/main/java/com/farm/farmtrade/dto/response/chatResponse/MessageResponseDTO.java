@@ -1,7 +1,10 @@
 package com.farm.farmtrade.dto.response.chatResponse;
 
 
+import lombok.RequiredArgsConstructor;
+
 import java.time.LocalDateTime;
+
 
 public class MessageResponseDTO {
     private Long messageId;
@@ -10,6 +13,16 @@ public class MessageResponseDTO {
     private String content;
     private LocalDateTime sentAt;
     private boolean isRead;
+
+    public MessageResponseDTO(Long messageId, Integer senderId, String content, LocalDateTime now) {
+        this.messageId = messageId;
+        this.senderId = senderId;
+        this.content = content;
+        this.sentAt = now;
+    }
+
+    public MessageResponseDTO() {
+    }
 
     // Getters and setters
     public Long getMessageId() {

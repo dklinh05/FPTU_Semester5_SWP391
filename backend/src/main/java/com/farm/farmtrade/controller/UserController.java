@@ -52,6 +52,17 @@ public class UserController {
         }
     }
 
+    @PutMapping("/{userId}/business-name")
+    public ResponseEntity<User> updateBusinessName(
+            @PathVariable int userId,
+            @RequestBody Map<String, String> payload
+    ) {
+        String businessName = payload.get("businessName");
+        User updatedUser = userService.updateBusinessName(userId, businessName);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+
     @PostMapping("/request")
     public ResponseEntity<RoleUpgrade> submitUpgradeRequest(
             @RequestPart("businessName") String businessName,

@@ -370,23 +370,22 @@ public class OrderService {
         order.setStatus(request.getNewStatus());
         orderRepository.save(order);
         User supplier = order.getSupplier(); // người bán
-        // Nếu đơn hàng đã hoàn thành hoặc xác nhận -> cập nhật doanh thu
-        if ("COMPLETED".equalsIgnoreCase(request.getNewStatus()) || "CONFIRMED".equalsIgnoreCase(request.getNewStatus())) {
-            BigDecimal currentTotalRevenue = supplier.getTotalRevenue() != null ? BigDecimal.valueOf(supplier.getTotalRevenue()) : BigDecimal.ZERO;
-            BigDecimal newTotalRevenue = currentTotalRevenue.add(order.getTotalAmount());
-            supplier.setTotalRevenue(newTotalRevenue.longValue());
-            userRepository.save(supplier);
-        }
         User customer = order.getBuyer(); // người đặt hàng
-        // Nếu đơn hàng đã hoàn thành hoặc xác nhận -> cập nhật điểm thưởng và tổng chi tiêu
-        if ("COMPLETED".equalsIgnoreCase(request.getNewStatus()) || "CONFIRMED".equalsIgnoreCase(request.getNewStatus())) {
+
+
+        if ("COMPLETED".equalsIgnoreCase(request.getNewStatus())) {
             BigDecimal currentTotalSpend = customer.getTotalSpend() != null ? customer.getTotalSpend() : BigDecimal.ZERO;
             BigDecimal newTotalSpend = currentTotalSpend.add(order.getTotalAmount());
-
+            // Nếu đơn hàng đã hoàn thành hoặc xác nhận -> cập nhật điểm thưởng và tổng chi tiêu
             customer.setTotalSpend(newTotalSpend);
             customer.setRewardPoints(newTotalSpend.divide(BigDecimal.valueOf(1000), RoundingMode.FLOOR).intValue());
-
             userRepository.save(customer);
+
+            BigDecimal currentTotalRevenue = supplier.getTotalRevenue() != null ? supplier.getTotalRevenue() : BigDecimal.ZERO;
+            BigDecimal newTotalRevenue = currentTotalRevenue.add(order.getTotalAmount());
+            // Nếu đơn hàng đã hoàn thành hoặc xác nhận -> cập nhật doanh thu
+            supplier.setTotalRevenue(newTotalRevenue);
+            userRepository.save(supplier);
         }
 
         String role = isSupplierAuthorized ? "Nhà cung cấp" : "Shipper";

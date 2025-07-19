@@ -36,8 +36,8 @@ public class SecurityConfig {
     @Value("${jwt.signerKey}")
     private String signerKey;
 
-    private final String[] ADMIN_ENDPOINTS = {"/admin/**", "/users", "/admin", "/voucher/**", "/voucher","/users/requests/pending"};
-    private final String[] PUBLIC_POST_ENDPOINTS = {"/auth/**", "/oauth2/**", "/users/register", "/auth/**", "/orders", "/orders/**", "/voucher", "/voucher/**", "users/request"};
+    private final String[] ADMIN_ENDPOINTS = {"/admin/**", "/users", "/admin", "/voucher/**", "/voucher","/users/requests/pending","/withdraw","/withdraw/**"};
+    private final String[] PUBLIC_POST_ENDPOINTS = {"/auth/**", "/oauth2/**", "/users/register", "/auth/**", "/orders", "/orders/**", "/voucher", "/voucher/**", "users/request","/withdraw"};
     private final String[] PUBLIC_GET_ENDPOINTS = {"/auth/**", "/products/**", "/orders", "/orders/**", "/voucher",  "/voucher/**",  "/reviews/**"};
     private final String[] PUBLIC_ENDPOINTS = {"/paypal","/paypal/**","/vnpay","/vnpay/**","/payos","/payos/**", "/orders/**", "/orders"};
     private final String[] CUSTOMER_POST_ENDPOINTS = {

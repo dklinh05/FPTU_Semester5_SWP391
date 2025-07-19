@@ -45,8 +45,8 @@ public class User {
     String businessName;
     @Column(name = "certification")
     private String certification;
-    Long totalRevenue;
-
+    BigDecimal totalRevenue;
+    BigDecimal withdrawn;
     // Shipper
     String vehicle;
     String licensePlate;

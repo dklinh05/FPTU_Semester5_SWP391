@@ -20,6 +20,7 @@ public class GeocodingService {
             Map.entry("An Hải", "Sơn Trà"),
             Map.entry("Sơn Trà", "Sơn Trà"),
             Map.entry("Ngũ Hành Sơn", "Ngũ Hành Sơn"),
+            Map.entry("Điện Bàn Đông", "Ngũ Hành Sơn"),
             Map.entry("Hòa Khánh", "Liên Chiểu"),
             Map.entry("Hải Vân", "Liên Chiểu"),
             Map.entry("Liên Chiểu", "Liên Chiểu"),

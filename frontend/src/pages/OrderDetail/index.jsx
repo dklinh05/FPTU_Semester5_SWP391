@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
-import { renderOrderById, renderOrderItemsByOrderId } from "../../services/orderService";
-import { formatDate } from "../../utils/formatDate"; 
+import {
+  renderOrderById,
+  renderOrderItemsByOrderId,
+} from "../../services/orderService";
+import { formatDate } from "../../utils/formatDate";
 
 function OrderDetail() {
   const { userId } = useUser();
- const { id } = useParams();
+  const { id } = useParams();
   const [order, setOrder] = useState({});
   const [orderItems, setOrderItems] = useState([]);
+  const [price, setPrice] = useState(0);
 
   const getOrders = async () => {
     try {
@@ -30,11 +34,17 @@ function OrderDetail() {
     }
   };
 
-useEffect(() => {
-   if(userId) {
-    getOrders();
-    getOrderItems();
-   }
+  const calculateTotalPrice = (orderItems) => {
+    return orderItems.reduce((total, item) => {
+      return total + item.quantity * item.price;
+    }, 0);
+  };
+
+  useEffect(() => {
+    if (userId) {
+      getOrders();
+      getOrderItems();
+    }
   }, [userId]);
 
   return (
@@ -54,14 +64,12 @@ useEffect(() => {
                 <strong>Invoice No:</strong> {order.orderID}
               </p>
               <p>
-                <strong>Order Date:</strong>{" "}
-                {formatDate(order.orderDate)}
+                <strong>Order Date:</strong> {formatDate(order.orderDate)}
               </p>
+              <p>{/* <strong>Payment Method:</strong> {order.method} */}</p>
               <p>
-                {/* <strong>Payment Method:</strong> {order.method} */}
-              </p>
-              <p>
-                <strong>Address:</strong>{order.address}
+                <strong>Address:</strong>
+                {order.address}
               </p>
             </div>
             <div className="col-md-6">
@@ -74,6 +82,13 @@ useEffect(() => {
               <p>
                 <strong>Total Amount:</strong>{" "}
                 {order.totalAmount?.toLocaleString()} VND
+              </p>
+              <p>
+                <strong>Shipping Fee:</strong>{" "}
+                {(
+                  order.totalAmount - calculateTotalPrice(orderItems)
+                ).toLocaleString()}{" "}
+                VND
               </p>
             </div>
           </div>
@@ -95,9 +110,7 @@ useEffect(() => {
                     <td>{item.productName}</td>
                     <td>{item.quantity}</td>
                     <td>{item.price?.toLocaleString()} VND</td>
-                    <td>
-                      {(item.quantity * item.price).toLocaleString()} VND
-                    </td>
+                    <td>{(item.quantity * item.price).toLocaleString()} VND</td>
                   </tr>
                 ))}
               </tbody>

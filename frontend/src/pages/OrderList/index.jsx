@@ -40,7 +40,7 @@ const OrderList = () => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const response = await updateStatusOrder(orderId, newStatus, userId, null);
+      const response = await updateStatusOrder(orderId, newStatus, userId, null, null);
       toast.success(response);
       await getOrders();
 

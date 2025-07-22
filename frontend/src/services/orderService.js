@@ -120,7 +120,8 @@ export const updateStatusOrder = async (
   orderId,
   newStatus,
   supplierId,
-  shipperId
+  shipperId,
+  customerId
 ) => {
   try {
     const response = await request.put(`/orders/update-status`, {
@@ -128,6 +129,8 @@ export const updateStatusOrder = async (
       newStatus,
       supplierId,
       shipperId,
+      customerId,
+      
     });
     return response.data;
   } catch (error) {

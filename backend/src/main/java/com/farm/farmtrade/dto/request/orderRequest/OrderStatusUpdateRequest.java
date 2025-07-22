@@ -17,7 +17,9 @@ public class OrderStatusUpdateRequest {
     @NotBlank(message = "Status must not be blank")
     String newStatus;
 
+
     Integer supplierId;
 
     Integer shipperId;
+    Integer customerId;
 }

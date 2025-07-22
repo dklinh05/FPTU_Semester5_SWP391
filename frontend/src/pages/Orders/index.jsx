@@ -6,11 +6,16 @@ import { useCart } from "../../context/CartContext";
 import {
   renderOrderByBuyerId,
   renderOrderItemsByOrderId,
+  updateStatusOrder,
 } from "../../services/orderService";
 import { addProductToCart } from "../../services/cartItemService";
 import ReviewModal from "../../components/ReviewModal/ReviewModal";
-import { checkIfReviewed, deleteReview, getReviewDetail } from "../../services/feedbackService";
-import {toast} from "react-toastify";
+import {
+  checkIfReviewed,
+  deleteReview,
+  getReviewDetail,
+} from "../../services/feedbackService";
+import { toast } from "react-toastify";
 import PopupModal from "../../components/PopupModal/index.js";
 
 function Orders() {
@@ -27,13 +32,24 @@ function Orders() {
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewedItems, setReviewedItems] = useState({});
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [reviewToDelete, setReviewToDelete] = useState({ orderId: null, productId: null });
+  const [reviewToDelete, setReviewToDelete] = useState({
+    orderId: null,
+    productId: null,
+  });
 
   const fetchOrders = async () => {
     try {
       let fetchedOrders = [];
       if (location.pathname === "/orders/rate") {
-        fetchedOrders = await renderOrderByBuyerId(userId, "completed");
+        const completedOrders = await renderOrderByBuyerId(userId, "completed");
+        const confirmedOrders = await renderOrderByBuyerId(userId, "confirmed");
+
+        fetchedOrders = [...completedOrders, ...confirmedOrders];
+      } else if (status === "completed") {
+        const completedOrders = await renderOrderByBuyerId(userId, "completed");
+        const confirmedOrders = await renderOrderByBuyerId(userId, "confirmed");
+
+        fetchedOrders = [...completedOrders, ...confirmedOrders];
       } else {
         fetchedOrders = await renderOrderByBuyerId(userId, status);
       }
@@ -145,6 +161,23 @@ function Orders() {
     }
   };
 
+  const handleStatusChange = async (orderId) => {
+    console.log(orderId);
+    try {
+      const response = await updateStatusOrder(
+        orderId,
+        "CONFIRMED",
+        null,
+        null,
+        userId
+      );
+      toast.success(response);
+      await fetchOrders(); 
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm:", error);
+    }
+  };
+
   useEffect(() => {
     if (userId) {
       fetchOrders();
@@ -183,66 +216,70 @@ function Orders() {
                     Giá: ₫{item.price.toLocaleString()}
                   </div>
 
-                  {order.status === "COMPLETED" && (
-                      reviewedItems[`${order.orderID}_${item.productId}`] ? (
-                          location.pathname === "/orders" ? (
-                              <div className="mt-2">
-                                <Button
-                                    size="sm"
-                                    variant="outline-info"
-                                    onClick={() => handleFeedback(order.orderID, {
-                                      productId: item.productId,
-                                      productName: item.productName,
-                                      productImage: item.productImage,
-                                      isEdit: true,
-                                      isViewOnly: true // Flag chỉ để xem
-                                    })}
-                                >
-                                  Xem đánh giá
-                                </Button>
-                              </div>
-                          ) : (
-                              <div className="mt-2 d-flex gap-2">
-                                <Button
-                                    size="sm"
-                                    variant="outline-warning"
-                                    onClick={() => handleFeedback(order.orderID, {
-                                      productId: item.productId,
-                                      productName: item.productName,
-                                      productImage: item.productImage,
-                                      isEdit: true
-                                    })}
-                                >
-                                  Chỉnh sửa đánh giá
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="outline-danger"
-                                    onClick={() => confirmDeleteReview(order.orderID, item.productId)}
-                                >
-                                  Xóa đánh giá
-                                </Button>
-                              </div>
-                          )
-                      ) : (
+                  {order.status === "CONFIRMED" &&
+                    (reviewedItems[`${order.orderID}_${item.productId}`] ? (
+                      location.pathname === "/orders" ? (
+                        <div className="mt-2">
                           <Button
-                              size="sm"
-                              variant="outline-success"
-                              className="mt-2"
-                              onClick={() =>
-                                  handleFeedback(order.orderID, {
-                                    productId: item.productId,
-                                    productName: item.productName,
-                                    productImage: item.productImage,
-                                    isEdit: false
-                                  })
-                              }
+                            size="sm"
+                            variant="outline-info"
+                            onClick={() =>
+                              handleFeedback(order.orderID, {
+                                productId: item.productId,
+                                productName: item.productName,
+                                productImage: item.productImage,
+                                isEdit: true,
+                                isViewOnly: true, // Flag chỉ để xem
+                              })
+                            }
                           >
-                            Đánh giá + 200P
+                            Xem đánh giá
                           </Button>
+                        </div>
+                      ) : (
+                        <div className="mt-2 d-flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline-warning"
+                            onClick={() =>
+                              handleFeedback(order.orderID, {
+                                productId: item.productId,
+                                productName: item.productName,
+                                productImage: item.productImage,
+                                isEdit: true,
+                              })
+                            }
+                          >
+                            Chỉnh sửa đánh giá
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline-danger"
+                            onClick={() =>
+                              confirmDeleteReview(order.orderID, item.productId)
+                            }
+                          >
+                            Xóa đánh giá
+                          </Button>
+                        </div>
                       )
-                  )}
-
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline-success"
+                        className="mt-2"
+                        onClick={() =>
+                          handleFeedback(order.orderID, {
+                            productId: item.productId,
+                            productName: item.productName,
+                            productImage: item.productImage,
+                            isEdit: false,
+                          })
+                        }
+                      >
+                        Đánh giá + 200P
+                      </Button>
+                    ))}
                 </div>
               </div>
             ))}
@@ -259,12 +296,20 @@ function Orders() {
             >
               Chi tiết
             </Button>
-            {(order.status === "COMPLETED" || order.status === "CANCELLED") && (
+            {(order.status === "CONFIRMED" || order.status === "CANCELLED") && (
               <Button
                 variant="danger"
                 onClick={() => handleBuyAgain(orderItemsMap[order.orderID])}
               >
                 Mua lại
+              </Button>
+            )}
+            {order.status === "COMPLETED" && (
+              <Button
+                variant="outline-primary"
+                onClick={() => handleStatusChange(order.orderID)}
+              >
+                Xác nhận đã nhận đơn hàng
               </Button>
             )}
             {order.status === "PENDING" && (
@@ -287,13 +332,13 @@ function Orders() {
         />
       )}
       <PopupModal
-          show={showConfirmModal}
-          onClose={() => setShowConfirmModal(false)}
-          onConfirm={handleDeleteConfirmed}
-          title="Xác nhận xóa đánh giá"
-          body="Bạn có chắc chắn muốn xóa đánh giá này không? Hành động này không thể hoàn tác."
-          confirmText="Xóa"
-          cancelText="Hủy"
+        show={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleDeleteConfirmed}
+        title="Xác nhận xóa đánh giá"
+        body="Bạn có chắc chắn muốn xóa đánh giá này không? Hành động này không thể hoàn tác."
+        confirmText="Xóa"
+        cancelText="Hủy"
       />
     </div>
   );

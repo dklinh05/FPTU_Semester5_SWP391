@@ -82,8 +82,6 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
-
-
     @GetMapping("/{orderId}/items")
     public ResponseEntity<List<OrderItemResponse>> getOrderItemsByOrderId(@PathVariable Integer orderId) {
         List<OrderItemResponse> orderItems = orderService.getOrderItemsByOrderId(orderId);

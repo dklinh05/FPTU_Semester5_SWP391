@@ -363,7 +363,11 @@ public class OrderService {
                 && order.getShipper() != null
                 && order.getShipper().getUserID().equals(request.getShipperId());
 
-        if (!isSupplierAuthorized && !isShipperAuthorized) {
+        boolean isCustomerAuthorized = request.getCustomerId() != null
+                && order.getBuyer() != null
+                && order.getBuyer().getUserID().equals(request.getCustomerId());
+
+        if (!isSupplierAuthorized && !isShipperAuthorized && !isCustomerAuthorized) {
             throw new SecurityException("You are not authorized to update this order.");
         }
 
@@ -372,8 +376,7 @@ public class OrderService {
         User supplier = order.getSupplier(); // người bán
         User customer = order.getBuyer(); // người đặt hàng
 
-
-        if ("COMPLETED".equalsIgnoreCase(request.getNewStatus())) {
+        if ("CONFIRMED".equalsIgnoreCase(request.getNewStatus())) {
             BigDecimal currentTotalSpend = customer.getTotalSpend() != null ? customer.getTotalSpend() : BigDecimal.ZERO;
             BigDecimal newTotalSpend = currentTotalSpend.add(order.getTotalAmount());
             // Nếu đơn hàng đã hoàn thành hoặc xác nhận -> cập nhật điểm thưởng và tổng chi tiêu
@@ -388,15 +391,21 @@ public class OrderService {
             userRepository.save(supplier);
         }
 
-        String role = isSupplierAuthorized ? "Nhà cung cấp" : "Shipper";
+        String role;
+        if (isSupplierAuthorized) {
+            role = "Nhà cung cấp";
+        } else if (isShipperAuthorized) {
+            role = "Shipper";
+        } else {
+            role = "Người mua";
+        }
+
         String status = request.getNewStatus(); // enum to string
 
         String title = "Cập nhật đơn hàng #" + order.getOrderID();
         String message = String.format("%s đã cập nhật trạng thái đơn hàng của bạn thành '%s'.", role, status);
         notificationService.createNotification(customer.getUserID(), title, message, "ORDER_UPDATE");
     }
-
-
 
     public Map<String, Object> getTodayMetricsForSupplier(Long supplierId) {
         LocalDate today = LocalDate.now();

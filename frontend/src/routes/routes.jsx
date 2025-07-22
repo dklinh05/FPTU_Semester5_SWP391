@@ -46,6 +46,7 @@ import OrderShipping from "../pages/OrderShipping/index.jsx";
 import ChatPage from "../pages/ChatPage/index.jsx";
 import AdminListProduct from "../pages/AdminListProduct/AdminListProduct";
 import SupplierProfile from "../pages/SupplierProfile/SupplierProfile";
+import WithDraw from "../pages/WithDraw/index.jsx";
 
 const publicRoutes = [
   { path: config.routes.home, component: Home },
@@ -67,6 +68,7 @@ const publicRoutes = [
   { path: config.routes.addProduct, component: AddProduct, layout: SupplierLayout,},
   { path: config.routes.listProduct, component: ListProduct, layout: SupplierLayout,},
   { path: config.routes.orderList, component: OrderList, layout: SupplierLayout,},
+  { path: config.routes.withDraw, component: WithDraw, layout: SupplierLayout,},
   { path: config.routes.userList, component: UserList, layout: AdminLayout },
   { path: config.routes.requestUpgradeRole, component: RequestUpgradeRole, layout: null,},
   { path: config.routes.checkout, component: Checkout, layout: null },

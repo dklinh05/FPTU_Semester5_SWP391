@@ -103,6 +103,12 @@ function SidebarSupplier() {
           <li className={styles["sidebar-label"]}>Other</li>
 
           <li>
+            <a href="/supplier/withdraw" className={styles["sidebar-link"]}>
+              <i className="fa-regular fa-message"></i>
+              <p>With Draw</p>
+            </a>
+          </li>
+          <li>
             <a href="#" className={styles["sidebar-link"]}>
               <i className="fa-regular fa-message"></i>
               <p>Message</p>

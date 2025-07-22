@@ -41,6 +41,7 @@ const routes = {
   ordersRate: '/orders/rate',
   AdminListProduct: "/admin/listproduct",
   SupplierProfile: '/supplier/profile',
+  withDraw: '/supplier/withdraw'
 };
 
 export default routes;

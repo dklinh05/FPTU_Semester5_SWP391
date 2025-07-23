@@ -172,7 +172,7 @@ function Orders() {
         userId
       );
       toast.success(response);
-      await fetchOrders(); 
+      await fetchOrders();
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);
     }

@@ -10,6 +10,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -106,6 +108,18 @@ public class WithdrawRequestService {
 
         } else {
             throw new IllegalArgumentException("Trạng thái không hợp lệ. Chỉ chấp nhận APPROVED hoặc REJECTED.");
+        }
+    }
+
+    public Page<WithdrawRequest> getWithdrawRequests(String status, Integer supplierId, Pageable pageable) {
+        if (status != null && supplierId != null) {
+            return withdrawRequestRepository.findByStatusAndSupplierUserID(status, supplierId, pageable);
+        } else if (status != null) {
+            return withdrawRequestRepository.findByStatus(status, pageable);
+        } else if (supplierId != null) {
+            return withdrawRequestRepository.findBySupplierUserID(supplierId, pageable);
+        } else {
+            return withdrawRequestRepository.findAll(pageable);
         }
     }
 }

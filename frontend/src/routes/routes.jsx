@@ -87,11 +87,11 @@ const publicRoutes = [
   component: OrderDetail,
   layout: ShipperLayout,
 },
-// {
-//   path: "/user/order-detail/:id",
-//   component: OrderDetail,
-//   layout: UserLayout,
-// },
+{
+  path: "/customer/order-detail/:id",
+  component: OrderDetail,
+  layout: OrdersLayout,
+},
 
   
   {

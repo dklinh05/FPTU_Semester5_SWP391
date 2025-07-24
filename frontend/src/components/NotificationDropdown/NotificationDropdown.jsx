@@ -1,10 +1,15 @@
 import Tippy from "@tippyjs/react/headless";
 import "tippy.js/dist/tippy.css";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
-import { renderNotifications } from "../../services/notificationService";
+import {
+  renderNotifications,
+  readNotifications,
+} from "../../services/notificationService";
 
 export default function NotificationDropdown() {
+  const navigate = useNavigate();
   const { userId } = useUser();
   const [visible, setVisible] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -15,8 +20,8 @@ export default function NotificationDropdown() {
     // Gọi API lấy danh sách thông báo khi mount
     const fetchNotifications = async () => {
       try {
-        const data = await renderNotifications(userId);
-        setNotifications(data || []);
+        const data = await renderNotifications(userId, 0 ,5);
+        setNotifications(data.content || []);
       } catch (err) {
         console.error("Lỗi khi lấy thông báo:", err);
       }
@@ -26,6 +31,30 @@ export default function NotificationDropdown() {
   }, [userId]);
 
   const count = notifications.length;
+
+  const handleNotificationClick = async (id, type, referenceId = 1, role) => {
+    switch (formatType(type)) {
+      case "ORDER":
+        navigate(`/${role.slice(0).toLowerCase()}/order-detail/${referenceId}`);
+        break;
+      case "WITHDRAWAL":
+        navigate(`/withdraw/${referenceId}`);
+        break;
+      case "MESSAGE":
+        navigate(`/messages/${referenceId}`);
+        break;
+      default:
+        navigate("/notifications");
+        break;
+    }
+    await readNotifications(id);
+  };
+
+  function formatType(type) {
+    if (!type) return "";
+    const firstPart = type.split("_")[0]; // Lấy phần đầu
+    return firstPart;
+  }
 
   return (
     <Tippy
@@ -39,10 +68,41 @@ export default function NotificationDropdown() {
           {count > 0 ? (
             <ul className="mb-0">
               {notifications.map((n) => (
-                <li key={n.id} className="p-2 hover:bg-light rounded">
-                  {n.title}
-                  <br />
-                  {n.message}
+                <li
+                  key={n.notificationID}
+                  className="p-2 rounded cursor-pointer position-relative hover:bg-light transition list-unstyled"
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "#e9ecef")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
+                  onClick={() =>
+                    handleNotificationClick(
+                      n.notificationID,
+                      n.type,
+                      n.contentID,
+                      n.user.role
+                    )
+                  }
+                >
+                  <div className="fw-semibold d-flex align-items-center justify-content-between">
+                    <span>{n.title}</span>
+
+                    {/* Dấu chấm đỏ nếu chưa đọc */}
+                    {!n.isRead && (
+                      <span
+                        className="bg-danger rounded-circle"
+                        style={{
+                          display: "inline-block",
+                          width: "8px",
+                          height: "8px",
+                          marginLeft: "8px",
+                        }}
+                      ></span>
+                    )}
+                  </div>
+                  <div className="text-dark small">{n.message}</div>
                 </li>
               ))}
             </ul>

@@ -5,6 +5,7 @@ import com.farm.farmtrade.entity.Notification;
 import com.farm.farmtrade.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +21,17 @@ public class NotificationController {
 
     @PostMapping
     public ResponseEntity<Notification> createNotification(@RequestBody NotificationRequest request) {
-        return ResponseEntity.ok(notificationService.createNotification(request.getUserId(), request.getTitle(), request.getMessage(), request.getType()));
+        return ResponseEntity.ok(notificationService.createNotification(request.getUserId(), request.getTitle(), request.getMessage(), request.getType(), request.getContentId()));
     }
 
     @GetMapping("{userId}")
-    public ResponseEntity<List<Notification>> getNotificationsByUser(@PathVariable Integer userId) {
-        return ResponseEntity.ok(notificationService.getNotificationsByUser(userId));
+    public ResponseEntity<Page<Notification>> getNotificationsByUser(
+            @PathVariable Integer userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return ResponseEntity.ok(notificationService.getNotificationsByUser(userId, page, size));
     }
+
 
     @PutMapping("/read/{id}")
     public ResponseEntity<Void> markAsRead(@PathVariable Integer id) {

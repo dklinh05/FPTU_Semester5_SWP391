@@ -3,10 +3,7 @@ import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import { useCart } from "../../context/CartContext";
-import {
-  
-  renderVoucherByUserId,
-} from "../../services/voucherService";
+import { renderVoucherByUserId } from "../../services/voucherService";
 import CartItem from "../../layouts/components/CartItem";
 import CartTotal from "../../layouts/components/CartTotal";
 
@@ -189,11 +186,7 @@ function Cart() {
         </select>
 
         {/* Cart Total - truyền selectedItems */}
-        <CartTotal
-          carts={selectedItems}
-          voucher={selectedVoucher}
-        
-        />
+        <CartTotal carts={selectedItems} voucher={selectedVoucher} />
       </div>
     </div>
   );

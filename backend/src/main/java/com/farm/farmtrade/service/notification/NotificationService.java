@@ -7,6 +7,10 @@ import com.farm.farmtrade.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,7 +24,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
 
-    public Notification createNotification(Integer userId, String title, String message, String type) {
+    public Notification createNotification(Integer userId, String title, String message, String type, Integer contentId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
 
@@ -31,14 +35,17 @@ public class NotificationService {
                 .type(type)
                 .isRead(false)
                 .createdAt(LocalDateTime.now())
+                .contentID(contentId)
                 .build();
 
         return notificationRepository.save(notification);
     }
 
-    public List<Notification> getNotificationsByUser(Integer userId) {
-        return notificationRepository.findByUserUserIDOrderByCreatedAtDesc(userId);
+    public Page<Notification> getNotificationsByUser(Integer userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return notificationRepository.findByUserUserID(userId, pageable);
     }
+
 
     public void markAsRead(Integer notificationId) {
         Notification notification = notificationRepository.findById(notificationId)

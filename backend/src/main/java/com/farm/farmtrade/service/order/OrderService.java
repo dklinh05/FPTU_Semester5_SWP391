@@ -202,7 +202,7 @@ public class OrderService {
                 String message = String.format("Bạn vừa nhận được đơn hàng #%d từ %s.",
                         order.getOrderID(), buyer.getFullName());
 
-                notificationService.createNotification(supplier.getUserID(), title, message, "NEW_ORDER");
+                notificationService.createNotification(supplier.getUserID(), title, message, "NEW_ORDER", order.getOrderID());
                 notifiedSuppliers.add(supplier);
             }
         }
@@ -404,7 +404,7 @@ public class OrderService {
 
         String title = "Cập nhật đơn hàng #" + order.getOrderID();
         String message = String.format("%s đã cập nhật trạng thái đơn hàng của bạn thành '%s'.", role, status);
-        notificationService.createNotification(customer.getUserID(), title, message, "ORDER_UPDATE");
+        notificationService.createNotification(customer.getUserID(), title, message, "ORDER_UPDATE", order.getOrderID());
     }
 
     public Map<String, Object> getTodayMetricsForSupplier(Long supplierId) {
@@ -498,7 +498,7 @@ public class OrderService {
         // ✅ Gửi thông báo cho shipper
         String title = "Bạn được giao đơn hàng mới";
         String message = String.format("Đơn hàng #%d đã được giao cho bạn để vận chuyển.", order.getOrderID());
-        notificationService.createNotification(nearestShipper.getUserID(), title, message, "ORDER_ASSIGNED");
+        notificationService.createNotification(nearestShipper.getUserID(), title, message, "ORDER_ASSIGNED", orderId);
 
         // Trả về kết quả
         return OrderResponse.builder()

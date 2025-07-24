@@ -57,12 +57,13 @@ public class WithdrawRequestService {
                 supplierId,
                 "Yêu cầu rút tiền đã được gửi",
                 "Yêu cầu rút số tiền " + amount + " của bạn đã được gửi và đang chờ phê duyệt.",
-                "WITHDRAWAL_REQUEST"
+                "WITHDRAWAL_REQUEST",
+                request.getId()
         );
     }
 
 
-    public void processWithdrawRequest(Integer requestId, String status, String note) {
+    public void  processWithdrawRequest(Integer requestId, String status, String note) {
         WithdrawRequest request = withdrawRequestRepository.findById(requestId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy yêu cầu rút tiền."));
 
@@ -90,7 +91,8 @@ public class WithdrawRequestService {
                     supplier.getUserID(),
                     "Yêu cầu rút tiền đã được duyệt",
                     "Yêu cầu rút số tiền " + amount + " của bạn đã được phê duyệt. Ghi chú: " + note,
-                    "WITHDRAWAL_APPROVED"
+                    "WITHDRAWAL_APPROVED",
+                    requestId
             );
 
         } else if ("REJECTED".equalsIgnoreCase(status)) {
@@ -103,7 +105,8 @@ public class WithdrawRequestService {
                     supplier.getUserID(),
                     "Yêu cầu rút tiền bị từ chối",
                     "Yêu cầu rút số tiền " + amount + " của bạn đã bị từ chối. Ghi chú: " + note,
-                    "WITHDRAWAL_REJECTED"
+                    "WITHDRAWAL_REJECTED",
+                    requestId
             );
 
         } else {

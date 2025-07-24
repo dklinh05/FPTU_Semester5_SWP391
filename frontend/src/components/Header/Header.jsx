@@ -6,7 +6,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import { useCart } from "../../context/CartContext";
 import { searchProducts } from "../../services/productService";
-import NotificationDropdown from "../NotificationDropdown";
+import NotificationDropdown from '../../components/NotificationDropdown'
 import {toast} from "react-toastify";
 
 const cx = classNames.bind(styles);

@@ -6,6 +6,7 @@ import {
   rejectWithDraw,
 } from "../../services/withDrawService";
 import PaginationTab from "../../components/PaginationTab/PaginationTab";
+import { formatDate } from "../../utils/formatDate";
 
 const WithdrawHandle = () => {
   const [requests, setRequests] = useState([]);
@@ -114,8 +115,8 @@ const handleApprove = async (id) => {
             <tbody>
               {requests.map((req, index) => (
                 <tr key={req.id} className="border-t">
-                  {/* <td className="px-4 py-2">{page * pageSize + index + 1}</td> */}
-                  <td></td>
+                  <td className="px-4 py-2">{(currentPage-1) * pageSize + index + 1}</td>
+                 
                   <td className="px-4 py-2">
                     {req.amountRequested?.toLocaleString()} VND
                   </td>
@@ -135,7 +136,7 @@ const handleApprove = async (id) => {
                     </span>
                   </td>
                   <td className="px-4 py-2">
-                    {new Date(req.requestDate).toLocaleString()}
+                    {formatDate(req.requestDate)}
                   </td>
                   <td>
                     {req.status === "PENDING" || req.status === "APPROVED" ? (

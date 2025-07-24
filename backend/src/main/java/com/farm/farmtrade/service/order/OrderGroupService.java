@@ -133,7 +133,7 @@ public class OrderGroupService {
             String title = "Bạn có đơn hàng mới";
             String message = String.format("Bạn vừa nhận được đơn hàng #%d từ %s.",
                     order.getOrderID(), buyer.getFullName());
-            notificationService.createNotification(supplier.getUserID(), title, message, "NEW_ORDER");
+            notificationService.createNotification(supplier.getUserID(), title, message, "ORDER_NEW", order.getOrderID());
 
             // ✅ Xóa cart item tương ứng
             List<OrderItem> orderItems = orderItemRepository.findByOrderOrderID(order.getOrderID());

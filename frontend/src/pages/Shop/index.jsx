@@ -9,7 +9,7 @@ function Shop({ products }) {
         {products?.map((product, index) => (
           <Link
             to={`/product/${product.productID}`}
-            className="col-md-6 col-lg-4 col-xl-3"
+            className="col-md-6 col-lg-4 col-xl-4"
           >
             <CardItem
               key={index}

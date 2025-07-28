@@ -1,17 +1,17 @@
-import {useState, useEffect} from "react";
-import {Link, useLocation} from "react-router-dom";
-import {useUser} from "../../context/UserContext";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
 import {
     renderProductBySupplierId, deleteProduct, updateProduct, updateProductStatus, renderAllProductsAdmin,
 } from "../../services/productService";
 import PaginationTab from "../../components/PaginationTab/PaginationTab";
 import EditProductModal from "/src/components/EditProductModal/EditProductModal"
 import PopupModal from "../../components/PopupModal/PopupModal";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 
 const ListProduct = () => {
-    const {userId} = useUser();
+    const { userId } = useUser();
     const [selectedItems, setSelectedItems] = useState(new Set());
     const [sortValue, setSortValue] = useState("createdAt");
     const [products, setProducts] = useState([]);
@@ -166,7 +166,7 @@ const ListProduct = () => {
                                 <h5 className="fw-bold text-start">Product List</h5>
                                 <button
                                     className="btn bg-disabled d-flex align-items-center ms-4"
-                                    // onClick={handleDelete}
+                                // onClick={handleDelete}
                                 >
                                     <i className="fas fa-trash"></i>{" "}
                                     <span className="ms-2">Delete</span>
@@ -200,21 +200,21 @@ const ListProduct = () => {
                                         </li>
                                         <li>
                                             <Link className="dropdown-item py-2"
-                                                  to={"/listproduct?status=Inactive"}
+                                                to={"/listproduct?status=Inactive"}
                                             >
                                                 Inactive
                                             </Link>
                                         </li>
                                         <li>
                                             <Link className="dropdown-item py-2"
-                                                  to={"/listproduct?status=Hidden"}
+                                                to={"/listproduct?status=Hidden"}
                                             >
                                                 Hidden
                                             </Link>
                                         </li>
                                         <li>
                                             <Link className="dropdown-item py-2"
-                                                  to={"/listproduct?status=Pending"}
+                                                to={"/listproduct?status=Pending"}
                                             >
                                                 Pending
                                             </Link>
@@ -228,109 +228,108 @@ const ListProduct = () => {
                         <div className="table-responsive">
                             <table className="table align-middle">
                                 <thead>
-                                <tr>
-                                    <th scope="col" className="py-3">
-                                        <input
-                                            type="checkbox"
-                                            id="select-all"
-                                            className="custom-checkbox"
-                                            onChange={handleSelectAll}
-                                            checked={selectedItems.size === products.length}
-                                        />
-                                    </th>
-                                    <th scope="col" className="py-3">
-                                        Product ID
-                                    </th>
-                                    <th scope="col" className="py-3">
-                                        Image
-                                    </th>
-                                    <th scope="col" className="py-3">
-                                        Product Name
-                                    </th>
-                                    <th scope="col" className="py-3">
-                                        Category
-                                    </th>
-                                    <th scope="col" className="py-3">
-                                        Price
-                                    </th>
-                                    <th scope="col" className="py-3">
-                                        Stock
-                                    </th>
-                                    <th scope="col" className="py-3">
-                                        Sales
-                                    </th>
-                                    <th scope="col" className="py-3">
-                                        Status
-                                    </th>
-                                    <th scope="col" className="py-3">
-                                        Actions
-                                    </th>
-                                </tr>
+                                    <tr>
+                                        <th scope="col" className="py-3">
+                                            <input
+                                                type="checkbox"
+                                                id="select-all"
+                                                className="custom-checkbox"
+                                                onChange={handleSelectAll}
+                                                checked={selectedItems.size === products.length}
+                                            />
+                                        </th>
+                                        <th scope="col" className="py-3">
+                                            Product ID
+                                        </th>
+                                        <th scope="col" className="py-3">
+                                            Image
+                                        </th>
+                                        <th scope="col" className="py-3">
+                                            Product Name
+                                        </th>
+                                        <th scope="col" className="py-3">
+                                            Category
+                                        </th>
+                                        <th scope="col" className="py-3">
+                                            Price
+                                        </th>
+                                        <th scope="col" className="py-3">
+                                            Stock
+                                        </th>
+                                        <th scope="col" className="py-3">
+                                            Sales
+                                        </th>
+                                        <th scope="col" className="py-3">
+                                            Status
+                                        </th>
+                                        <th scope="col" className="py-3">
+                                            Actions
+                                        </th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                {products.map((product) => (<tr key={product.productID}>
-                                    <td>
-                                        <input
-                                            type="checkbox"
-                                            className="custom-checkbox row-checkbox"
-                                            checked={selectedItems.has(product.productID)}
-                                            onChange={() => handleSelectRow(product.productID)}
-                                        />
-                                    </td>
-                                    <td>{product.productID}</td>
-                                    <td>
-                                        <img
-                                            src={product.imageURL}
-                                            alt="Product"
-                                            className="p-img-thumbnail"
-                                            width="50"
-                                        />
-                                    </td>
-                                    <td>{product.name}</td>
-                                    <td>{product.category}</td>
-                                    <td>{product.price}</td>
-                                    <td>{product.stockQuantity}</td>
-                                    <td>{product?.sales}</td>
-                                    <td>
-                          <span
-                              className={`status-badge ${
-                                  product.status === "Active" ? "status-success" :
-                                  product.status === "Hidden" ? "status-warning" : 
-                                  product.status === "Pending" ? "status-info" : 
-                                  "status-danger"
-                              }`}>
-                                {product.status}
-                            </span>
-                                    </td>
-                                    <td>
-                                        <button
-                                            className="btn btn-sm me-1"
-                                            onClick={() => handleEdit(product)}
-                                        >
-                                            <i className="fa-solid fa-edit"></i>
-                                        </button>
-                                        <button
-                                            className="btn btn-sm me-1"
-                                            onClick={() => confirmDelete(product)}
-                                        >
-                                            <i className="fa-solid fa-trash"></i>
-                                        </button>
+                                    {products.map((product) => (<tr key={product.productID}>
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                className="custom-checkbox row-checkbox"
+                                                checked={selectedItems.has(product.productID)}
+                                                onChange={() => handleSelectRow(product.productID)}
+                                            />
+                                        </td>
+                                        <td>{product.productID}</td>
+                                        <td>
+                                            <img
+                                                src={product.imageURL}
+                                                alt="Product"
+                                                className="p-img-thumbnail"
+                                                width="50"
+                                            />
+                                        </td>
+                                        <td>{product.name}</td>
+                                        <td>{product.category}</td>
+                                        <td>{product.price}</td>
+                                        <td>{product.stockQuantity}</td>
+                                        <td>{product?.sales}</td>
+                                        <td>
+                                            <span
+                                                className={`status-badge ${product.status === "Active" ? "status-success" :
+                                                        product.status === "Hidden" ? "status-warning" :
+                                                            product.status === "Pending" ? "status-info" :
+                                                                "status-danger"
+                                                    }`}>
+                                                {product.status}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className="btn btn-sm me-1"
+                                                onClick={() => handleEdit(product)}
+                                            >
+                                                <i className="fa-solid fa-edit"></i>
+                                            </button>
+                                            <button
+                                                className="btn btn-sm me-1"
+                                                onClick={() => confirmDelete(product)}
+                                            >
+                                                <i className="fa-solid fa-trash"></i>
+                                            </button>
 
-                                        {product.status === "Hidden" ? (<button
-                                            className="btn btn-sm"
-                                            onClick={() => handleUnhide(product)}
-                                            title="Hiện lại sản phẩm"
-                                        >
-                                            <i className="fa-solid fa-eye"></i>
-                                        </button>) : (<button
-                                            className="btn btn-sm"
-                                            onClick={() => handleHide(product)}
-                                            title="Ẩn sản phẩm"
-                                        >
-                                            <i className="fa-solid fa-eye-slash"></i>
-                                        </button>)}
-                                    </td>
-                                </tr>))}
+                                            {product.status === "Hidden" ? (<button
+                                                className="btn btn-sm"
+                                                onClick={() => handleUnhide(product)}
+                                                title="Hiện lại sản phẩm"
+                                            >
+                                                <i className="fa-solid fa-eye"></i>
+                                            </button>) : (<button
+                                                className="btn btn-sm"
+                                                onClick={() => handleHide(product)}
+                                                title="Ẩn sản phẩm"
+                                            >
+                                                <i className="fa-solid fa-eye-slash"></i>
+                                            </button>)}
+                                        </td>
+                                    </tr>))}
                                 </tbody>
                             </table>
                         </div>

@@ -22,18 +22,6 @@ export const getUserById = async (userId) => {
     throw new Error(`Lỗi khi lấy thông tin người dùng: ${error.message}`);
   }
 };
-// Gọi API GET /farmtrade/users/{userID}
-// export const getUserById = async (userId) => {
-//   try {
-//     console.log("getUserById: userId =", userId);
-//     const res = await checkAuthAndCall(() => request.get(`${API_BASE}/${userId}`));
-//     console.log("getUserById: response =", res.data);
-//     return res.data; // Returns user object with rewardPoints
-//   } catch (error) {
-//     console.error("getUserById error:", error);
-//     throw new Error(`Lỗi khi lấy thông tin user: ${error.response?.data?.message || error.message}`);
-//   }
-// };
 
 // Gửi yêu cầu nâng cấp
 export const submitRoleUpgradeRequest = async (formData) => {

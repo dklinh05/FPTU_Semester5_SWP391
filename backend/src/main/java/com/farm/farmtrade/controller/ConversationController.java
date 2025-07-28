@@ -1,5 +1,6 @@
 package com.farm.farmtrade.controller;
 
+import com.farm.farmtrade.dto.request.chatRequest.ConversationRequestDTO;
 import com.farm.farmtrade.dto.request.chatRequest.CreateCommunityChatRequestDTO;
 import com.farm.farmtrade.dto.request.chatRequest.JoinCommunityChatRequestDTO;
 import com.farm.farmtrade.dto.request.chatRequest.MessageRequestDTO;
@@ -65,13 +66,13 @@ public class ConversationController {
     }
 
     @PostMapping
-    public ResponseEntity<ConversationResponseDTO> createConversation(@Valid @RequestBody ProductMessageRequest.ConversationRequest request) {
+    public ResponseEntity<ConversationResponseDTO> createConversation(@Valid @RequestBody ConversationRequestDTO request) {
         Conversation conversation = conversationService.createConversation(
-                request.getUserIDs(),
+                request.getUserIds(),
                 request.isGroup(),
                 request.getName()
         );
-        return ResponseEntity.ok(new ConversationResponseDTO(conversation.getConversationId(), request.getUserIDs(), request.isGroup(), request.getName()));
+        return ResponseEntity.ok(new ConversationResponseDTO(conversation.getConversationId(), request.getUserIds(), request.isGroup(), request.getName()));
     }
 
     @PostMapping("/{conversationId}/messages")
@@ -96,63 +97,12 @@ public class ConversationController {
     @PostMapping("/{conversationId}/product-message")
     public ResponseEntity<?> sendProductMessage(
             @PathVariable Long conversationId,
-            @RequestBody ProductMessageRequest request) {
+            @RequestBody ConversationRequestDTO.ProductMessageRequest request) {
         try {
             conversationService.sendProductMessage(conversationId, request.getSenderId(), request.getProductId());
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(403).body(e.getMessage());
-        }
-    }
-}
-class ProductMessageRequest {
-    private Integer senderId;
-    private Integer productId;
-
-    public Integer getSenderId() {
-        return senderId;
-    }
-
-    public void setSenderId(Integer senderId) {
-        this.senderId = senderId;
-    }
-
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
-
-    class ConversationRequest {
-        private List<Integer> userIDs;
-        private boolean isGroup;
-        private String name;
-
-        // Getters and setters
-        public List<Integer> getUserIDs() {
-            return userIDs;
-        }
-
-        public void setUserIDs(List<Integer> userIDs) {
-            this.userIDs = userIDs;
-        }
-
-        public boolean isGroup() {
-            return isGroup;
-        }
-
-        public void setGroup(boolean isGroup) {
-            this.isGroup = isGroup;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
         }
     }
 }

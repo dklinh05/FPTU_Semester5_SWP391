@@ -1,4 +1,4 @@
-🥬 SWP391 - FarmFresh | Da Nang Vegetable Trading Platform
+🥬 SWP391 - FarmTrade | Da Nang Vegetable Trading Platform
 
 📌 Project Overview
 

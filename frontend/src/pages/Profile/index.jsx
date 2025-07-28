@@ -28,13 +28,13 @@ const Profile = () => {
     if (!file || !user) return;
 
     const formData = new FormData();
-    formData.append("avatar", file); // Tên field phải khớp với backend
+    formData.append("avatar", file); 
 
     try {
-      const response = await uploadAvatar(userId, formData); // Gọi API
-      const updatedUser = await getUserById(userId); // Lấy lại user mới nhất
-      setUser(updatedUser); // Cập nhật context
-      setAvatarTimestamp(Date.now()); // Làm mới hình ảnh
+      const response = await uploadAvatar(userId, formData); 
+      const updatedUser = await getUserById(userId);
+      setUser(updatedUser); 
+      setAvatarTimestamp(Date.now());
     } catch (err) {
       toast.error("Tải lên avatar thất bại");
     }
@@ -76,7 +76,6 @@ const Profile = () => {
     );
   }
 
-  // Hàm xử lý onChange cho input
   const handleChange = (field) => (e) => {
     const value =
       e.target.type === "number" ? parseFloat(e.target.value) : e.target.value;
@@ -92,7 +91,6 @@ const Profile = () => {
     }));
   };
 
-  // Gửi chỉ những field đã thay đổi
   const handleSave = async (e) => {
     e.preventDefault();
     if (Object.keys(dirtyFields).length === 0) {

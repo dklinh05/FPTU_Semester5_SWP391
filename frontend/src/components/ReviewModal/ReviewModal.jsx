@@ -64,7 +64,6 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
                     setComment(res.comment);
                     setOldImages(res.imageList || []);
                 } catch (err) {
-                    console.error("Không load được review cũ:", err);
                 }
             }
         };
@@ -120,7 +119,6 @@ function ReviewModal({ show, onHide, product, onSuccess }) {
             onHide();
             if (onSuccess) onSuccess();
         } catch (error) {
-            console.error("Gửi đánh giá thất bại:", error);
             toast.error("Đã xảy ra lỗi khi gửi đánh giá.");
         }
     };

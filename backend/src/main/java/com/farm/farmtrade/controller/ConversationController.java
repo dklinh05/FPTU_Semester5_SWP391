@@ -9,7 +9,6 @@ import com.farm.farmtrade.dto.response.chatResponse.CreateCommunityChatResponseD
 import com.farm.farmtrade.dto.response.chatResponse.JoinCommunityChatResponseDTO;
 import com.farm.farmtrade.dto.response.chatResponse.MessageResponseDTO;
 import com.farm.farmtrade.entity.Conversation;
-
 import com.farm.farmtrade.entity.ConversationParticipants;
 import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.service.ConversationService;

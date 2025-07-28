@@ -7,7 +7,6 @@ import com.farm.farmtrade.dto.request.authenticationRequest.ResetPasswordRequest
 import com.farm.farmtrade.dto.request.authenticationRequest.UserCreationRequest;
 import com.farm.farmtrade.dto.request.authenticationRequest.UserUpdateRequest;
 import com.farm.farmtrade.dto.response.chatResponse.SupplierDTO;
-import com.farm.farmtrade.entity.UserSpecification;
 import com.farm.farmtrade.enums.Role;
 import com.farm.farmtrade.exception.AppException;
 import com.farm.farmtrade.exception.ErrorCode;
@@ -21,15 +20,11 @@ import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

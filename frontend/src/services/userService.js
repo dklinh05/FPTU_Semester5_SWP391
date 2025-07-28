@@ -1,97 +1,87 @@
-// userService.js
-import { request, formRequest } from "../utils/httpRequest"; // ← THÊM DÒNG NÀY
+// src/services/userService.js
+
+import { request, formRequest } from "../utils/httpRequest";
 import { getUserIdFromToken } from "./authService";
 
 const API_BASE = "/users";
 
 const checkAuthAndCall = async (apiCall) => {
   const token = localStorage.getItem("token");
-  console.log("userService checkAuthAndCall: token =", token);
   if (!token) throw new Error("Vui lòng đăng nhập: Không tìm thấy token.");
   return await apiCall();
 };
 
+/**
+ * Lấy thông tin người dùng theo ID
+ */
 export const getUserById = async (userId) => {
   try {
-    console.log("getUserById: userId =", userId);
     const res = await request.get(`/users/${userId}`);
-    console.log("getUserById: response =", res.data);
     return res.data;
   } catch (error) {
-    console.error("getUserById error:", error.response?.data || error.message);
     throw new Error(`Lỗi khi lấy thông tin người dùng: ${error.message}`);
   }
 };
-// Gọi API GET /farmtrade/users/{userID}
-// export const getUserById = async (userId) => {
-//   try {
-//     console.log("getUserById: userId =", userId);
-//     const res = await checkAuthAndCall(() => request.get(`${API_BASE}/${userId}`));
-//     console.log("getUserById: response =", res.data);
-//     return res.data; // Returns user object with rewardPoints
-//   } catch (error) {
-//     console.error("getUserById error:", error);
-//     throw new Error(`Lỗi khi lấy thông tin user: ${error.response?.data?.message || error.message}`);
-//   }
-// };
 
-// Gửi yêu cầu nâng cấp
+/**
+ * Gửi yêu cầu nâng cấp vai trò
+ */
 export const submitRoleUpgradeRequest = async (formData) => {
-const userId = parseInt(getUserIdFromToken(), 10); // ← Chắc chắn là số nguyên
-    if (!userId) throw new Error("Không thể xác định userId từ token");
+  const userId = parseInt(getUserIdFromToken(), 10);
+  if (!userId) throw new Error("Không thể xác định userId từ token");
 
-    formData.append("userId", userId);
+  formData.append("userId", userId);
 
-    return checkAuthAndCall(async () =>
-        formRequest.post(`${API_BASE}/request`, formData)
-    );
+  return checkAuthAndCall(async () =>
+    formRequest.post(`${API_BASE}/request`, formData)
+  );
 };
 
+/**
+ * Cập nhật tên doanh nghiệp
+ */
 export const updateBusinessName = async (userId, businessName) => {
-    try {
-        const res = await request.put(`/users/${userId}/business-name`, { businessName });
-        return res.data;
-    } catch (error) {
-        console.error("Lỗi cập nhật BusinessName:", error);
-        throw new Error(`Cập nhật Business Name thất bại: ${error.message}`);
-    }
+  try {
+    const res = await request.put(`/users/${userId}/business-name`, { businessName });
+    return res.data;
+  } catch (error) {
+    throw new Error(`Cập nhật Business Name thất bại: ${error.message}`);
+  }
 };
+
+/**
+ * Cập nhật thông tin người dùng
+ */
 export const updateUser = async (userId, data) => {
   try {
     const response = await request.put(`/users/${userId}`, data);
 
-    // Nếu backend trả về { success: true }
     if (response.data && response.data.success === true) {
-      return response.data; // Trả về dữ liệu thành công
+      return response.data;
     }
 
-
-    // Nếu backend trả về lỗi rõ ràng
     throw new Error(response.data.error || "Cập nhật thất bại");
   } catch (error) {
-    console.error("Lỗi khi cập nhật:", error);
     throw new Error(error.response?.data?.error || error.message);
   }
 };
 
+/**
+ * Upload ảnh đại diện
+ */
 export const uploadAvatar = async (userId, formData) => {
   try {
     const res = await formRequest.post(`/users/${userId}/avatar`, formData);
     return res.data; // { avatarUrl: '...' }
   } catch (error) {
-    let errorMessage = "Upload avatar thất bại";
-
-    // Nếu backend trả về lỗi JSON
-    if (error.response && error.response.data) {
-      errorMessage = error.response.data.error || errorMessage;
-    }
-
-    console.error("Phản hồi lỗi từ backend:", errorMessage);
-    alert(errorMessage);
+    const errorMessage = error.response?.data?.error || "Upload avatar thất bại";
     throw new Error(errorMessage);
   }
-}
+};
 
+/**
+ * Cập nhật thông tin bổ sung (Google)
+ */
 export const updateUserExtra = async (userId, extraData) => {
   try {
     const response = await request.put(`${API_BASE}/google/${userId}`, extraData);
@@ -101,7 +91,9 @@ export const updateUserExtra = async (userId, extraData) => {
   }
 };
 
-// Hàm khóa tài khoản người dùng
+/**
+ * Khóa tài khoản người dùng (admin)
+ */
 export const blockUser = async (userId) => {
   try {
     const token = localStorage.getItem("token");
@@ -109,16 +101,16 @@ export const blockUser = async (userId) => {
       throw new Error("Vui lòng đăng nhập.");
     }
 
-    // Gọi API khóa tài khoản
     await request.put(`/admin/users/lock/${userId}`);
     return true;
   } catch (error) {
-    console.error(error);
     throw new Error("Không thể khóa người dùng. Vui lòng thử lại.");
   }
 };
 
-// Hàm mở khóa tài khoản người dùng
+/**
+ * Mở khóa tài khoản người dùng (admin)
+ */
 export const unblockUser = async (userId) => {
   try {
     const token = localStorage.getItem("token");
@@ -126,12 +118,9 @@ export const unblockUser = async (userId) => {
       throw new Error("Vui lòng đăng nhập.");
     }
 
-    // Gọi API mở khóa tài khoản
     await request.put(`/admin/users/unlock/${userId}`);
     return true;
   } catch (error) {
-    console.error(error);
     throw new Error("Không thể mở khóa người dùng. Vui lòng thử lại.");
   }
 };
-

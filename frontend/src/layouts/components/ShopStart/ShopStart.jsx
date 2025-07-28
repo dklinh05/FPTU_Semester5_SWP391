@@ -143,7 +143,7 @@ function ShopStart() {
                   <div className="row g-4">
                     {products?.map((product, index) => (
                       <Link
-                        to={`/product/${product.productID}`}
+                        to={`/product/${product.productID}`} key={index}
                         className="col-md-6 col-lg-4 col-xl-3"
                       >
                         <CardItem

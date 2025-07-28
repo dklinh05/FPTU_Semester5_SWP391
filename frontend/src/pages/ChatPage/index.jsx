@@ -189,7 +189,11 @@ const ChatPage = () => {
     if (!currentUserId) return;
     try {
       const data = await getSupplierProducts(currentUserId);
-      setProducts(data);
+
+      // Lọc chỉ những sản phẩm có status là "Active"
+      const activeProducts = data.filter(product => product.status === "Active");
+
+      setProducts(activeProducts);
       setShowProductsModal(true);
     } catch (err) {
       setError("Không thể tải danh sách sản phẩm");
@@ -404,6 +408,12 @@ const ChatPage = () => {
               className="form-control"
               value={content}
               onChange={(e) => setContent(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault(); // Ngăn xuống dòng
+                  handleSendMessage();  // Gọi hàm gửi
+                }
+              }}
             />
             <button
               onClick={handleSendMessage}

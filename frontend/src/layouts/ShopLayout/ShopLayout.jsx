@@ -6,11 +6,12 @@ import ShopHero from "../components/ShopHero";
 import SidebarDetail from "../../components/SidebarDetail";
 import PaginationTab from "../../components/PaginationTab/PaginationTab";
 import Footer from "../../components/Footer";
-import { renderProductBySupplierId } from "../../services/productService";
+import { renderProductBySupplierId, getBestSellersByShop } from "../../services/productService";
 
 function ShopLayout({ children }) {
   const { id } = useParams();
   const [products, setProducts] = useState([]);
+  const [topProducts, setTopProducts] = useState([]);
   const [sortValue, setSortValue] = useState("createdAt");
 
   const [currentPage, setCurrentPage] = useState(1); // trang đang xem (1-based)
@@ -22,6 +23,7 @@ function ShopLayout({ children }) {
     try {
       const response = await renderProductBySupplierId(
         id,
+        "active",
         sortBy,
         null,
         currentPage - 1,
@@ -35,8 +37,19 @@ function ShopLayout({ children }) {
     }
   };
 
+  const getShopSidebarProps = async ()=>{
+       try {
+      const response =await getBestSellersByShop(id);
+      setTopProducts(response);
+     
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm:", error);
+    }
+  }
+
   useEffect(() => {
     getProducts(sortValue);
+    getShopSidebarProps();
   }, [sortValue, currentPage, pageSize, location.search]);
 
   return (
@@ -52,7 +65,7 @@ function ShopLayout({ children }) {
               <div className="row g-4">
                 <div className="col-lg-3">
                   <div className="row g-4">
-                    <SidebarDetail />
+                    <SidebarDetail supplier={products[0].supplier} topProducts={topProducts}/>
                   </div>
                 </div>
                 {cloneElement(children, { products })}

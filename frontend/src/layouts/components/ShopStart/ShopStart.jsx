@@ -141,7 +141,9 @@ function ShopStart() {
               <div className="row g-4">
                 <div className="col-lg-12">
                   <div className="row g-4">
-                    {products?.map((product, index) => (
+                    {products
+                        ?.filter((product) => product.stockQuantity > 0)
+                        .map((product, index) => (
                       <Link
                         to={`/product/${product.productID}`} key={index}
                         className="col-md-6 col-lg-4 col-xl-3"

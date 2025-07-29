@@ -112,11 +112,16 @@ const SidebarAdmin = () => {
                 <a href="/acceptupdaterole" className={styles["submenu-link"]}>
                   Customer Request
                 </a>
-                <a href="/handle-withdraw" className={styles["submenu-link"]}>
-                  Withdraw Request
-                </a>
               </li>
             </ul>
+          </li>
+
+          <li className={styles["sidebar-label"]}>Other</li>
+          <li>
+            <a href="/handle-withdraw" className={styles["sidebar-link"]}>
+              <i className="fa-regular fa-money-bill-transfer"></i>
+              <p>With Draw</p>
+            </a>
           </li>
         </ul>
       </div>

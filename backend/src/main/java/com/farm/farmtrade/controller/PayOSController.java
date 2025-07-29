@@ -31,7 +31,6 @@ public class PayOSController {
     private static final String RETURN_BACKEND_URL = "http://localhost:8080/farmtrade/payos/handle-payment";
     private static final String FAILURE_REACT_URL = "http://localhost:5173/payment/failure";
 
-    //http://localhost:5173/orders?code=00&id=9772173bfccd49ed882fdc7e0e9bfe05&cancel=false&status=PAID&orderCode=172072
     private final PayOS payOS;
     public PayOSController(PayOS payOS) {
         this.payOS = payOS;

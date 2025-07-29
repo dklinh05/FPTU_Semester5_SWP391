@@ -35,8 +35,15 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 
     // Doanh thu trong tháng
     @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o " +
-            "WHERE MONTH(o.orderDate) = :month AND YEAR(o.orderDate) = :year AND o.supplier.userID = :supplierId")
-    Double getRevenueByMonthAndSupplier(@Param("month") int month, @Param("year") int year, @Param("supplierId") Long supplierId);
+            "WHERE MONTH(o.orderDate) = :month AND YEAR(o.orderDate) = :year " +
+            "AND o.supplier.userID = :supplierId " +
+            "AND o.status = 'CONFIRMED'")
+    Double getRevenueByMonthAndSupplier(
+            @Param("month") int month,
+            @Param("year") int year,
+            @Param("supplierId") Long supplierId
+    );
+
 
     // Số đơn trong tháng
     @Query("SELECT COUNT(o) FROM Order o " +

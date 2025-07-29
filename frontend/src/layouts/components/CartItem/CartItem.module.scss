@@ -1,0 +1,23 @@
+.out-of-stock-row {
+  td,
+  th {
+    opacity: 0.5;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  // Giữ nút xoá không bị mờ hoặc disabled
+  td:last-child {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+
+    button {
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+
+    i {
+      color: red !important;
+    }
+  }
+}

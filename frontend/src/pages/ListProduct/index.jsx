@@ -293,12 +293,19 @@ const ListProduct = () => {
                                         <td>{product?.sales}</td>
                                         <td>
                                             <span
-                                                className={`status-badge ${product.status === "Active" ? "status-success" :
-                                                        product.status === "Hidden" ? "status-warning" :
-                                                            product.status === "Pending" ? "status-info" :
-                                                                "status-danger"
-                                                    }`}>
-                                                {product.status}
+                                                className={`status-badge ${
+                                                    product.stockQuantity === 0
+                                                        ? "status-danger"
+                                                        : product.status === "Active"
+                                                            ? "status-success"
+                                                            : product.status === "Hidden"
+                                                                ? "status-warning"
+                                                                : product.status === "Pending"
+                                                                    ? "status-info"
+                                                                    : "status-danger"
+                                                }`}
+                                                >
+                                            {product.stockQuantity === 0 ? "Inactive" : product.status}
                                             </span>
                                         </td>
                                         <td>

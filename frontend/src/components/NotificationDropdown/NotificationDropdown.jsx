@@ -20,7 +20,7 @@ export default function NotificationDropdown() {
     // Gọi API lấy danh sách thông báo khi mount
     const fetchNotifications = async () => {
       try {
-        const data = await renderNotifications(userId, 0 ,5);
+        const data = await renderNotifications(userId, 0, 10);
         setNotifications(data.content || []);
       } catch (err) {
         console.error("Lỗi khi lấy thông báo:", err);
@@ -30,7 +30,8 @@ export default function NotificationDropdown() {
     fetchNotifications();
   }, [userId]);
 
-  const count = notifications.length;
+  const count = notifications.filter((n) => !n.isRead).length;
+
 
   const handleNotificationClick = async (id, type, referenceId = 1, role) => {
     switch (formatType(type)) {
@@ -66,7 +67,13 @@ export default function NotificationDropdown() {
         <div className="bg-white shadow-lg rounded-lg w-64 p-3 border text-sm z-50">
           <div className="fw-bold mb-2">Thông báo</div>
           {count > 0 ? (
-            <ul className="mb-0">
+            <ul
+              className="mb-0"
+              style={{
+                maxHeight: "300px", // chiều cao tối đa
+                overflowY: "auto", // thanh cuộn dọc khi vượt quá
+              }}
+            >
               {notifications.map((n) => (
                 <li
                   key={n.notificationID}
@@ -88,8 +95,6 @@ export default function NotificationDropdown() {
                 >
                   <div className="fw-semibold d-flex align-items-center justify-content-between">
                     <span>{n.title}</span>
-
-                    {/* Dấu chấm đỏ nếu chưa đọc */}
                     {!n.isRead && (
                       <span
                         className="bg-danger rounded-circle"

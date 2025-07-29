@@ -3,7 +3,7 @@ import styles from "./CustomerList.module.scss";
 import { request } from "../../utils/httpRequest";
 import { blockUser, unblockUser } from "../../services/userService";
 import * as XLSX from 'xlsx';
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 
 const CustomerList = () => {
   const [users, setUsers] = useState([]);

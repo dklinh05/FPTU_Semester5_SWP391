@@ -4,6 +4,8 @@ import data from "@emoji-mart/data";
 import Swal from "sweetalert2";
 import chatbotInitData from "../../data/ChatbotInitData";
 import styles from "./Chatbot.module.scss";
+import { renderProduct } from "../../services/productService";
+import { renderVoucher } from "../../services/voucherService";
 
 const Chatbot = () => {
   const API_KEY = "AIzaSyCtIPry_4VCCOIOm0n_pyE0VEnemUgD_aQ";
@@ -19,6 +21,10 @@ const Chatbot = () => {
   const [pickerVisible, setPickerVisible] = useState(false);
   const [showChatbot, setShowChatbot] = useState(false);
 
+  const staticText = chatbotInitData
+  .map((entry) => entry.parts.map((p) => p.text).join("\n"))
+  .join("\n\n");
+
   // Chào mừng mặc định khi mở bot
   const initialWelcomeMessage = {
     role: "model",
@@ -33,7 +39,7 @@ const Chatbot = () => {
     e.preventDefault();
     if (!message.trim()) return;
 
-    const userMsg = {
+     const userMsg = {
       role: "user",
       parts: [
         { text: message },
@@ -43,39 +49,96 @@ const Chatbot = () => {
       ],
     };
 
-    const updatedHistory = [...chatHistory, userMsg];
-    setChatHistory(updatedHistory);
+    // 👉 hiển thị tin nhắn người dùng
     setVisibleMessages((prev) => [...prev, userMsg]);
     setMessage("");
     setFile(null);
 
+    let productsText = "";
+    let vouchersText = "";
+
+    try {
+      const products = await renderProduct();
+      const vouchers = await renderVoucher();
+
+      productsText =
+        "📦 Danh sách sản phẩm hiện tại:\n" +
+        products.content
+          .map(
+            (p, idx) =>
+              `${idx + 1}. ${p.name} - Giá: ${p.price} VND/${
+                p.unit
+              } - Đã bán: ${p.sales ?? 0} - Loại: ${
+                p.category ?? ""
+              } - Đánh giá: ${p.rating ?? ""}`
+          )
+          .join("\n");
+
+      vouchersText =
+        "🎁 Danh sách voucher khả dụng:\n" +
+        vouchers
+          .map(
+            (v, idx) =>
+              `${idx + 1}. ${v.code} - ${v.description} - Cần ${
+                v.points ?? 0
+              } điểm`
+          )
+          .join("\n");
+    } catch (err) {
+      console.error("Lỗi lấy dữ liệu từ API:", err);
+    }
+
+    // 👇 gửi dữ liệu thực tế từ API đến Gemini
+    const promptContext = {
+      role: "user",
+      parts: [
+        {
+          text: `
+Bạn là trợ lý FarmBot - hỗ trợ khách hàng mua nông sản online.
+Dưới đây là thông tin mới nhất từ hệ thống:
+
+${productsText}
+${vouchersText}
+${staticText}
+
+Câu hỏi của khách: ${message}
+        `.trim(),
+        },
+      ],
+    };
+
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: updatedHistory }),
+      body: JSON.stringify({ contents: [promptContext] }),
     };
 
     try {
       const response = await fetch(API_URL, requestOptions);
       const data = await response.json();
 
+      const botText =
+        data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
+        "Xin lỗi, tôi không thể trả lời lúc này.";
+
       const botMsg = {
         role: "model",
-        parts: [
-          {
-            text: data.candidates[0].content.parts[0].text.trim(),
-          },
-        ],
+        parts: [{ text: botText }],
       };
 
-      setChatHistory((prev) => [...prev, botMsg]);
+      // 👉 thêm câu trả lời vào hiển thị
       setVisibleMessages((prev) => [...prev, botMsg]);
 
       setTimeout(() => {
         chatBodyRef.current?.scrollTo(0, chatBodyRef.current.scrollHeight);
       }, 100);
     } catch (err) {
-      console.error("API Error:", err);
+      console.error("Lỗi Gemini API:", err);
+      const errorMsg = {
+        role: "model",
+        parts: [{ text: "Đã xảy ra lỗi, vui lòng thử lại sau." }],
+      };
+      setVisibleMessages((prev) => [...prev, errorMsg]);
     }
   };
 

@@ -23,6 +23,7 @@ Cùng nhau, họ đã phát triển nên FarmTrade một giải pháp thông min
     role: "model",
     parts: [
       {
+
         text: `Bạn là một trợ lý ảo thông minh cho hệ thống thương mại rau củ quả. Dưới đây là dữ liệu hệ thống:
 
 📦 **Sản phẩm**
@@ -85,7 +86,6 @@ Hãy sử dụng thông tin này để trả lời các câu hỏi về sản ph
     }
   ]
 }
-  
-  
+
 ];
 export default chatbotInitData;

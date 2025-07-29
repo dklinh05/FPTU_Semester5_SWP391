@@ -30,7 +30,7 @@ const Chatbot = () => {
     role: "model",
     parts: [
       {
-        text: "Xin chào! Tôi là FarmBot - trợ lý nông sản của bạn 🌿. Bạn có thể hỏi về sản phẩm, giá cả, voucher, hoặc nhà cung cấp.",
+        text: "Xin chào! Tôi là FarmBot - trợ lý nông sản của bạn 🌿. Bạn có thể hỏi về sản phẩm, giá cả, voucher hoặc các thao tác cơ bản của hệ thống.",
       },
     ],
   };

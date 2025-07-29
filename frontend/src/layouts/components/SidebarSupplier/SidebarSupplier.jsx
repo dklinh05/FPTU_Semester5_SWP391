@@ -104,20 +104,10 @@ function SidebarSupplier() {
 
           <li>
             <a href="/supplier/withdraw" className={styles["sidebar-link"]}>
-              <i className="fa-regular fa-message"></i>
+
+              <i className="fa-regular fa-money-bill-transfer"></i>
               <p>Withdraw</p>
-            </a>
-          </li>
-          <li>
-            <a href="#" className={styles["sidebar-link"]}>
-              <i className="fa-regular fa-message"></i>
-              <p>Message</p>
-            </a>
-          </li>
-          <li>
-            <a href="#" className={styles["sidebar-link"]}>
-              <i className="fa-solid fa-phone"></i>
-              <p>Help & Support</p>
+
             </a>
           </li>
         </ul>

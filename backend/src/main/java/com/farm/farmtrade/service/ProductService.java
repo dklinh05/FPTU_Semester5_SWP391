@@ -7,6 +7,7 @@ import com.farm.farmtrade.entity.Product;
 import com.farm.farmtrade.entity.User;
 import com.farm.farmtrade.repository.*;
 import com.farm.farmtrade.service.fileStorage.FileStorageService;
+import com.farm.farmtrade.service.notification.NotificationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class ProductService {
     @Autowired
     private FileStorageService fileStorageService;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public List<Product> getAllActiveProducts() {
         return productRepository.findAllByStatus("active");
     }
@@ -51,7 +55,9 @@ public class ProductService {
         if (keyword == null || keyword.trim().isEmpty()) {
             return new ArrayList<>();
         }
-        return productRepository.findByNameContainingIgnoreCaseAndStatusNot(keyword, "Hidden");
+        return productRepository.findByNameContainingIgnoreCaseAndStatusNot(keyword, "Hidden").stream()
+                .filter(p -> p.getStockQuantity() != null && p.getStockQuantity() > 0)
+                .collect(Collectors.toList());
     }
 
     public Product addProduct(ProductCreateRequest request) {
@@ -79,19 +85,6 @@ public class ProductService {
         product = fileStorageService.uploadProductImage(String.valueOf(product.getProductID()), request.getImage());
 
         return product;
-    }
-
-    public Product updateProduct(Integer id, Product updatedProduct) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
-
-        product.setName(updatedProduct.getName());
-        product.setDescription(updatedProduct.getDescription());
-        product.setPrice(updatedProduct.getPrice());
-        product.setStockQuantity(updatedProduct.getStockQuantity());
-//        product.setImageUrl(updatedProduct.getImageUrl());
-
-        return productRepository.save(product);
     }
 
     public void deleteProduct(Integer id) {
@@ -250,11 +243,31 @@ public class ProductService {
         product.setOrigin(request.getOrigin());
         product.setUnit(request.getUnit());
 
+        // Tự động chuyển trạng thái nếu stock = 0
+        if (request.getStockQuantity() != null) {
+            if (request.getStockQuantity() == 0 && !"Inactive".equals(product.getStatus())) {
+                product.setStatus("Inactive");
+
+                // Gửi thông báo đến supplier
+                notificationService.createNotification(
+                        product.getSupplier().getUserID(),
+                        "Sản phẩm hết hàng",
+                        "Sản phẩm '" + product.getName() + "' đã hết hàng và được chuyển sang trạng thái Inactive.",
+                        "product",
+                        product.getProductID()
+                );
+            } else if (request.getStockQuantity() > 0 && "Inactive".equals(product.getStatus())) {
+                product.setStatus("Active");
+            }
+        }
+
+        // Upload ảnh nếu có
         if (request.getImage() != null && !request.getImage().isEmpty()) {
             product = fileStorageService.uploadProductImage(String.valueOf(id), request.getImage());
         }
 
         return productRepository.save(product);
     }
+
 
 }

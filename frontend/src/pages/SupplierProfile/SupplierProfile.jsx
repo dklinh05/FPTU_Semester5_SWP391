@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { useUser } from "../../context/UserContext";
 import {
     getUserById,
-    updateBusinessName, // <-- Hàm mới
+    updateUser,
     uploadAvatar,
 } from "../../services/userService";
 import AddressPopup from "../../components/AddressPopup";
@@ -48,18 +48,19 @@ const ProfileSupplier = () => {
     const handleSave = async (e) => {
         e.preventDefault();
 
-        if (!dirtyFields.businessName) {
-            toast.success("Không có thay đổi nào cho Business Name!");
+        if (Object.keys(dirtyFields).length === 0) {
+            toast.info("Không có thay đổi nào để lưu!");
             return;
         }
 
         try {
-            const updatedUser = await updateBusinessName(userId, dirtyFields.businessName);
+            await updateUser(userId, dirtyFields); // <-- Gửi toàn bộ field đã chỉnh
+            const updatedUser = await getUserById(userId);
             setUser(updatedUser);
             setDirtyFields({});
-            toast.success("Cập nhật Business Name thành công!");
+            toast.success("Cập nhật thông tin thành công!");
         } catch (error) {
-            console.error("Lỗi khi lưu:", error);
+            console.error("Lỗi khi cập nhật:", error);
             toast.error("Cập nhật thất bại: " + error.message);
         }
     };

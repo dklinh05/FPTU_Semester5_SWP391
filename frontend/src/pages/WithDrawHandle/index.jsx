@@ -13,23 +13,23 @@ const WithdrawHandle = () => {
   const [status, setStatus] = useState(""); // "PENDING", "APPROVED", "REJECTED"
 
   const [loading, setLoading] = useState(false);
-   const [currentPage, setCurrentPage] = useState(1); // trang đang xem (1-based)
+  const [currentPage, setCurrentPage] = useState(1); // trang đang xem (1-based)
   const pageSize = 10;
   const [totalItems, setTotalItems] = useState(0); // tổng số đơn hàng
-    const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   const fetchRequests = async () => {
     try {
       setLoading(true);
       const response = await getWithdrawRequests({
-        page:  currentPage - 1,
+        page: currentPage - 1,
         size: pageSize,
         status: status || undefined,
         // supplierId,
       });
 
       setRequests(response.content || []);
-     setTotalPages(response.totalPages);
+      setTotalPages(response.totalPages);
       setTotalItems(response.totalElements);
     } catch (error) {
       console.error("Lỗi khi tải danh sách:", error);
@@ -40,17 +40,17 @@ const WithdrawHandle = () => {
 
   useEffect(() => {
     fetchRequests();
-  }, [status]);
+  }, [status, currentPage]);
 
   const handleStatusChange = (e) => {
     // setPage(0);
     setStatus(e.target.value);
   };
-const handleApprove = async (id) => {
+  const handleApprove = async (id) => {
     if (!window.confirm("Bạn có chắc muốn duyệt yêu cầu này?")) return;
     try {
       const response = await approveWithDraw(id);
-      toast.success(response)
+      toast.success(response);
       fetchRequests();
     } catch (err) {
       alert("Lỗi khi duyệt yêu cầu: " + err);
@@ -61,7 +61,7 @@ const handleApprove = async (id) => {
     if (!window.confirm("Bạn có chắc muốn từ chối yêu cầu này?")) return;
     try {
       const response = await rejectWithDraw(id);
-      toast.success(response)
+      toast.success(response);
       fetchRequests();
     } catch (err) {
       alert("Lỗi khi từ chối yêu cầu: " + err);
@@ -115,8 +115,10 @@ const handleApprove = async (id) => {
             <tbody>
               {requests.map((req, index) => (
                 <tr key={req.id} className="border-t">
-                  <td className="px-4 py-2">{(currentPage-1) * pageSize + index + 1}</td>
-                 
+                  <td className="px-4 py-2">
+                    {(currentPage - 1) * pageSize + index + 1}
+                  </td>
+
                   <td className="px-4 py-2">
                     {req.amountRequested?.toLocaleString()} VND
                   </td>
@@ -135,9 +137,7 @@ const handleApprove = async (id) => {
                       {req.status}
                     </span>
                   </td>
-                  <td className="px-4 py-2">
-                    {formatDate(req.requestDate)}
-                  </td>
+                  <td className="px-4 py-2">{formatDate(req.requestDate)}</td>
                   <td>
                     {req.status === "PENDING" || req.status === "APPROVED" ? (
                       <img
@@ -155,26 +155,25 @@ const handleApprove = async (id) => {
                     )}
                   </td>
                   <td>
-                {req.status === "PENDING" && (
-                  <>
-                    <button
-                      className="btn btn-sm btn-success me-1"
-                      onClick={() => handleApprove(req.id)}
-                    >
-                      Duyệt
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleReject(req.id)}
-                    >
-                      Từ chối
-                    </button>
-                  </>
-                )}
-                {(req.status === "APPROVED" || req.status === "REJECTED") && (
-                  <em>Đã xử lý</em>
-                )}
-              </td>
+                    {req.status === "PENDING" && (
+                      <>
+                        <button
+                          className="btn btn-sm btn-success me-1"
+                          onClick={() => handleApprove(req.id)}
+                        >
+                          Duyệt
+                        </button>
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => handleReject(req.id)}
+                        >
+                          Từ chối
+                        </button>
+                      </>
+                    )}
+                    {(req.status === "APPROVED" ||
+                      req.status === "REJECTED") && <em>Đã xử lý</em>}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -183,12 +182,12 @@ const handleApprove = async (id) => {
       </div>
 
       {/* Pagination */}
-          <PaginationTab
-            currentPage={currentPage}
-            totalPages={totalPages}
-            totalItems={totalItems}
-            setCurrentPage={setCurrentPage}
-          />
+      <PaginationTab
+        currentPage={currentPage}
+        totalPages={totalPages}
+        totalItems={totalItems}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
   );
 };

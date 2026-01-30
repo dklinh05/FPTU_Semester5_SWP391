@@ -18,10 +18,7 @@ function Cart() {
   const [isUpdate, setIsUpdate] = useState(false);
 
   const onUpdateQuantity = () => {
-    setIsUpdate((prev) => {
-      console.log(!prev); // sẽ thấy giá trị thay đổi đúng
-      return !prev;
-    });
+    setIsUpdate((prev) => !prev);
   };
 
   const getCarts = () => {
@@ -29,14 +26,12 @@ function Cart() {
       setCheckedItems((prevChecked) => {
         const updatedChecked = { ...prevChecked };
 
-        // Đảm bảo tất cả cartItemID đều có key
         carts.forEach((cart) => {
           if (!(cart.cartItemID in updatedChecked)) {
             updatedChecked[cart.cartItemID] = false;
           }
         });
 
-        // Các cart được chọn từ trước (chooseCartItems) sẽ luôn được chọn
         chooseCartItems.forEach((cart) => {
           updatedChecked[cart.cartItemID] = true;
         });
@@ -65,7 +60,7 @@ function Cart() {
   }, [userId]);
 
   const handleItemDeleted = () => {
-    getCarts(); // gọi lại API để cập nhật
+    getCarts();
   };
 
   const handleCheckItem = (id, checked) => {
@@ -76,42 +71,51 @@ function Cart() {
   };
 
   const isAllChecked =
-    carts.length > 0 && carts.every((cart) => checkedItems[cart.cartItemID]);
+      carts.length > 0 &&
+      carts.every((cart) =>
+          cart.product.stockQuantity > 0
+              ? checkedItems[cart.cartItemID]
+              : true // ignore hết hàng khi check all
+      );
 
   const handleCheckAll = (e) => {
     const checked = e.target.checked;
     const newChecked = {};
     carts.forEach((cart) => {
-      newChecked[cart.cartItemID] = checked;
+      if (cart.product.stockQuantity > 0) {
+        newChecked[cart.cartItemID] = checked;
+      }
     });
     setCheckedItems(newChecked);
   };
 
   const selectedItems = useMemo(() => {
-    return carts.filter((cart) => checkedItems[cart.cartItemID]);
+    return carts.filter(
+        (cart) =>
+            checkedItems[cart.cartItemID] && cart.product.stockQuantity > 0
+    );
   }, [carts, checkedItems]);
 
   const calculateTotal = (items) => {
     return items.reduce(
-      (total, cart) => total + cart.quantity * cart.product.price,
-      0
+        (total, cart) => total + cart.quantity * cart.product.price,
+        0
     );
   };
 
   return (
-    <div className="container-fluid py-5">
-      <div className="container py-5">
-        {/* Table Responsive */}
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
+      <div className="container-fluid py-5">
+        <div className="container py-5">
+          <div className="table-responsive">
+            <table className="table">
+              <thead>
               <tr>
                 <th scope="col" className="text-center align-middle">
                   <input
-                    type="checkbox"
-                    checked={isAllChecked}
-                    onChange={handleCheckAll}
-                    style={{ transform: "scale(1.3)" }}
+                      type="checkbox"
+                      checked={isAllChecked}
+                      onChange={handleCheckAll}
+                      style={{ transform: "scale(1.3)" }}
                   />
                 </th>
                 <th scope="col">Products</th>
@@ -121,74 +125,85 @@ function Cart() {
                 <th scope="col">Total</th>
                 <th scope="col">Handle</th>
               </tr>
-            </thead>
-            <tbody>
+              </thead>
+              <tbody>
               {carts.map((cart) => (
-                <CartItem
-                  key={cart.cartItemID}
-                  id={cart.cartItemID}
-                  quantity={cart.quantity}
-                  img={cart.product.imageURL}
-                  name={cart.product.name}
-                  price={cart.product.price}
-                  unit={cart.product.unit}
-                  onDeleted={handleItemDeleted}
-                  checked={checkedItems[cart.cartItemID] || false}
-                  onCheck={(checked) =>
-                    handleCheckItem(cart.cartItemID, checked)
-                  }
-                  onUpdate={onUpdateQuantity}
-                />
+                  <CartItem
+                      key={cart.cartItemID}
+                      id={cart.cartItemID}
+                      quantity={cart.quantity}
+                      img={cart.product.imageURL}
+                      name={cart.product.name}
+                      price={cart.product.price}
+                      unit={cart.product.unit}
+                      stockQuantity={cart.product.stockQuantity}
+                      onDeleted={handleItemDeleted}
+                      checked={checkedItems[cart.cartItemID] || false}
+                      onCheck={(checked) =>
+                          handleCheckItem(cart.cartItemID, checked)
+                      }
+                      onUpdate={onUpdateQuantity}
+                  />
               ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Voucher chọn */}
+          <select
+              className="form-select border-0 border-bottom rounded me-5 py-3 mb-4"
+              value={selectedVoucher?.userVoucherID || ""}
+              onChange={(e) => {
+                const selected = ownedVouchers.find(
+                    (v) => v.userVoucherID === parseInt(e.target.value)
+                );
+                if (!selected) return;
+
+                if (
+                    selectedItems.some(
+                        (item) => item.product.stockQuantity === 0
+                    )
+                ) {
+                  toast.error("Không thể dùng voucher vì có sản phẩm hết hàng.");
+                  return;
+                }
+
+                if (
+                    calculateTotal(selectedItems) > selected.voucher.minOrderAmount
+                ) {
+                  setSelectedVoucher(selected);
+                  toast.success(
+                      `Đã áp dụng mã: ${selected.voucher.code} - Giảm ${selected.voucher.discountValue}₫`
+                  );
+                } else {
+                  toast.error("Bạn chưa đủ mức tiền tối thiểu để dùng voucher.");
+                }
+              }}
+          >
+            <option value="">Chọn voucher</option>
+            {ownedVouchers.map((voucher) => (
+                <option
+                    key={voucher.userVoucherID}
+                    value={voucher.userVoucherID}
+                    disabled={
+                        calculateTotal(selectedItems) <
+                        voucher.voucher.minOrderAmount
+                    }
+                >
+                  {voucher.voucher.code} - Giảm {voucher.voucher.discountValue}₫
+                  cho đơn từ {voucher.voucher.minOrderAmount}₫
+                  {calculateTotal(selectedItems) <
+                  voucher.voucher.minOrderAmount
+                      ? " (Không đủ điều kiện)"
+                      : ""}
+                </option>
+            ))}
+          </select>
+
+          {/* Tổng tiền */}
+          <CartTotal carts={selectedItems} voucher={selectedVoucher} />
         </div>
-
-        {/* Coupon Code */}
-        <select
-          className="form-select border-0 border-bottom rounded me-5 py-3 mb-4"
-          value={selectedVoucher?.userVoucherID || ""}
-          onChange={(e) => {
-            const selected = ownedVouchers.find(
-              (v) => v.userVoucherID === parseInt(e.target.value)
-            );
-            if (selected) {
-              setSelectedVoucher(selected);
-            }
-            if (
-              calculateTotal(selectedItems) > selected.voucher.minOrderAmount
-            ) {
-              setSelectedVoucher(selected);
-              toast.success(
-                `Đã áp dụng mã: ${selected.voucher.code} - Giảm ${selected.voucher.discountValue}₫`
-              );
-            } else {
-              toast.error("Bạn chưa đủ điểm để sử dụng voucher này.");
-            }
-          }}
-        >
-          <option value="">Chọn voucher</option>
-          {ownedVouchers.map((voucher) => (
-            <option
-              key={voucher.userVoucherID}
-              value={voucher.userVoucherID}
-              disabled={
-                calculateTotal(selectedItems) < voucher.voucher.minOrderAmount
-              }
-            >
-              {voucher.voucher.code} - Giảm {voucher.voucher.discountValue}₫ cho
-              đơn từ {voucher.voucher.minOrderAmount}
-              {calculateTotal(selectedItems) < voucher.voucher.minOrderAmount
-                ? "(Không đủ mức tiền tối thiểu ✖)"
-                : ""}
-            </option>
-          ))}
-        </select>
-
-        {/* Cart Total - truyền selectedItems */}
-        <CartTotal carts={selectedItems} voucher={selectedVoucher} />
       </div>
-    </div>
   );
 }
 

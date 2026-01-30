@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useUser } from "../../context/UserContext";
-import { withDrawRequest } from "../../services/withDrawService";
+import {
+  withDrawRequest,
+  getWithdrawRequests,
+} from "../../services/withDrawService";
+import PaginationTab from "../../components/PaginationTab/PaginationTab";
 
 function WithDraw() {
   const { userId, user } = useUser();
@@ -9,6 +13,13 @@ function WithDraw() {
   const [bank, setBank] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [message, setMessage] = useState("");
+  const [requests, setRequests] = useState([]);
+  const availableBalance = (user?.totalRevenue || 0) - (user?.withdrawn || 0);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const [totalItems, setTotalItems] = useState(0); // tổng số đơn hàng
+  const [totalPages, setTotalPages] = useState(0);
 
   const handleWithdraw = async () => {
     const numAmount = parseInt(amount);
@@ -22,7 +33,7 @@ function WithDraw() {
       return;
     }
 
-    if (numAmount > user?.totalRevenue) {
+    if (numAmount > availableBalance) {
       setMessage("Số tiền rút vượt quá số dư hiện có.");
       return;
     }
@@ -30,7 +41,12 @@ function WithDraw() {
     // Gửi yêu cầu rút tiền (giả lập)
     // setBalance(balance - numAmount);
     try {
-      const response = await withDrawRequest(userId, amount, bank, accountNumber);
+      const response = await withDrawRequest(
+        userId,
+        amount,
+        bank,
+        accountNumber
+      );
       setMessage(response);
     } catch (error) {
       console.error("Lỗi khi lấy sản phẩm:", error);
@@ -42,6 +58,29 @@ function WithDraw() {
     setAccountNumber("");
   };
 
+  const fetchRequests = async () => {
+    try {
+      // setLoading(true);
+      const response = await getWithdrawRequests({
+        page: currentPage - 1,
+        size: pageSize,
+        supplierId: userId,
+      });
+
+      setRequests(response.content || []);
+      setTotalPages(response.totalPages);
+      setTotalItems(response.totalElements);
+    } catch (error) {
+      console.error("Lỗi khi tải danh sách:", error);
+    }
+  };
+
+  useEffect(() => {
+    if(userId){
+      fetchRequests();
+    }
+  }, [userId, currentPage]);
+
   return (
     <div className="p-6">
       <div className="extra-header"></div>
@@ -52,7 +91,13 @@ function WithDraw() {
         <p className="text-lg">
           <strong>Tổng tiền có thể rút:</strong>{" "}
           <span className="text-green-700 font-semibold">
-            {user?.totalRevenue} VND
+            {availableBalance} VND
+          </span>
+        </p>
+        <p className="text-lg">
+          <strong>Tổng tiền đã rút:</strong>{" "}
+          <span className="text-green-700 font-semibold">
+            {user?.withdrawn || 0} VND
           </span>
         </p>
       </div>
@@ -99,7 +144,7 @@ function WithDraw() {
         />
 
         <button
-          className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition"
+          className="bg-green-600 text-black px-6 py-2 rounded hover:bg-green-700 transition"
           onClick={handleWithdraw}
         >
           Gửi Yêu Cầu Rút
@@ -109,41 +154,40 @@ function WithDraw() {
       </div>
 
       {/* Lịch sử rút tiền */}
-      <div className="mt-10">
+      <div>
         <h3 className="text-lg font-medium mb-2">Lịch sử rút tiền</h3>
-        <table className="min-w-full bg-white border rounded shadow-sm">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="px-4 py-2">STT</th>
-              <th className="px-4 py-2">Số tiền</th>
-              <th className="px-4 py-2">Ngân hàng</th>
-              <th className="px-4 py-2">STK</th>
-              <th className="px-4 py-2">Trạng thái</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="px-4 py-2">1</td>
-              <td className="px-4 py-2">100,000 VND</td>
-              <td className="px-4 py-2">Vietcombank</td>
-              <td className="px-4 py-2">0123456789</td>
+        <tbody>
+          {requests?.map((req, index) => (
+            <tr key={req.id}>
+              <td className="px-4 py-2">{index + 1}</td>
               <td className="px-4 py-2">
-                <span className="bg-yellow-100 px-2 py-1 rounded">pending</span>
+                {req.amountApproved.toLocaleString()} VND
               </td>
-            </tr>
-            <tr>
-              <td className="px-4 py-2">2</td>
-              <td className="px-4 py-2">50,000 VND</td>
-              <td className="px-4 py-2">ACB</td>
-              <td className="px-4 py-2">0987654321</td>
+              <td className="px-4 py-2">{req.bankName}</td>
+              <td className="px-4 py-2">{req.accountNumber}</td>
               <td className="px-4 py-2">
-                <span className="bg-green-100 px-2 py-1 rounded">
-                  completed
+                <span
+                  className={`px-2 py-1 rounded ${
+                    req.status === "pending"
+                      ? "bg-yellow-100"
+                      : req.status === "completed"
+                      ? "bg-green-100"
+                      : "bg-red-100"
+                  }`}
+                >
+                  {req.status}
                 </span>
               </td>
             </tr>
-          </tbody>
-        </table>
+          ))}
+        </tbody>
+        {/* Pagination */}
+        <PaginationTab
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={totalItems}
+          setCurrentPage={setCurrentPage}
+        />
       </div>
     </div>
   );

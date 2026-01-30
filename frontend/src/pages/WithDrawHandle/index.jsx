@@ -40,7 +40,7 @@ const WithdrawHandle = () => {
 
   useEffect(() => {
     fetchRequests();
-  }, [status, currentPage]);
+  }, [status]);
 
   const handleStatusChange = (e) => {
     // setPage(0);
